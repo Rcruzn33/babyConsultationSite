@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(220, 13%, 20%);
+  --muted: hsl(210, 40%, 98%);
+  --muted-foreground: hsl(215, 13.8%, 40%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(220, 13%, 20%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(220, 13%, 20%);
+  --border: hsl(214.3, 31.8%, 91.4%);
+  --input: hsl(214.3, 31.8%, 91.4%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(210, 40%, 98%);
+  --secondary-foreground: hsl(222.2, 84%, 4.9%);
+  --accent: hsl(210, 40%, 98%);
+  --accent-foreground: hsl(222.2, 84%, 4.9%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(220, 13%, 20%);
+  --radius: 0.5rem;
+  
+  /* Baby Sleep Theme Colors */
+  --cream: hsl(200, 25%, 98%);
+  --baby-blue: hsl(207, 90%, 84%);
+  --soft-pink: hsl(338, 100%, 92%);
+  --pastel-yellow: hsl(53, 84%, 91%);
+  --mint: hsl(150, 50%, 88%);
+  --soft-dark: hsl(0, 0%, 20%);
+  --medium-gray: hsl(0, 0%, 40%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    background-color: var(--cream);
+    color: var(--soft-dark);
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .bg-cream {
+    background-color: var(--cream);
+  }
+  
+  .bg-baby-blue {
+    background-color: var(--baby-blue);
+  }
+  
+  .bg-soft-pink {
+    background-color: var(--soft-pink);
+  }
+  
+  .bg-pastel-yellow {
+    background-color: var(--pastel-yellow);
+  }
+  
+  .bg-mint {
+    background-color: var(--mint);
+  }
+  
+  .text-soft-dark {
+    color: var(--soft-dark);
+  }
+  
+  .text-medium-gray {
+    color: var(--medium-gray);
+  }
+  
+  .text-baby-blue {
+    color: var(--baby-blue);
+  }
+  
+  .text-soft-pink {
+    color: var(--soft-pink);
+  }
+  
+  .text-mint {
+    color: var(--mint);
+  }
+  
+  .border-baby-blue {
+    border-color: var(--baby-blue);
+  }
+  
+  .border-soft-pink {
+    border-color: var(--soft-pink);
+  }
+  
+  .hover\:bg-baby-blue:hover {
+    background-color: var(--baby-blue);
+  }
+  
+  .hover\:bg-soft-pink:hover {
+    background-color: var(--soft-pink);
+  }
+  
+  .hover\:text-baby-blue:hover {
+    color: var(--baby-blue);
+  }
+  
+  .hover\:text-soft-pink:hover {
+    color: var(--soft-pink);
+  }
+  
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+}
