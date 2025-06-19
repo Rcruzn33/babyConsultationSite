@@ -3,9 +3,9 @@ import { Instagram, Facebook } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-soft-dark text-white py-16">
+    <footer className="bg-soft-dark text-white py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           <div className="md:col-span-2">
             <h3 className="text-2xl font-bold text-baby-blue mb-4">
               Baby Sleep Whisperer
@@ -35,37 +35,37 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link href="/">
-                  <a className="text-gray-300 hover:text-baby-blue transition-colors">
+                  <span className="text-gray-300 hover:text-baby-blue transition-colors cursor-pointer">
                     Home
-                  </a>
+                  </span>
                 </Link>
               </li>
               <li>
                 <Link href="/about">
-                  <a className="text-gray-300 hover:text-baby-blue transition-colors">
+                  <span className="text-gray-300 hover:text-baby-blue transition-colors cursor-pointer">
                     About
-                  </a>
+                  </span>
                 </Link>
               </li>
               <li>
                 <Link href="/services">
-                  <a className="text-gray-300 hover:text-baby-blue transition-colors">
+                  <span className="text-gray-300 hover:text-baby-blue transition-colors cursor-pointer">
                     Services
-                  </a>
+                  </span>
                 </Link>
               </li>
               <li>
                 <Link href="/blog">
-                  <a className="text-gray-300 hover:text-baby-blue transition-colors">
+                  <span className="text-gray-300 hover:text-baby-blue transition-colors cursor-pointer">
                     Blog
-                  </a>
+                  </span>
                 </Link>
               </li>
               <li>
                 <Link href="/contact">
-                  <a className="text-gray-300 hover:text-baby-blue transition-colors">
+                  <span className="text-gray-300 hover:text-baby-blue transition-colors cursor-pointer">
                     Contact
-                  </a>
+                  </span>
                 </Link>
               </li>
             </ul>

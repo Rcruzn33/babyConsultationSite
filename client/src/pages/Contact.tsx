@@ -81,20 +81,20 @@ export default function Contact() {
 
   return (
     <main>
-      <section className="py-24 bg-white">
+      <section className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-soft-dark mb-4">Get in Touch</h1>
-            <p className="text-xl text-medium-gray max-w-3xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h1 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">Get in Touch</h1>
+            <p className="text-lg sm:text-xl text-medium-gray max-w-3xl mx-auto">
               Have questions about your baby's sleep? Ready to start your journey to better nights? 
               I'm here to help.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
             {/* Contact Form */}
-            <div className="bg-cream p-8 rounded-3xl">
-              <h2 className="text-2xl font-bold text-soft-dark mb-6">Send a Message</h2>
+            <div className="bg-cream p-6 sm:p-8 rounded-2xl sm:rounded-3xl">
+              <h2 className="text-xl sm:text-2xl font-bold text-soft-dark mb-6">Send a Message</h2>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -52,55 +52,55 @@ export default function Services() {
 
   return (
     <main>
-      <section className="py-24 bg-white">
+      <section className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold text-soft-dark mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h1 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">
               Sleep Solutions for Every Family
             </h1>
-            <p className="text-xl text-medium-gray max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-medium-gray max-w-3xl mx-auto">
               Personalized sleep plans designed to work with your baby's temperament 
               and your family's lifestyle.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
             {services.map((service, index) => {
               const IconComponent = service.icon;
               return (
                 <div
                   key={index}
-                  className={`${service.bgColor} p-8 rounded-2xl border-2 ${
+                  className={`${service.bgColor} p-6 sm:p-8 rounded-2xl border-2 ${
                     service.popular ? "border-soft-pink" : "border-transparent"
                   } hover:border-baby-blue transition-colors card-hover relative`}
                 >
                   {service.popular && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-soft-pink text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-soft-pink text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-semibold">
                         Most Popular
                       </span>
                     </div>
                   )}
                   <div className="text-center mb-6">
-                    <div className={`w-16 h-16 ${service.iconBg} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                      <IconComponent className="text-white h-8 w-8" />
+                    <div className={`w-14 h-14 sm:w-16 sm:h-16 ${service.iconBg} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                      <IconComponent className="text-white h-6 w-6 sm:h-8 sm:w-8" />
                     </div>
-                    <h3 className="text-2xl font-bold text-soft-dark mb-2">
+                    <h3 className="text-xl sm:text-2xl font-bold text-soft-dark mb-2">
                       {service.title}
                     </h3>
-                    <div className="text-3xl font-bold text-baby-blue">
+                    <div className="text-2xl sm:text-3xl font-bold text-baby-blue">
                       {service.price}
                     </div>
                   </div>
-                  <ul className="space-y-3 mb-8">
+                  <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                     {service.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center text-medium-gray">
-                        <Check className="text-baby-blue mr-3 h-5 w-5" />
+                      <li key={featureIndex} className="flex items-center text-sm sm:text-base text-medium-gray">
+                        <Check className="text-baby-blue mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                         {feature}
                       </li>
                     ))}
                   </ul>
-                  <Button className={`w-full ${service.buttonBg} text-white py-3 rounded-full font-semibold hover:bg-baby-blue transition-colors`}>
+                  <Button className={`w-full ${service.buttonBg} text-white py-3 rounded-full font-semibold hover:bg-baby-blue transition-colors touch-target`}>
                     {service.title === "Free Consultation" ? "Schedule Free Call" : 
                      service.title === "Complete Sleep Package" ? "Get Started Today" : 
                      "Join Workshop"}
@@ -111,28 +111,28 @@ export default function Services() {
           </div>
 
           {/* Calendly Integration Section */}
-          <div className="bg-cream p-12 rounded-3xl text-center">
-            <h2 className="text-3xl font-bold text-soft-dark mb-4">
+          <div className="bg-cream p-6 sm:p-8 lg:p-12 rounded-2xl sm:rounded-3xl text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-soft-dark mb-4">
               Ready to Get Started?
             </h2>
-            <p className="text-xl text-medium-gray mb-8 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-medium-gray mb-6 sm:mb-8 max-w-2xl mx-auto">
               Book your free consultation today and take the first step toward 
               peaceful nights for your whole family.
             </p>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto">
-              <div className="text-center py-16">
-                <Calendar className="h-16 w-16 text-baby-blue mb-4 mx-auto" />
-                <h3 className="text-2xl font-semibold text-soft-dark mb-4">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg max-w-4xl mx-auto">
+              <div className="text-center py-8 sm:py-12 lg:py-16">
+                <Calendar className="h-12 w-12 sm:h-16 sm:w-16 text-baby-blue mb-4 mx-auto" />
+                <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-4">
                   Schedule Your Free Consultation
                 </h3>
-                <p className="text-medium-gray mb-6">Choose a time that works for you</p>
-                <Button className="bg-soft-pink text-white px-8 py-3 rounded-full font-semibold hover:bg-baby-blue transition-colors">
+                <p className="text-sm sm:text-base text-medium-gray mb-6">Choose a time that works for you</p>
+                <Button className="bg-soft-pink text-white px-6 sm:px-8 py-3 rounded-full font-semibold hover:bg-baby-blue transition-colors touch-target mobile-full-width">
                   Open Calendar
                 </Button>
                 {/* TODO: Replace with actual Calendly embed code */}
-                <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">
+                <div className="mt-6 sm:mt-8 p-4 bg-gray-50 rounded-lg">
+                  <p className="text-xs sm:text-sm text-gray-600">
                     Calendly integration will be embedded here. 
                     Add your Calendly embed code to replace this placeholder.
                   </p>

@@ -75,45 +75,45 @@ export default function Home() {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="py-24 bg-white">
+      <section className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-soft-dark mb-4">Why Families Choose Us</h2>
-            <p className="text-xl text-medium-gray max-w-3xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">Why Families Choose Us</h2>
+            <p className="text-lg sm:text-xl text-medium-gray max-w-3xl mx-auto">
               Our gentle, evidence-based approach helps babies learn healthy sleep habits 
               while supporting parents through every step.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-8 rounded-2xl bg-baby-blue/5 card-hover">
-              <div className="w-16 h-16 bg-baby-blue rounded-full flex items-center justify-center mx-auto mb-6">
-                <Heart className="text-white h-8 w-8" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            <div className="text-center p-6 sm:p-8 rounded-2xl bg-baby-blue/5 card-hover">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-baby-blue rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <Heart className="text-white h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="text-2xl font-semibold text-soft-dark mb-4">Gentle Methods</h3>
-              <p className="text-medium-gray leading-relaxed">
+              <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-3 sm:mb-4">Gentle Methods</h3>
+              <p className="text-sm sm:text-base text-medium-gray leading-relaxed">
                 No harsh cry-it-out methods. We use responsive, gentle techniques that 
                 respect your baby's needs and your parenting style.
               </p>
             </div>
 
-            <div className="text-center p-8 rounded-2xl bg-soft-pink/10 card-hover">
-              <div className="w-16 h-16 bg-soft-pink rounded-full flex items-center justify-center mx-auto mb-6">
-                <GraduationCap className="text-white h-8 w-8" />
+            <div className="text-center p-6 sm:p-8 rounded-2xl bg-soft-pink/10 card-hover">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-soft-pink rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <GraduationCap className="text-white h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="text-2xl font-semibold text-soft-dark mb-4">Expert Guidance</h3>
-              <p className="text-medium-gray leading-relaxed">
+              <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-3 sm:mb-4">Expert Guidance</h3>
+              <p className="text-sm sm:text-base text-medium-gray leading-relaxed">
                 Certified sleep consultant with 8+ years of experience helping families 
                 achieve better sleep through personalized plans.
               </p>
             </div>
 
-            <div className="text-center p-8 rounded-2xl bg-mint/10 card-hover">
-              <div className="w-16 h-16 bg-mint rounded-full flex items-center justify-center mx-auto mb-6">
-                <Clock className="text-white h-8 w-8" />
+            <div className="text-center p-6 sm:p-8 rounded-2xl bg-mint/10 card-hover">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-mint rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <Clock className="text-white h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="text-2xl font-semibold text-soft-dark mb-4">Ongoing Support</h3>
-              <p className="text-medium-gray leading-relaxed">
+              <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-3 sm:mb-4">Ongoing Support</h3>
+              <p className="text-sm sm:text-base text-medium-gray leading-relaxed">
                 2 weeks of unlimited text support, follow-up calls, and plan adjustments 
                 to ensure lasting success for your family.
               </p>
@@ -123,25 +123,25 @@ export default function Home() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-baby-blue/20 via-soft-pink/10 to-mint/20">
+      <section className="py-16 sm:py-24 bg-gradient-to-br from-baby-blue/20 via-soft-pink/10 to-mint/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-soft-dark mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4 sm:mb-6">
             Ready for Peaceful Nights?
           </h2>
-          <p className="text-xl text-medium-gray mb-8 leading-relaxed">
+          <p className="text-lg sm:text-xl text-medium-gray mb-6 sm:mb-8 leading-relaxed">
             Join hundreds of families who've transformed their sleep with gentle, effective methods. 
             Your journey to better sleep starts with a free consultation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/services">
-              <Button className="bg-soft-pink text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-baby-blue transition-colors">
+              <Button className="bg-soft-pink text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-baby-blue transition-colors touch-target mobile-full-width">
                 Book Free Consultation
               </Button>
             </Link>
             <Link href="/services">
               <Button
                 variant="outline"
-                className="border-2 border-baby-blue text-baby-blue px-8 py-4 rounded-full text-lg font-semibold hover:bg-baby-blue hover:text-white transition-colors"
+                className="border-2 border-baby-blue text-baby-blue px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-baby-blue hover:text-white transition-colors touch-target mobile-full-width"
               >
                 View All Services
               </Button>
