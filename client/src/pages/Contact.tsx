@@ -97,7 +97,7 @@ export default function Contact() {
               <h2 className="text-xl sm:text-2xl font-bold text-soft-dark mb-6">Send a Message</h2>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="name"
@@ -109,7 +109,7 @@ export default function Contact() {
                           <FormControl>
                             <Input
                               placeholder="Enter your name"
-                              className="px-4 py-3 rounded-xl border border-gray-200 focus:border-baby-blue focus:ring-2 focus:ring-baby-blue/20"
+                              className="px-4 py-3 rounded-xl border border-gray-200 focus:border-baby-blue focus:ring-2 focus:ring-baby-blue/20 touch-target"
                               {...field}
                             />
                           </FormControl>
@@ -130,7 +130,7 @@ export default function Contact() {
                             <Input
                               type="email"
                               placeholder="Enter your email"
-                              className="px-4 py-3 rounded-xl border border-gray-200 focus:border-baby-blue focus:ring-2 focus:ring-baby-blue/20"
+                              className="px-4 py-3 rounded-xl border border-gray-200 focus:border-baby-blue focus:ring-2 focus:ring-baby-blue/20 touch-target"
                               {...field}
                             />
                           </FormControl>
@@ -150,7 +150,7 @@ export default function Contact() {
                         </FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger className="px-4 py-3 rounded-xl border border-gray-200 focus:border-baby-blue focus:ring-2 focus:ring-baby-blue/20">
+                            <SelectTrigger className="px-4 py-3 rounded-xl border border-gray-200 focus:border-baby-blue focus:ring-2 focus:ring-baby-blue/20 touch-target">
                               <SelectValue placeholder="Select a topic" />
                             </SelectTrigger>
                           </FormControl>
@@ -177,7 +177,7 @@ export default function Contact() {
                         <FormControl>
                           <Textarea
                             placeholder="Tell me about your baby's sleep challenges..."
-                            className="px-4 py-3 rounded-xl border border-gray-200 focus:border-baby-blue focus:ring-2 focus:ring-baby-blue/20 resize-none"
+                            className="px-4 py-3 rounded-xl border border-gray-200 focus:border-baby-blue focus:ring-2 focus:ring-baby-blue/20 resize-none touch-target"
                             rows={5}
                             {...field}
                           />
@@ -190,7 +190,7 @@ export default function Contact() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-soft-pink text-white py-4 rounded-xl font-semibold hover:bg-baby-blue transition-colors"
+                    className="w-full bg-soft-pink text-white py-4 rounded-xl font-semibold hover:bg-baby-blue transition-colors touch-target"
                   >
                     {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
@@ -199,27 +199,27 @@ export default function Contact() {
             </div>
 
             {/* Contact Information */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8 mt-8 lg:mt-0">
               <div>
-                <h2 className="text-2xl font-bold text-soft-dark mb-6">Let's Connect</h2>
-                <p className="text-medium-gray leading-relaxed mb-8">
+                <h2 className="text-xl sm:text-2xl font-bold text-soft-dark mb-4 sm:mb-6">Let's Connect</h2>
+                <p className="text-sm sm:text-base text-medium-gray leading-relaxed mb-6 sm:mb-8">
                   I'm passionate about helping families get the sleep they need. Whether you have 
                   questions about my services or just want to chat about your baby's sleep, I'd love to hear from you.
                 </p>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {contactInfo.map((info, index) => {
                   const IconComponent = info.icon;
                   return (
-                    <div key={index} className="flex items-start space-x-4">
-                      <div className={`w-12 h-12 ${info.bgColor} rounded-full flex items-center justify-center flex-shrink-0`}>
-                        <IconComponent className="text-white h-5 w-5" />
+                    <div key={index} className="flex items-start space-x-3 sm:space-x-4">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 ${info.bgColor} rounded-full flex items-center justify-center flex-shrink-0`}>
+                        <IconComponent className="text-white h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-soft-dark mb-1">{info.title}</h3>
-                        <p className="text-medium-gray">{info.content}</p>
-                        <p className="text-sm text-medium-gray">{info.subtitle}</p>
+                        <h3 className="font-semibold text-soft-dark mb-1 text-sm sm:text-base">{info.title}</h3>
+                        <p className="text-medium-gray text-sm sm:text-base">{info.content}</p>
+                        <p className="text-xs sm:text-sm text-medium-gray">{info.subtitle}</p>
                       </div>
                     </div>
                   );
@@ -227,20 +227,20 @@ export default function Contact() {
               </div>
 
               {/* Social Media Links */}
-              <div className="pt-8 border-t border-gray-200">
-                <h3 className="font-semibold text-soft-dark mb-4">Follow for Daily Tips</h3>
-                <div className="flex space-x-4">
+              <div className="pt-6 sm:pt-8 border-t border-gray-200">
+                <h3 className="font-semibold text-soft-dark mb-4 text-sm sm:text-base">Follow for Daily Tips</h3>
+                <div className="flex space-x-3 sm:space-x-4">
                   <a
                     href="#"
-                    className="w-10 h-10 bg-baby-blue rounded-full flex items-center justify-center text-white hover:bg-soft-pink transition-colors"
+                    className="w-10 h-10 sm:w-12 sm:h-12 bg-baby-blue rounded-full flex items-center justify-center text-white hover:bg-soft-pink transition-colors touch-target"
                   >
-                    <Instagram className="h-5 w-5" />
+                    <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />
                   </a>
                   <a
                     href="#"
-                    className="w-10 h-10 bg-baby-blue rounded-full flex items-center justify-center text-white hover:bg-soft-pink transition-colors"
+                    className="w-10 h-10 sm:w-12 sm:h-12 bg-baby-blue rounded-full flex items-center justify-center text-white hover:bg-soft-pink transition-colors touch-target"
                   >
-                    <Facebook className="h-5 w-5" />
+                    <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
                   </a>
                 </div>
               </div>
