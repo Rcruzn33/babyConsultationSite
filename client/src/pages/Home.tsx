@@ -8,27 +8,27 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-baby-blue/20 via-soft-pink/10 to-mint/20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <h1 className="text-4xl lg:text-6xl font-bold text-soft-dark leading-tight">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
+              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-soft-dark leading-tight">
                 Peaceful Nights for Your{" "}
                 <span className="text-baby-blue">Little One</span>
               </h1>
-              <p className="text-xl text-medium-gray leading-relaxed">
+              <p className="text-lg sm:text-xl text-medium-gray leading-relaxed">
                 Expert sleep consulting to help your baby develop healthy sleep habits, 
                 giving your whole family the rest you deserve.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link href="/services">
-                  <Button className="bg-soft-pink text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-baby-blue transition-colors">
+                  <Button className="bg-soft-pink text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:bg-baby-blue transition-colors touch-target mobile-full-width">
                     Book Free Consultation
                   </Button>
                 </Link>
                 <Link href="/services">
                   <Button
                     variant="outline"
-                    className="border-2 border-baby-blue text-baby-blue px-8 py-4 rounded-full text-lg font-medium hover:bg-baby-blue hover:text-white transition-colors"
+                    className="border-2 border-baby-blue text-baby-blue px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:bg-baby-blue hover:text-white transition-colors touch-target mobile-full-width"
                   >
                     View Services
                   </Button>
@@ -36,36 +36,36 @@ export default function Home() {
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex items-center space-x-8 pt-8">
+              <div className="flex items-center justify-center lg:justify-start space-x-4 sm:space-x-8 pt-6 sm:pt-8">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-baby-blue">500+</div>
-                  <div className="text-sm text-medium-gray">Families Helped</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-baby-blue">500+</div>
+                  <div className="text-xs sm:text-sm text-medium-gray">Families Helped</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-soft-pink">95%</div>
-                  <div className="text-sm text-medium-gray">Success Rate</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-soft-pink">95%</div>
+                  <div className="text-xs sm:text-sm text-medium-gray">Success Rate</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-mint">5★</div>
-                  <div className="text-sm text-medium-gray">Average Rating</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-mint">5★</div>
+                  <div className="text-xs sm:text-sm text-medium-gray">Average Rating</div>
                 </div>
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative mt-8 lg:mt-0">
               <img
                 src="https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
                 alt="Peaceful baby sleeping in nursery"
-                className="rounded-3xl shadow-2xl w-full h-auto"
+                className="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto"
               />
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-mint rounded-full flex items-center justify-center">
-                    <Moon className="text-white h-6 w-6" />
+              <div className="absolute -bottom-4 sm:-bottom-6 -left-4 sm:-left-6 bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-mint rounded-full flex items-center justify-center">
+                    <Moon className="text-white h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                   <div>
-                    <div className="font-semibold text-soft-dark">Sleep Success</div>
-                    <div className="text-sm text-medium-gray">Within 2 weeks</div>
+                    <div className="font-semibold text-soft-dark text-sm sm:text-base">Sleep Success</div>
+                    <div className="text-xs sm:text-sm text-medium-gray">Within 2 weeks</div>
                   </div>
                 </div>
               </div>
