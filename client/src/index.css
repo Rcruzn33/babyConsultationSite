@@ -147,4 +147,35 @@
     transform: translateY(-5px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   }
+  
+  /* Mobile-specific styles */
+  @media (max-width: 768px) {
+    .card-hover:hover {
+      transform: none;
+    }
+    
+    .mobile-padding {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    .mobile-text-center {
+      text-align: center;
+    }
+    
+    .mobile-full-width {
+      width: 100%;
+    }
+  }
+  
+  /* Touch-friendly buttons */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improved mobile scrolling */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
 }
