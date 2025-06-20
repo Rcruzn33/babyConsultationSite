@@ -33,7 +33,7 @@ export default function About() {
             <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4 sm:mb-6">
-                  Meet Sarah, Your Sleep Consultant
+                  Meet Yana, Your Sleep Consultant
                 </h1>
                 <p className="text-base sm:text-lg text-medium-gray leading-relaxed mb-4 sm:mb-6">
                   As a certified pediatric sleep consultant and mother of two, I understand 
@@ -70,7 +70,7 @@ export default function About() {
             <div className="relative mt-8 lg:mt-0">
               <img
                 src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
-                alt="Sarah, certified sleep consultant"
+                alt="Yana, certified sleep consultant"
                 className="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto"
               />
             </div>
