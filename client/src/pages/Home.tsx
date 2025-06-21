@@ -38,16 +38,16 @@ export default function Home() {
               {/* Trust Indicators */}
               <div className="flex items-center justify-center lg:justify-start space-x-4 sm:space-x-8 pt-6 sm:pt-8">
                 <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-baby-blue">500+</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-baby-blue">100+</div>
                   <div className="text-xs sm:text-sm text-medium-gray">Families Helped</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-soft-pink">95%</div>
-                  <div className="text-xs sm:text-sm text-medium-gray">Success Rate</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-soft-pink">Proven</div>
+                  <div className="text-xs sm:text-sm text-medium-gray">Methods</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-mint">5★</div>
-                  <div className="text-xs sm:text-sm text-medium-gray">Average Rating</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-mint">Expert</div>
+                  <div className="text-xs sm:text-sm text-medium-gray">Guidance</div>
                 </div>
               </div>
             </div>
