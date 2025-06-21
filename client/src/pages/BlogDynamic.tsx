@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface BlogPost {
   id: number;
@@ -15,6 +19,8 @@ interface BlogPost {
 }
 
 export default function Blog() {
+  const [visibleCount, setVisibleCount] = useState(3);
+  
   const { data: blogPosts = [], isLoading } = useQuery({
     queryKey: ["/api/blog", "published"],
     queryFn: async () => {
