@@ -42,6 +42,7 @@ export interface IStorage {
   getApprovedTestimonials(): Promise<Testimonial[]>;
   getAllTestimonials(): Promise<Testimonial[]>;
   approveTestimonial(id: number): Promise<void>;
+  unpublishTestimonial(id: number): Promise<void>;
   deleteTestimonial(id: number): Promise<void>;
 }
 
@@ -130,6 +131,10 @@ export class PostgresStorage implements IStorage {
 
   async approveTestimonial(id: number): Promise<void> {
     await db.update(testimonials).set({ approved: true }).where(eq(testimonials.id, id));
+  }
+
+  async unpublishTestimonial(id: number): Promise<void> {
+    await db.update(testimonials).set({ approved: false }).where(eq(testimonials.id, id));
   }
 
   async deleteTestimonial(id: number): Promise<void> {

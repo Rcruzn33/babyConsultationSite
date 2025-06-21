@@ -379,6 +379,19 @@ export default function Admin() {
     }
   };
 
+  const unpublishTestimonial = async (id: number) => {
+    try {
+      const response = await fetch(`/api/testimonials/${id}/unpublish`, {
+        method: "PATCH",
+      });
+      if (response.ok) {
+        setTestimonials(prev => prev.map(t => t.id === id ? { ...t, approved: false } : t));
+      }
+    } catch (error) {
+      console.error("Failed to unpublish testimonial:", error);
+    }
+  };
+
   const deleteTestimonial = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this testimonial?')) {
       try {
