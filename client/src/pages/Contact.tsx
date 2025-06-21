@@ -59,21 +59,21 @@ export default function Contact() {
     {
       icon: Phone,
       title: "Phone",
-      content: "(555) 123-4567",
-      subtitle: "Available Mon-Fri, 9am-6pm EST",
+      content: "(661) 470-6815",
+      subtitle: "Text or Call",
       bgColor: "bg-baby-blue",
     },
     {
       icon: Mail,
       title: "Email",
-      content: "sarah@babysleepwhisperer.com",
-      subtitle: "I respond within 24 hours",
+      content: "happybabysleeping@gmail.com",
+      subtitle: "I respond within 48 hours",
       bgColor: "bg-soft-pink",
     },
     {
       icon: Clock,
       title: "Response Time",
-      content: "Within 24 hours",
+      content: "Within 48 hours",
       subtitle: "Emergency support for active clients",
       bgColor: "bg-mint",
     },
@@ -224,25 +224,6 @@ export default function Contact() {
                     </div>
                   );
                 })}
-              </div>
-
-              {/* Social Media Links */}
-              <div className="pt-6 sm:pt-8 border-t border-gray-200">
-                <h3 className="font-semibold text-soft-dark mb-4 text-sm sm:text-base">Follow for Daily Tips</h3>
-                <div className="flex space-x-3 sm:space-x-4">
-                  <a
-                    href="#"
-                    className="w-10 h-10 sm:w-12 sm:h-12 bg-baby-blue rounded-full flex items-center justify-center text-white hover:bg-soft-pink transition-colors touch-target"
-                  >
-                    <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </a>
-                  <a
-                    href="#"
-                    className="w-10 h-10 sm:w-12 sm:h-12 bg-baby-blue rounded-full flex items-center justify-center text-white hover:bg-soft-pink transition-colors touch-target"
-                  >
-                    <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </a>
-                </div>
               </div>
             </div>
           </div>
