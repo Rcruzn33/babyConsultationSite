@@ -16,7 +16,7 @@ export default function Home() {
                 <span className="text-baby-blue">Little One</span>
               </h1>
               <p className="text-lg sm:text-xl text-medium-gray leading-relaxed">
-                Expert sleep consulting tailored specifically to your child to help develop healthy sleep habits, giving your whole family the rest you deserve and need.
+                Expert sleep consulting tailored specifically to your child to help develop healthy sleep habits, giving your whole family the rest you deserve.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link href="/services">
