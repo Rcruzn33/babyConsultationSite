@@ -499,24 +499,24 @@ export default function Admin() {
                               <p className="text-sm text-gray-600">Slug: {post.slug}</p>
                             </div>
                             <div className="flex items-center gap-2">
-                          <Badge variant={post.published ? "default" : "secondary"}>
-                            {post.published ? "Published" : "Draft"}
-                          </Badge>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => togglePostStatus(post.id, !post.published)}
-                          >
-                            {post.published ? "Unpublish" : "Publish"}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => deleteBlogPost(post.id)}
-                          >
-                            Delete
-                          </Button>
-                        </div>
+                              <Badge variant={post.published ? "default" : "secondary"}>
+                                {post.published ? "Published" : "Draft"}
+                              </Badge>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => togglePostStatus(post.id, !post.published)}
+                              >
+                                {post.published ? "Unpublish" : "Publish"}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => deleteBlogPost(post.id)}
+                              >
+                                Delete
+                              </Button>
+                            </div>
                           </div>
                           <p className="text-sm mb-2">{post.excerpt}</p>
                           <div className="text-xs text-gray-500">
