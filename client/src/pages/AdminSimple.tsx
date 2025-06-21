@@ -268,6 +268,21 @@ export default function Admin() {
     }
   };
 
+  const deleteBlogPost = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this blog post?")) return;
+    
+    try {
+      const response = await fetch(`/api/blog/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setBlogPosts(prev => prev.filter(p => p.id !== id));
+      }
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+    }
+  };
+
 
 
   if (loading) {
@@ -472,6 +487,13 @@ export default function Admin() {
                             onClick={() => togglePostStatus(post.id, !post.published)}
                           >
                             {post.published ? "Unpublish" : "Publish"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteBlogPost(post.id)}
+                          >
+                            Delete
                           </Button>
                         </div>
                       </div>
