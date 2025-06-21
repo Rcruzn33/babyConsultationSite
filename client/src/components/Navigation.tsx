@@ -29,7 +29,7 @@ export default function Navigation() {
             <div className="flex-shrink-0">
               <Link href="/">
                 <h1 className="text-xl sm:text-2xl font-bold text-baby-blue cursor-pointer hover:opacity-80 transition-opacity">
-                  Happy Baby Sleeping
+                  Baby Sleep Whisperer
                 </h1>
               </Link>
             </div>
