@@ -176,6 +176,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/testimonials/:id/unpublish", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.unpublishTestimonial(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error(`Unpublish testimonial error: ${error}`);
+      res.status(500).json({ error: "Failed to unpublish testimonial" });
+    }
+  });
+
   app.delete("/api/testimonials/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
