@@ -8,6 +8,7 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   content: string;
+  imageUrl?: string;
   published: boolean;
   createdAt: string;
   updatedAt: string;
@@ -55,8 +56,21 @@ export default function BlogSection() {
 
         {publishedPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {publishedPosts.slice(0, 3).map((post) => (
+            {publishedPosts.slice(0, 3).map((post, index) => (
               <article key={post.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                {post.imageUrl ? (
+                  <img 
+                    src={post.imageUrl} 
+                    alt={post.title}
+                    className="h-48 w-full object-cover"
+                  />
+                ) : (
+                  <div className={`h-48 bg-gradient-to-br ${
+                    index === 0 ? 'from-baby-blue to-soft-pink' :
+                    index === 1 ? 'from-soft-pink to-mint' :
+                    'from-mint to-baby-blue'
+                  }`}></div>
+                )}
                 <div className="p-6 sm:p-8">
                   <div className="flex items-center text-sm text-medium-gray mb-3">
                     <Calendar className="h-4 w-4 mr-2" />

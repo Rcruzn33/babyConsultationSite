@@ -8,6 +8,7 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   content: string;
+  imageUrl?: string;
   published: boolean;
   createdAt: string;
   updatedAt: string;
@@ -66,14 +67,22 @@ export default function Blog() {
                   key={post.id} 
                   className={`${index === 0 ? 'md:col-span-2 lg:col-span-1' : ''} bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow`}
                 >
-                  <div className={`${index === 0 ? 'h-48' : 'h-48'} bg-gradient-to-br ${
-                    index % 6 === 0 ? 'from-baby-blue to-soft-pink' :
-                    index % 6 === 1 ? 'from-soft-pink to-mint' :
-                    index % 6 === 2 ? 'from-mint to-baby-blue' :
-                    index % 6 === 3 ? 'from-baby-blue/50 to-soft-pink/50' :
-                    index % 6 === 4 ? 'from-soft-pink/50 to-mint/50' :
-                    'from-mint/50 to-baby-blue/50'
-                  }`}></div>
+                  {post.imageUrl ? (
+                    <img 
+                      src={post.imageUrl} 
+                      alt={post.title}
+                      className={`${index === 0 ? 'h-48' : 'h-48'} w-full object-cover`}
+                    />
+                  ) : (
+                    <div className={`${index === 0 ? 'h-48' : 'h-48'} bg-gradient-to-br ${
+                      index % 6 === 0 ? 'from-baby-blue to-soft-pink' :
+                      index % 6 === 1 ? 'from-soft-pink to-mint' :
+                      index % 6 === 2 ? 'from-mint to-baby-blue' :
+                      index % 6 === 3 ? 'from-baby-blue/50 to-soft-pink/50' :
+                      index % 6 === 4 ? 'from-soft-pink/50 to-mint/50' :
+                      'from-mint/50 to-baby-blue/50'
+                    }`}></div>
+                  )}
                   <div className={`${index === 0 ? 'p-6 sm:p-8' : 'p-6'}`}>
                     <div className="flex items-center text-sm text-medium-gray mb-3">
                       <Calendar className="h-4 w-4 mr-2" />

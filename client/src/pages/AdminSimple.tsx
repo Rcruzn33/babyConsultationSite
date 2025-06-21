@@ -38,6 +38,7 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   content: string;
+  imageUrl?: string;
   published: boolean;
   createdAt: string;
   updatedAt: string;
@@ -483,12 +484,21 @@ export default function Admin() {
                 <div className="space-y-4">
                   {blogPosts.map((post) => (
                     <Card key={post.id} className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="font-semibold">{post.title}</h3>
-                          <p className="text-sm text-gray-600">Slug: {post.slug}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
+                      <div className="flex gap-4 mb-4">
+                        {post.imageUrl && (
+                          <img 
+                            src={post.imageUrl} 
+                            alt={post.title}
+                            className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+                          />
+                        )}
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <h3 className="font-semibold">{post.title}</h3>
+                              <p className="text-sm text-gray-600">Slug: {post.slug}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
                           <Badge variant={post.published ? "default" : "secondary"}>
                             {post.published ? "Published" : "Draft"}
                           </Badge>
@@ -507,13 +517,15 @@ export default function Admin() {
                             Delete
                           </Button>
                         </div>
-                      </div>
-                      <p className="text-sm mb-2">{post.excerpt}</p>
-                      <div className="text-xs text-gray-500">
-                        Created: {formatDate(post.createdAt)}
-                        {post.updatedAt && post.updatedAt !== post.createdAt && (
-                          <span> • Updated: {formatDate(post.updatedAt)}</span>
-                        )}
+                          </div>
+                          <p className="text-sm mb-2">{post.excerpt}</p>
+                          <div className="text-xs text-gray-500">
+                            Created: {formatDate(post.createdAt)}
+                            {post.updatedAt && post.updatedAt !== post.createdAt && (
+                              <span> • Updated: {formatDate(post.updatedAt)}</span>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </Card>
                   ))}
