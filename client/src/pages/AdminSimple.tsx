@@ -735,6 +735,15 @@ export default function Admin() {
                               Approve
                             </Button>
                           )}
+                          {testimonial.approved && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => unpublishTestimonial(testimonial.id)}
+                            >
+                              Unpublish
+                            </Button>
+                          )}
                           <Button
                             size="sm"
                             variant="destructive"
