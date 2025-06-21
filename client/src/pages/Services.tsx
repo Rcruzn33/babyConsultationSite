@@ -196,16 +196,141 @@ export default function Services() {
                   Schedule Your Free Consultation
                 </h3>
                 <p className="text-sm sm:text-base text-medium-gray mb-6">Choose a time that works for you</p>
-                <Button className="bg-soft-pink text-white px-6 sm:px-8 py-3 rounded-full font-semibold hover:bg-baby-blue transition-colors touch-target mobile-full-width">
-                  Open Calendar
-                </Button>
-                {/* TODO: Replace with actual Calendly embed code */}
-                <div className="mt-6 sm:mt-8 p-4 bg-gray-50 rounded-lg">
-                  <p className="text-xs sm:text-sm text-gray-600">
-                    Calendly integration will be embedded here. 
-                    Add your Calendly embed code to replace this placeholder.
-                  </p>
-                </div>
+                <Card className="mt-6 sm:mt-8 text-left">
+                  <CardHeader>
+                    <CardTitle>Book Your Free Consultation</CardTitle>
+                    <CardDescription>Tell me about your sleep challenges and I'll contact you within 24 hours</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="parentName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Your Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter your name" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                  <Input type="email" placeholder="Enter your email" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Phone (Optional)</FormLabel>
+                                <FormControl>
+                                  <Input type="tel" placeholder="Phone number" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="childAge"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Child's Age</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="e.g., 8 months" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <FormField
+                          control={form.control}
+                          name="consultationType"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Consultation Type</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select consultation type" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="free-consultation">Free Consultation</SelectItem>
+                                  <SelectItem value="complete-package">Complete Sleep Package</SelectItem>
+                                  <SelectItem value="family-package">Family Sleep Package</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="sleepChallenges"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Sleep Challenges</FormLabel>
+                              <FormControl>
+                                <Textarea 
+                                  placeholder="Describe your current sleep challenges..."
+                                  rows={3}
+                                  {...field} 
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="preferredDate"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Preferred Date (Optional)</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="date" 
+                                  {...field} 
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-baby-blue hover:bg-soft-pink"
+                          disabled={isSubmitting}
+                        >
+                          {isSubmitting ? "Booking..." : "Book Free Consultation"}
+                        </Button>
+                      </form>
+                    </Form>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
