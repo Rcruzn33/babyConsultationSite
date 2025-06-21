@@ -11,7 +11,7 @@ import About from "@/pages/About";
 import Services from "@/pages/Services";
 import Blog from "@/pages/Blog";
 import Contact from "@/pages/Contact";
-import Admin from "@/pages/Admin";
+import Admin from "@/pages/AdminSimple";
 import NotFound from "@/pages/not-found";
 
 function Router() {
