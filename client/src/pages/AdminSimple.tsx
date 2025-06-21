@@ -223,6 +223,119 @@ export default function Admin() {
     return new Date(dateString).toLocaleDateString() + ' ' + new Date(dateString).toLocaleTimeString();
   };
 
+  // Form component for creating new testimonials
+  function CreateTestimonialForm({ onTestimonialCreated }: { onTestimonialCreated: () => void }) {
+    const [formData, setFormData] = useState({
+      parentName: '',
+      childAge: '',
+      testimonial: '',
+      rating: 5,
+      approved: true
+    });
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!formData.parentName.trim() || !formData.testimonial.trim()) {
+        alert('Please fill in required fields');
+        return;
+      }
+
+      await createTestimonial({
+        parentName: formData.parentName,
+        childAge: formData.childAge || undefined,
+        testimonial: formData.testimonial,
+        rating: formData.rating,
+        approved: formData.approved
+      });
+
+      setFormData({
+        parentName: '',
+        childAge: '',
+        testimonial: '',
+        rating: 5,
+        approved: true
+      });
+      onTestimonialCreated();
+    };
+
+    return (
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Add New Testimonial</CardTitle>
+          <CardDescription>Create a new testimonial for the website</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="parentName">Parent Name *</Label>
+                <Input
+                  id="parentName"
+                  value={formData.parentName}
+                  onChange={(e) => setFormData(prev => ({ ...prev, parentName: e.target.value }))}
+                  placeholder="Enter parent name"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="childAge">Child Age</Label>
+                <Input
+                  id="childAge"
+                  value={formData.childAge}
+                  onChange={(e) => setFormData(prev => ({ ...prev, childAge: e.target.value }))}
+                  placeholder="e.g., 8 months"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="testimonial">Testimonial *</Label>
+              <Textarea
+                id="testimonial"
+                value={formData.testimonial}
+                onChange={(e) => setFormData(prev => ({ ...prev, testimonial: e.target.value }))}
+                placeholder="Enter testimonial text"
+                rows={4}
+                required
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="rating">Rating</Label>
+                <Select value={formData.rating.toString()} onValueChange={(value) => setFormData(prev => ({ ...prev, rating: parseInt(value) }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 Star</SelectItem>
+                    <SelectItem value="2">2 Stars</SelectItem>
+                    <SelectItem value="3">3 Stars</SelectItem>
+                    <SelectItem value="4">4 Stars</SelectItem>
+                    <SelectItem value="5">5 Stars</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="approved">Status</Label>
+                <Select value={formData.approved.toString()} onValueChange={(value) => setFormData(prev => ({ ...prev, approved: value === 'true' }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Approved</SelectItem>
+                    <SelectItem value="false">Pending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <Button type="submit" className="w-full">
+              Create Testimonial
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const updateContactStatus = async (id: number, responded: boolean) => {
     try {
       const response = await fetch(`/api/contacts/${id}`, {
@@ -575,6 +688,7 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="testimonials" className="space-y-4">
+            <CreateTestimonialForm onTestimonialCreated={loadData} />
             <Card>
               <CardHeader>
                 <CardTitle>Testimonials</CardTitle>
