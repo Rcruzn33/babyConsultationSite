@@ -44,6 +44,13 @@ export default function Blog() {
     return Math.ceil(wordCount / wordsPerMinute);
   };
 
+  const loadMoreArticles = () => {
+    setVisibleCount(prev => prev + 3);
+  };
+
+  const visiblePosts = blogPosts.slice(0, visibleCount);
+  const hasMorePosts = visibleCount < blogPosts.length;
+
   return (
     <main className="min-h-screen bg-cream">
       {/* Hero Section */}
@@ -67,51 +74,66 @@ export default function Blog() {
               <div className="text-medium-gray text-lg">Loading articles...</div>
             </div>
           ) : blogPosts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {blogPosts.map((post, index) => (
-                <article 
-                  key={post.id} 
-                  className={`${index === 0 ? 'md:col-span-2 lg:col-span-1' : ''} bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow`}
-                >
-                  {post.imageUrl ? (
-                    <img 
-                      src={post.imageUrl} 
-                      alt={post.title}
-                      className={`${index === 0 ? 'h-48' : 'h-48'} w-full object-cover`}
-                    />
-                  ) : (
-                    <div className={`${index === 0 ? 'h-48' : 'h-48'} bg-gradient-to-br ${
-                      index % 6 === 0 ? 'from-baby-blue to-soft-pink' :
-                      index % 6 === 1 ? 'from-soft-pink to-mint' :
-                      index % 6 === 2 ? 'from-mint to-baby-blue' :
-                      index % 6 === 3 ? 'from-baby-blue/50 to-soft-pink/50' :
-                      index % 6 === 4 ? 'from-soft-pink/50 to-mint/50' :
-                      'from-mint/50 to-baby-blue/50'
-                    }`}></div>
-                  )}
-                  <div className={`${index === 0 ? 'p-6 sm:p-8' : 'p-6'}`}>
-                    <div className="flex items-center text-sm text-medium-gray mb-3">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      {formatDate(post.createdAt)}
-                      <span className="mx-2">•</span>
-                      <Clock className="h-4 w-4 mr-2" />
-                      {estimateReadTime(post.content)} min read
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {visiblePosts.map((post, index) => (
+                  <article 
+                    key={post.id} 
+                    className={`${index === 0 ? 'md:col-span-2 lg:col-span-1' : ''} bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow`}
+                  >
+                    {post.imageUrl ? (
+                      <img 
+                        src={post.imageUrl} 
+                        alt={post.title}
+                        className={`${index === 0 ? 'h-48' : 'h-48'} w-full object-cover`}
+                      />
+                    ) : (
+                      <div className={`${index === 0 ? 'h-48' : 'h-48'} bg-gradient-to-br ${
+                        index % 6 === 0 ? 'from-baby-blue to-soft-pink' :
+                        index % 6 === 1 ? 'from-soft-pink to-mint' :
+                        index % 6 === 2 ? 'from-mint to-baby-blue' :
+                        index % 6 === 3 ? 'from-baby-blue/50 to-soft-pink/50' :
+                        index % 6 === 4 ? 'from-soft-pink/50 to-mint/50' :
+                        'from-mint/50 to-baby-blue/50'
+                      }`}></div>
+                    )}
+                    <div className={`${index === 0 ? 'p-6 sm:p-8' : 'p-6'}`}>
+                      <div className="flex items-center text-sm text-medium-gray mb-3">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        {formatDate(post.createdAt)}
+                        <span className="mx-2">•</span>
+                        <Clock className="h-4 w-4 mr-2" />
+                        {estimateReadTime(post.content)} min read
+                      </div>
+                      <h2 className={`${index === 0 ? 'text-xl sm:text-2xl' : 'text-lg'} font-bold text-soft-dark mb-3 leading-tight`}>
+                        {post.title}
+                      </h2>
+                      <p className={`text-medium-gray mb-4 ${index === 0 ? 'leading-relaxed' : 'text-sm leading-relaxed'}`}>
+                        {post.excerpt}
+                      </p>
+                      <Link href={`/blog/${post.slug}`}>
+                        <span className={`text-baby-blue font-semibold hover:text-soft-pink transition-colors cursor-pointer ${index === 0 ? '' : 'text-sm'}`}>
+                          Read More →
+                        </span>
+                      </Link>
                     </div>
-                    <h2 className={`${index === 0 ? 'text-xl sm:text-2xl' : 'text-lg'} font-bold text-soft-dark mb-3 leading-tight`}>
-                      {post.title}
-                    </h2>
-                    <p className={`text-medium-gray mb-4 ${index === 0 ? 'leading-relaxed' : 'text-sm leading-relaxed'}`}>
-                      {post.excerpt}
-                    </p>
-                    <Link href={`/blog/${post.slug}`}>
-                      <span className={`text-baby-blue font-semibold hover:text-soft-pink transition-colors cursor-pointer ${index === 0 ? '' : 'text-sm'}`}>
-                        Read More →
-                      </span>
-                    </Link>
-                  </div>
-                </article>
-              ))}
-            </div>
+                  </article>
+                ))}
+              </div>
+              
+              {/* Load More Button */}
+              {hasMorePosts && (
+                <div className="text-center mt-12">
+                  <Button 
+                    onClick={loadMoreArticles}
+                    className="bg-baby-blue hover:bg-baby-blue/90 text-white px-8 py-3 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                  >
+                    Load More Articles
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-16">
               <h2 className="text-2xl font-bold text-soft-dark mb-4">No Articles Yet</h2>
