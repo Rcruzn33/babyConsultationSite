@@ -43,6 +43,7 @@ export const blogPosts = pgTable("blog_posts", {
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   excerpt: text("excerpt").notNull(),
   content: text("content").notNull(),
+  imageUrl: text("image_url"),
   published: boolean("published").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -88,6 +89,7 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts).pick({
   slug: true,
   excerpt: true,
   content: true,
+  imageUrl: true,
   published: true,
 });
 

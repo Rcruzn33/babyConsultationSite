@@ -59,6 +59,7 @@ const CreateBlogPostForm = ({ onPostCreated }: { onPostCreated: () => void }) =>
     slug: '',
     excerpt: '',
     content: '',
+    imageUrl: '',
     published: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,6 +98,7 @@ const CreateBlogPostForm = ({ onPostCreated }: { onPostCreated: () => void }) =>
           slug: '',
           excerpt: '',
           content: '',
+          imageUrl: '',
           published: false
         });
         onPostCreated();
@@ -144,6 +146,15 @@ const CreateBlogPostForm = ({ onPostCreated }: { onPostCreated: () => void }) =>
               placeholder="Brief description of the post"
               rows={2}
               required
+            />
+          </div>
+          <div>
+            <Label htmlFor="imageUrl">Image URL (Optional)</Label>
+            <Input
+              id="imageUrl"
+              value={formData.imageUrl}
+              onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
+              placeholder="https://example.com/image.jpg"
             />
           </div>
           <div>
