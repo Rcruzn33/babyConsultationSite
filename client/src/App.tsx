@@ -9,7 +9,7 @@ import BackToTop from "@/components/BackToTop";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Services from "@/pages/Services";
-import Blog from "@/pages/Blog";
+import Blog from "@/pages/BlogDynamic";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/AdminSimple";
 import NotFound from "@/pages/not-found";
