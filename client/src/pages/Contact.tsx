@@ -9,11 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Phone, Mail, Clock, Instagram, Facebook } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { sendContactEmail } from "@/lib/emailjs";
-
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
+  phone: z.string().optional(),
   subject: z.string().min(1, "Please select a subject"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
@@ -29,6 +28,7 @@ export default function Contact() {
     defaultValues: {
       name: "",
       email: "",
+      phone: "",
       subject: "",
       message: "",
     },
@@ -38,7 +38,18 @@ export default function Contact() {
     setIsSubmitting(true);
     
     try {
-      await sendContactEmail(data);
+      const response = await fetch('/api/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
       toast({
         title: "Message sent successfully!",
         description: "I'll get back to you within 24 hours.",
@@ -139,6 +150,27 @@ export default function Contact() {
                       )}
                     />
                   </div>
+
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-soft-dark">
+                          Phone Number (Optional)
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            placeholder="Enter your phone number"
+                            className="px-4 py-3 rounded-xl border border-gray-200 focus:border-baby-blue focus:ring-2 focus:ring-baby-blue/20 touch-target"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={form.control}

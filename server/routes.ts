@@ -117,6 +117,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/blog/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      await storage.updateBlogPost(id, updates);
+      res.json({ success: true });
+    } catch (error) {
+      console.error(`Update blog post error: ${error}`);
+      res.status(500).json({ error: "Failed to update blog post" });
+    }
+  });
+
   // Testimonials
   app.get("/api/testimonials", async (req, res) => {
     try {
