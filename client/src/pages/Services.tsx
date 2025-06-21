@@ -1,8 +1,77 @@
+import { useState } from "react";
 import { Link } from "wouter";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Bed, Users, Check, Calendar } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+const consultationFormSchema = z.object({
+  parentName: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().optional(),
+  childAge: z.string().min(1, "Please specify child's age"),
+  sleepChallenges: z.string().min(10, "Please describe your sleep challenges"),
+  consultationType: z.string().min(1, "Please select a consultation type"),
+  preferredDate: z.string().optional(),
+});
+
+type ConsultationFormData = z.infer<typeof consultationFormSchema>;
 
 export default function Services() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<ConsultationFormData>({
+    resolver: zodResolver(consultationFormSchema),
+    defaultValues: {
+      parentName: "",
+      email: "",
+      phone: "",
+      childAge: "",
+      sleepChallenges: "",
+      consultationType: "",
+      preferredDate: "",
+    },
+  });
+
+  const onSubmit = async (data: ConsultationFormData) => {
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/consultations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to book consultation');
+      }
+
+      toast({
+        title: "Consultation booked!",
+        description: "I'll contact you within 24 hours to schedule our call.",
+      });
+      form.reset();
+    } catch (error) {
+      toast({
+        title: "Booking failed",
+        description: "Please try again or contact me directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   const services = [
     {
       icon: Phone,
