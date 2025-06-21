@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Contact {
   id: number;
@@ -262,6 +263,42 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Failed to approve testimonial:", error);
+    }
+  };
+
+  const deleteTestimonial = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this testimonial?')) {
+      try {
+        const response = await fetch(`/api/testimonials/${id}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          setTestimonials(prev => prev.filter(t => t.id !== id));
+        }
+      } catch (error) {
+        console.error("Failed to delete testimonial:", error);
+      }
+    }
+  };
+
+  const createTestimonial = async (testimonialData: {
+    parentName: string;
+    childAge?: string;
+    testimonial: string;
+    rating: number;
+    approved: boolean;
+  }) => {
+    try {
+      const response = await fetch("/api/testimonials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(testimonialData),
+      });
+      if (response.ok) {
+        await loadData();
+      }
+    } catch (error) {
+      console.error("Failed to create testimonial:", error);
     }
   };
 
@@ -571,6 +608,13 @@ export default function Admin() {
                               Approve
                             </Button>
                           )}
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteTestimonial(testimonial.id)}
+                          >
+                            Delete
+                          </Button>
                         </div>
                       </div>
                       <p className="text-sm mb-2">{testimonial.testimonial}</p>
