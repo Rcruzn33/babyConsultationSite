@@ -130,6 +130,10 @@ export class PostgresStorage implements IStorage {
   async approveTestimonial(id: number): Promise<void> {
     await db.update(testimonials).set({ approved: true }).where(eq(testimonials.id, id));
   }
+
+  async deleteBlogPost(id: number): Promise<void> {
+    await db.delete(blogPosts).where(eq(blogPosts.id, id));
+  }
 }
 
 export const storage = new PostgresStorage();
