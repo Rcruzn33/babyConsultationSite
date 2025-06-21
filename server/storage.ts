@@ -35,6 +35,7 @@ export interface IStorage {
   getAllBlogPosts(publishedOnly?: boolean): Promise<BlogPost[]>;
   getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
   updateBlogPost(id: number, updates: Partial<InsertBlogPost>): Promise<void>;
+  deleteBlogPost(id: number): Promise<void>;
   
   // Testimonial management
   createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;

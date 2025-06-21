@@ -39,7 +39,7 @@ export default function TestimonialsSection() {
     );
   }
 
-  const approvedTestimonials = testimonials.filter(t => t.approved);
+  // Data is already filtered by approved=true in the API call
 
   return (
     <section className="py-16 sm:py-24 bg-cream/50">
@@ -51,9 +51,9 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        {approvedTestimonials.length > 0 ? (
+        {testimonials.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {approvedTestimonials.slice(0, 6).map((testimonial) => (
+            {testimonials.slice(0, 6).map((testimonial: Testimonial) => (
               <div key={testimonial.id} className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg card-hover">
                 <div className="flex mb-4">
                   {Array.from({ length: testimonial.rating }).map((_, i) => (
