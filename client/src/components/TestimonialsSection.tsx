@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Star } from "lucide-react";
+import { useMemo } from "react";
 
 interface Testimonial {
   id: number;
@@ -12,18 +13,23 @@ interface Testimonial {
 }
 
 export default function TestimonialsSection() {
-  const { data: testimonials = [], isLoading, error } = useQuery({
+  const { data: allTestimonials = [], isLoading, error } = useQuery({
     queryKey: ["/api/testimonials", "approved"],
     queryFn: async () => {
       const response = await fetch("/api/testimonials?approved=true");
       if (!response.ok) throw new Error("Failed to fetch testimonials");
-      const data = await response.json();
-      console.log("Testimonials fetched:", data);
-      return data as Testimonial[];
+      return response.json() as Promise<Testimonial[]>;
     },
   });
 
-  console.log("TestimonialsSection render:", { testimonials, isLoading, error });
+  // Randomize and select 3 testimonials - creates new random selection on each component mount
+  const testimonials = useMemo(() => {
+    if (allTestimonials.length === 0) return [];
+    
+    // Simple shuffle and take first 3
+    const shuffled = [...allTestimonials].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 3);
+  }, [allTestimonials]);
 
   if (isLoading) {
     return (
@@ -75,7 +81,7 @@ export default function TestimonialsSection() {
 
         {testimonials.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {testimonials.slice(0, 6).map((testimonial: Testimonial) => (
+            {testimonials.map((testimonial: Testimonial) => (
               <div key={testimonial.id} className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg card-hover">
                 <div className="flex mb-4">
                   {Array.from({ length: testimonial.rating }).map((_, i) => (
