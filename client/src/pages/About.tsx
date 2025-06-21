@@ -1,29 +1,7 @@
 import { CheckCircle, Star } from "lucide-react";
+import TestimonialsSection from "@/components/TestimonialsSection";
 
 export default function About() {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Emma & David",
-      role: "Parents of Lucas, 8 months",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100",
-      content: "Sarah transformed our nights! Our 8-month-old now sleeps 12 hours straight. Her gentle approach made all the difference.",
-    },
-    {
-      id: 2,
-      name: "Michelle",
-      role: "Mother of Sophia, 6 months",
-      image: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100",
-      content: "After months of exhaustion, Sarah's plan worked in just 10 days. We finally have our evenings back!",
-    },
-    {
-      id: 3,
-      name: "James",
-      role: "Father of Noah, 10 months",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100",
-      content: "Sarah's support during the process was incredible. She was always there when we needed guidance.",
-    },
-  ];
 
   return (
     <main>

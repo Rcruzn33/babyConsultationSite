@@ -1,8 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Heart, GraduationCap, Clock, Star, Moon } from "lucide-react";
-import TestimonialsSection from "@/components/TestimonialsSection";
-import BlogSection from "@/components/BlogSection";
 
 export default function Home() {
   return (
@@ -126,12 +124,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Testimonials Section */}
-      <TestimonialsSection />
-
-      {/* Blog Section */}
-      <BlogSection />
 
       {/* Final CTA Section */}
       <section className="py-16 sm:py-24 bg-gradient-to-br from-baby-blue/20 via-soft-pink/10 to-mint/20">
