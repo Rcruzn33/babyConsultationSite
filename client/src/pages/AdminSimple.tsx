@@ -3,6 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface Contact {
   id: number;
@@ -49,6 +52,128 @@ interface Testimonial {
   approved: boolean;
   createdAt: string;
 }
+
+const CreateBlogPostForm = ({ onPostCreated }: { onPostCreated: () => void }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    published: false
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
+  const handleTitleChange = (title: string) => {
+    setFormData(prev => ({
+      ...prev,
+      title,
+      slug: generateSlug(title)
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title || !formData.excerpt || !formData.content) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/blog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      
+      if (response.ok) {
+        setFormData({
+          title: '',
+          slug: '',
+          excerpt: '',
+          content: '',
+          published: false
+        });
+        onPostCreated();
+      }
+    } catch (error) {
+      console.error('Failed to create blog post:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Create New Blog Post</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              value={formData.title}
+              onChange={(e) => handleTitleChange(e.target.value)}
+              placeholder="Enter blog post title"
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="slug">Slug</Label>
+            <Input
+              id="slug"
+              value={formData.slug}
+              onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+              placeholder="url-friendly-slug"
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="excerpt">Excerpt</Label>
+            <Textarea
+              id="excerpt"
+              value={formData.excerpt}
+              onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
+              placeholder="Brief description of the post"
+              rows={2}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="content">Content</Label>
+            <Textarea
+              id="content"
+              value={formData.content}
+              onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+              placeholder="Full blog post content"
+              rows={8}
+              required
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="published"
+              checked={formData.published}
+              onChange={(e) => setFormData(prev => ({ ...prev, published: e.target.checked }))}
+            />
+            <Label htmlFor="published">Publish immediately</Label>
+          </div>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Create Post"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default function Admin() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -127,6 +252,23 @@ export default function Admin() {
       console.error("Failed to approve testimonial:", error);
     }
   };
+
+  const togglePostStatus = async (id: number, published: boolean) => {
+    try {
+      const response = await fetch(`/api/blog/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ published }),
+      });
+      if (response.ok) {
+        setBlogPosts(prev => prev.map(p => p.id === id ? { ...p, published } : p));
+      }
+    } catch (error) {
+      console.error("Failed to update post status:", error);
+    }
+  };
+
+
 
   if (loading) {
     return (
@@ -309,6 +451,9 @@ export default function Admin() {
                 <CardDescription>Manage your blog content</CardDescription>
               </CardHeader>
               <CardContent>
+                <div className="mb-4">
+                  <CreateBlogPostForm onPostCreated={loadData} />
+                </div>
                 <div className="space-y-4">
                   {blogPosts.map((post) => (
                     <Card key={post.id} className="p-4">
@@ -317,9 +462,18 @@ export default function Admin() {
                           <h3 className="font-semibold">{post.title}</h3>
                           <p className="text-sm text-gray-600">Slug: {post.slug}</p>
                         </div>
-                        <Badge variant={post.published ? "default" : "secondary"}>
-                          {post.published ? "Published" : "Draft"}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={post.published ? "default" : "secondary"}>
+                            {post.published ? "Published" : "Draft"}
+                          </Badge>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => togglePostStatus(post.id, !post.published)}
+                          >
+                            {post.published ? "Unpublish" : "Publish"}
+                          </Button>
+                        </div>
                       </div>
                       <p className="text-sm mb-2">{post.excerpt}</p>
                       <div className="text-xs text-gray-500">
