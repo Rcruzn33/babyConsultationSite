@@ -138,10 +138,7 @@ export default function Admin() {
                             size="sm"
                             variant="outline"
                             onClick={() =>
-                              updateContactMutation.mutate({
-                                id: contact.id,
-                                responded: !contact.responded,
-                              })
+                              updateContactStatus(contact.id, !contact.responded)
                             }
                           >
                             Mark as {contact.responded ? "Unread" : "Read"}
@@ -156,7 +153,7 @@ export default function Admin() {
                         <p className="mt-1 text-sm">{contact.message}</p>
                       </div>
                       <div className="text-xs text-gray-500">
-                        Submitted: {format(new Date(contact.createdAt), "PPp")}
+                        Submitted: {new Date(contact.createdAt).toLocaleString()}
                       </div>
                     </Card>
                   ))}
@@ -203,10 +200,7 @@ export default function Admin() {
                           <select
                             value={consultation.status}
                             onChange={(e) =>
-                              updateConsultationMutation.mutate({
-                                id: consultation.id,
-                                status: e.target.value,
-                              })
+                              updateConsultationStatus(consultation.id, e.target.value)
                             }
                             className="text-sm border rounded px-2 py-1"
                           >
@@ -228,7 +222,7 @@ export default function Admin() {
                       {consultation.preferredDate && (
                         <div className="mb-2 text-sm">
                           <strong>Preferred Date:</strong>{" "}
-                          {format(new Date(consultation.preferredDate), "PPp")}
+                          {new Date(consultation.preferredDate).toLocaleString()}
                         </div>
                       )}
                       <div className="mb-2">
@@ -242,7 +236,7 @@ export default function Admin() {
                         </div>
                       )}
                       <div className="text-xs text-gray-500">
-                        Submitted: {format(new Date(consultation.createdAt), "PPp")}
+                        Submitted: {new Date(consultation.createdAt).toLocaleString()}
                       </div>
                     </Card>
                   ))}
@@ -275,9 +269,9 @@ export default function Admin() {
                       </div>
                       <p className="text-sm mb-2">{post.excerpt}</p>
                       <div className="text-xs text-gray-500">
-                        Created: {format(new Date(post.createdAt), "PPp")}
+                        Created: {new Date(post.createdAt).toLocaleString()}
                         {post.updatedAt && post.updatedAt !== post.createdAt && (
-                          <span> • Updated: {format(new Date(post.updatedAt), "PPp")}</span>
+                          <span> • Updated: {new Date(post.updatedAt).toLocaleString()}</span>
                         )}
                       </div>
                     </Card>
@@ -319,7 +313,7 @@ export default function Admin() {
                           {!testimonial.approved && (
                             <Button
                               size="sm"
-                              onClick={() => approveTestimonialMutation.mutate(testimonial.id)}
+                              onClick={() => approveTestimonial(testimonial.id)}
                             >
                               Approve
                             </Button>
@@ -328,7 +322,7 @@ export default function Admin() {
                       </div>
                       <p className="text-sm mb-2">{testimonial.testimonial}</p>
                       <div className="text-xs text-gray-500">
-                        Submitted: {format(new Date(testimonial.createdAt), "PPp")}
+                        Submitted: {new Date(testimonial.createdAt).toLocaleString()}
                       </div>
                     </Card>
                   ))}
