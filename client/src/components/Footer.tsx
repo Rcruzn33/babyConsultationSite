@@ -62,11 +62,11 @@ export default function Footer() {
             <ul className="space-y-2 text-gray-300">
               <li className="flex items-center">
                 <span className="mr-2">📞</span>
-                (555) 123-4567
+                661-470-6815
               </li>
               <li className="flex items-center">
                 <span className="mr-2">✉️</span>
-                sarah@babysleepwhisperer.com
+                happybabysleeping@gmail.com
               </li>
             </ul>
           </div>
