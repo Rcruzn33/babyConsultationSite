@@ -536,9 +536,17 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600">Manage your baby sleep consulting business</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p className="text-gray-600">Manage your baby sleep consulting business</p>
+          </div>
+          <a 
+            href="/" 
+            className="text-baby-blue hover:text-soft-pink transition-colors font-medium"
+          >
+            ← Main Site
+          </a>
         </div>
 
         <Tabs defaultValue="contacts" className="space-y-6">
