@@ -223,7 +223,7 @@ export default function Services() {
                 <Card id="consultation-form" className="mt-6 sm:mt-8 text-left">
                   <CardHeader>
                     <CardTitle>Book Your Free Consultation</CardTitle>
-                    <CardDescription>Tell me about your sleep challenges and I'll contact you within 24 hours</CardDescription>
+                    <CardDescription>Tell me about your sleep challenges and I'll contact you within 48 hours</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Form {...form}>
