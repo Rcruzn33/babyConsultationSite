@@ -215,7 +215,9 @@ export default function Services() {
                   </CardHeader>
                   <CardContent>
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                      <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
+                        console.error('Form validation failed:', errors);
+                      })} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <FormField
                             control={form.control}
@@ -336,6 +338,7 @@ export default function Services() {
                           type="submit" 
                           className="w-full bg-baby-blue hover:bg-soft-pink"
                           disabled={isSubmitting}
+                          onClick={() => console.log('Submit button clicked')}
                         >
                           {isSubmitting ? "Booking..." : "Book Free Consultation"}
                         </Button>
