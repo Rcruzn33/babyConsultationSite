@@ -45,6 +45,7 @@ export default function Services() {
     setIsSubmitting(true);
     
     try {
+      console.log('Form validation errors:', form.formState.errors);
       console.log('Submitting consultation data:', data);
       
       const response = await fetch('/api/consultations', {
@@ -279,7 +280,7 @@ export default function Services() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Consultation Type</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                   <SelectTrigger>
                                     <SelectValue placeholder="Select consultation type" />
