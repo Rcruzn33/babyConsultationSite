@@ -99,7 +99,7 @@ export default function Services() {
       features: [
         "15-minute phone call",
         "Sleep assessment",
-        "Customized recommendations",
+        "General information",
         "Next steps discussion",
       ],
     },
