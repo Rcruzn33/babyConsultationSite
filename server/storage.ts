@@ -29,6 +29,7 @@ export interface IStorage {
   createConsultation(consultation: InsertConsultation): Promise<Consultation>;
   getAllConsultations(): Promise<Consultation[]>;
   updateConsultationStatus(id: number, status: string, notes?: string): Promise<void>;
+  deleteConsultation(id: number): Promise<void>;
   
   // Blog management
   createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
@@ -101,6 +102,10 @@ export class PostgresStorage implements IStorage {
     const updates: any = { status };
     if (notes !== undefined) updates.notes = notes;
     await db.update(consultations).set(updates).where(eq(consultations.id, id));
+  }
+
+  async deleteConsultation(id: number): Promise<void> {
+    await db.delete(consultations).where(eq(consultations.id, id));
   }
 
   // Blog methods
