@@ -42,14 +42,9 @@ export default function Services() {
   });
 
   const onSubmit = async (data: ConsultationFormData) => {
-    console.log('=== FORM SUBMISSION STARTED ===');
-    console.log('Form data:', data);
-    console.log('Form errors:', form.formState.errors);
-    
     setIsSubmitting(true);
     
     try {
-      console.log('Making API request...');
       const response = await fetch('/api/consultations', {
         method: 'POST',
         headers: {
@@ -58,51 +53,25 @@ export default function Services() {
         body: JSON.stringify(data),
       });
 
-      console.log('API Response received:', {
-        status: response.status,
-        ok: response.ok,
-        statusText: response.statusText,
-        url: response.url
-      });
-
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API Error response:', errorText);
-        throw new Error(`API Error: ${response.status} ${errorText}`);
+        throw new Error('Failed to book consultation');
       }
 
-      const result = await response.json();
-      console.log('API Success result:', result);
-      console.log('About to show success toast...');
-
-      // Show success message
-      alert("Consultation booked successfully! I'll contact you within 24 hours to schedule our call.");
-      
       toast({
         title: "Consultation booked!",
         description: "I'll contact you within 24 hours to schedule our call.",
       });
       
-      console.log('Success toast triggered, resetting form...');
       form.reset();
-      console.log('=== FORM SUBMISSION COMPLETED SUCCESSFULLY ===');
       
-    } catch (error: any) {
-      console.error('=== FORM SUBMISSION ERROR ===');
-      console.error('Error caught:', error);
-      console.error('Error type:', typeof error);
-      console.error('Error message:', error?.message);
-      console.error('Error stack:', error?.stack);
-      
+    } catch (error) {
       toast({
         title: "Booking failed",
         description: "Please try again or contact me directly.",
         variant: "destructive",
       });
-      console.log('Error toast triggered');
     } finally {
       setIsSubmitting(false);
-      console.log('=== FORM SUBMISSION FINISHED ===');
     }
   };
   const services = [
@@ -236,16 +205,7 @@ export default function Services() {
                   </CardHeader>
                   <CardContent>
                     <Form {...form}>
-                      <form onSubmit={(e) => {
-                        e.preventDefault();
-                        console.log('Form submit event triggered');
-                        console.log('Form is valid:', form.formState.isValid);
-                        console.log('Form errors:', form.formState.errors);
-                        console.log('Form values:', form.getValues());
-                        form.handleSubmit(onSubmit, (errors) => {
-                          console.error('Form validation failed:', errors);
-                        })(e);
-                      }} className="space-y-4">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <FormField
                             control={form.control}
@@ -310,7 +270,11 @@ export default function Services() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Consultation Type</FormLabel>
-                              <Select onValueChange={field.onChange} value={field.value}>
+                              <Select 
+                                onValueChange={field.onChange} 
+                                value={field.value}
+                                defaultValue=""
+                              >
                                 <FormControl>
                                   <SelectTrigger>
                                     <SelectValue placeholder="Select consultation type" />
@@ -366,15 +330,7 @@ export default function Services() {
                           type="submit" 
                           className="w-full bg-baby-blue hover:bg-soft-pink"
                           disabled={isSubmitting}
-                          onClick={(e) => {
-                            console.log('Submit button clicked');
-                            console.log('Button event:', e);
-                            console.log('Form state before click:', {
-                              isValid: form.formState.isValid,
-                              isSubmitting: form.formState.isSubmitting,
-                              errors: form.formState.errors
-                            });
-                          }}
+
                         >
                           {isSubmitting ? "Booking..." : "Book Free Consultation"}
                         </Button>
