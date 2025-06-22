@@ -588,21 +588,31 @@ export default function Admin() {
           </a>
         </div>
 
-        <Tabs defaultValue="contacts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="contacts">
-              Contacts ({pendingContacts})
-            </TabsTrigger>
-            <TabsTrigger value="consultations">
-              Consultations ({pendingConsultations})
-            </TabsTrigger>
-            <TabsTrigger value="blog">Blog Posts ({blogPosts.length})</TabsTrigger>
-            <TabsTrigger value="testimonials">
-              Testimonials ({pendingTestimonials} pending)
-            </TabsTrigger>
-            <TabsTrigger value="users">
-              Settings
-            </TabsTrigger>
+        <Tabs defaultValue={user?.canManageContacts ? "contacts" : user?.canManageConsultations ? "consultations" : user?.canManageBlog ? "blog" : "testimonials"} className="space-y-6">
+          <TabsList className={`grid w-full ${user?.canManageUsers ? 'grid-cols-5' : 'grid-cols-4'}`}>
+            {user?.canManageContacts && (
+              <TabsTrigger value="contacts">
+                Contacts ({pendingContacts})
+              </TabsTrigger>
+            )}
+            {user?.canManageConsultations && (
+              <TabsTrigger value="consultations">
+                Consultations ({pendingConsultations})
+              </TabsTrigger>
+            )}
+            {user?.canManageBlog && (
+              <TabsTrigger value="blog">Blog Posts ({blogPosts.length})</TabsTrigger>
+            )}
+            {user?.canManageTestimonials && (
+              <TabsTrigger value="testimonials">
+                Testimonials ({pendingTestimonials} pending)
+              </TabsTrigger>
+            )}
+            {user?.canManageUsers && (
+              <TabsTrigger value="users">
+                Settings
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="contacts" className="space-y-4">
