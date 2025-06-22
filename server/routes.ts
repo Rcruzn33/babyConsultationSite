@@ -58,6 +58,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin management routes (require approved admin)
   app.get("/api/admin/pending-users", requireApprovedAdmin, handleGetPendingUsers);
   app.post("/api/admin/approve-user/:userId", requireApprovedAdmin, handleApproveUser);
+  app.get("/api/admin/users", requireApprovedAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      // Remove passwords from response
+      const safeUsers = users.map(({ password, resetToken, resetTokenExpiry, ...user }) => user);
+      res.json(safeUsers);
+    } catch (error) {
+      console.error("Get users error:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+  app.patch("/api/admin/users/:id", requireApprovedAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      await storage.updateUser(id, updates);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Update user error:", error);
+      res.status(500).json({ error: "Failed to update user" });
+    }
+  });
+  app.delete("/api/admin/users/:id", requireApprovedAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const currentUserId = req.session.userId;
+      
+      // Prevent self-deletion
+      if (id === currentUserId) {
+        return res.status(400).json({ error: "Cannot delete your own account" });
+      }
+      
+      await storage.deleteUser(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Delete user error:", error);
+      res.status(500).json({ error: "Failed to delete user" });
+    }
+  });
 
   // File upload endpoint
   app.post("/api/upload", upload.single('image'), (req, res) => {

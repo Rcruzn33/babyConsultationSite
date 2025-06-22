@@ -24,6 +24,7 @@ export interface IStorage {
   approveUser(userId: number, approvedById: number): Promise<void>;
   getPendingUsers(): Promise<User[]>;
   getAllUsers(): Promise<User[]>;
+  deleteUser(id: number): Promise<void>;
   setResetToken(email: string, token: string, expiry: Date): Promise<void>;
   getUserByResetToken(token: string): Promise<User | undefined>;
   resetPassword(token: string, newPassword: string): Promise<void>;
@@ -96,6 +97,10 @@ export class PostgresStorage implements IStorage {
 
   async getAllUsers(): Promise<User[]> {
     return await db.select().from(users).orderBy(users.createdAt);
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
   }
 
   async setResetToken(email: string, token: string, expiry: Date): Promise<void> {

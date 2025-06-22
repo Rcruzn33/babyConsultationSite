@@ -14,6 +14,12 @@ export const users = pgTable("users", {
   approvedAt: timestamp("approved_at"),
   resetToken: text("reset_token"),
   resetTokenExpiry: timestamp("reset_token_expiry"),
+  // Permissions
+  canManageContacts: boolean("can_manage_contacts").default(true).notNull(),
+  canManageConsultations: boolean("can_manage_consultations").default(true).notNull(),
+  canManageBlog: boolean("can_manage_blog").default(true).notNull(),
+  canManageTestimonials: boolean("can_manage_testimonials").default(true).notNull(),
+  canManageUsers: boolean("can_manage_users").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
