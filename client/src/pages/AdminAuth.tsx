@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2, Eye, EyeOff, Mail, User, Lock, ShieldCheck } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 // Form schemas
 const loginSchema = z.object({
@@ -40,7 +40,15 @@ export default function AdminAuth() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   
-  const { loginMutation, registerMutation, forgotPasswordMutation } = useAuth();
+  const { user, loginMutation, registerMutation, forgotPasswordMutation } = useAuth();
+  const [, navigate] = useLocation();
+
+  // Redirect if already logged in and approved
+  useEffect(() => {
+    if (user && user.isApproved) {
+      navigate('/admin');
+    }
+  }, [user, navigate]);
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -68,7 +76,11 @@ export default function AdminAuth() {
   });
 
   const onLogin = (data: LoginFormData) => {
-    loginMutation.mutate(data);
+    loginMutation.mutate(data, {
+      onSuccess: () => {
+        navigate('/admin');
+      }
+    });
   };
 
   const onRegister = (data: RegisterFormData) => {
