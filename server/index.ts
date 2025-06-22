@@ -1,10 +1,19 @@
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Serve uploaded files statically
+const uploadsPath = path.join(process.cwd(), "client", "public", "uploads");
+app.use("/uploads", (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+});
+app.use("/uploads", express.static(uploadsPath));
 
 app.use((req, res, next) => {
   const start = Date.now();
