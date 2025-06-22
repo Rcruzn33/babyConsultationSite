@@ -8,6 +8,7 @@ interface Testimonial {
   childAge?: string;
   testimonial: string;
   rating: number;
+  photoUrl?: string;
   approved: boolean;
   createdAt: string;
 }
@@ -91,10 +92,21 @@ export default function TestimonialsSection() {
                 <p className="text-medium-gray mb-4 italic leading-relaxed">
                   "{testimonial.testimonial}"
                 </p>
-                <div className="text-soft-dark font-semibold">- {testimonial.parentName}</div>
-                {testimonial.childAge && (
-                  <div className="text-sm text-medium-gray">Parent of {testimonial.childAge}</div>
-                )}
+                <div className="flex items-center gap-3">
+                  {testimonial.photoUrl && (
+                    <img 
+                      src={testimonial.photoUrl} 
+                      alt={testimonial.parentName}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-baby-blue/20"
+                    />
+                  )}
+                  <div>
+                    <div className="text-soft-dark font-semibold">- {testimonial.parentName}</div>
+                    {testimonial.childAge && (
+                      <div className="text-sm text-medium-gray">Parent of {testimonial.childAge}</div>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
