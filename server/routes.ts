@@ -92,7 +92,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all contacts (admin only)
-  app.get("/api/contacts", async (_req, res) => {
+  app.get("/api/contacts", requireApprovedAdmin, async (_req, res) => {
     try {
       const contacts = await storage.getAllContacts();
       res.json(contacts);
@@ -103,7 +103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update contact status (admin only)
-  app.patch("/api/contacts/:id", async (req, res) => {
+  app.patch("/api/contacts/:id", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { responded } = req.body;
@@ -116,7 +116,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete contact (admin only)
-  app.delete("/api/contacts/:id", async (req, res) => {
+  app.delete("/api/contacts/:id", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteContact(id);
@@ -145,7 +145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all consultations (admin only)
-  app.get("/api/consultations", async (_req, res) => {
+  app.get("/api/consultations", requireApprovedAdmin, async (_req, res) => {
     try {
       const consultations = await storage.getAllConsultations();
       res.json(consultations);
@@ -156,7 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update consultation status (admin only)
-  app.patch("/api/consultations/:id", async (req, res) => {
+  app.patch("/api/consultations/:id", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { status, notes } = req.body;
@@ -169,7 +169,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete consultation (admin only)
-  app.delete("/api/consultations/:id", async (req, res) => {
+  app.delete("/api/consultations/:id", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteConsultation(id);
@@ -205,7 +205,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/blog", async (req, res) => {
+  app.post("/api/blog", requireApprovedAdmin, async (req, res) => {
     try {
       const validatedData = insertBlogPostSchema.parse(req.body);
       const post = await storage.createBlogPost(validatedData);
@@ -216,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/blog/:id", async (req, res) => {
+  app.patch("/api/blog/:id", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const updates = req.body;
@@ -228,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/blog/:id", async (req, res) => {
+  app.delete("/api/blog/:id", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteBlogPost(id);
@@ -243,6 +243,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/testimonials", async (req, res) => {
     try {
       const approvedOnly = req.query.approved === "true";
+      const isAdminRequest = req.query.approved !== "true";
+      
+      if (isAdminRequest) {
+        // Require admin auth for getting all testimonials
+        const authResult = await new Promise<boolean>((resolve) => {
+          requireApprovedAdmin(req, res, (err) => {
+            resolve(!err);
+          });
+        });
+        if (!authResult) return;
+      }
+      
       const testimonials = approvedOnly 
         ? await storage.getApprovedTestimonials()
         : await storage.getAllTestimonials();
@@ -253,7 +265,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/testimonials", async (req, res) => {
+  app.post("/api/testimonials", requireApprovedAdmin, async (req, res) => {
     try {
       const validatedData = insertTestimonialSchema.parse(req.body);
       const testimonial = await storage.createTestimonial(validatedData);
@@ -264,7 +276,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/testimonials/:id/approve", async (req, res) => {
+  app.patch("/api/testimonials/:id/approve", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.approveTestimonial(id);
@@ -275,7 +287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/testimonials/:id/unpublish", async (req, res) => {
+  app.patch("/api/testimonials/:id/unpublish", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.unpublishTestimonial(id);
@@ -286,7 +298,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/testimonials/:id", async (req, res) => {
+  app.delete("/api/testimonials/:id", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteTestimonial(id);
