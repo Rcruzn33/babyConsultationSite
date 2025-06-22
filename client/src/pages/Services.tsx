@@ -41,6 +41,20 @@ export default function Services() {
     },
   });
 
+  const scrollToForm = (packageType: string) => {
+    // Set the selected package in the form
+    form.setValue("consultationType", packageType);
+    
+    // Scroll to the form section
+    const formElement = document.getElementById("consultation-form");
+    if (formElement) {
+      formElement.scrollIntoView({ 
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  };
+
   const onSubmit = async (data: ConsultationFormData) => {
     setIsSubmitting(true);
     
@@ -171,7 +185,15 @@ export default function Services() {
                       </li>
                     ))}
                   </ul>
-                  <Button className={`w-full ${service.buttonBg} text-white py-3 rounded-full font-semibold hover:bg-baby-blue transition-colors touch-target`}>
+                  <Button 
+                    className={`w-full ${service.buttonBg} text-white py-3 rounded-full font-semibold hover:bg-baby-blue transition-colors touch-target`}
+                    onClick={() => {
+                      const packageType = service.title === "Free Consultation" ? "free-consultation" :
+                                        service.title === "Complete Sleep Package" ? "complete-package" :
+                                        "family-package";
+                      scrollToForm(packageType);
+                    }}
+                  >
                     {service.title === "Free Consultation" ? "Schedule Free Call" : 
                      service.title === "Complete Sleep Package" ? "Get Started Today" : 
                      "Join Workshop"}
@@ -198,7 +220,7 @@ export default function Services() {
                   Schedule Your Free Consultation
                 </h3>
                 <p className="text-sm sm:text-base text-medium-gray mb-6">Choose a time that works for you</p>
-                <Card className="mt-6 sm:mt-8 text-left">
+                <Card id="consultation-form" className="mt-6 sm:mt-8 text-left">
                   <CardHeader>
                     <CardTitle>Book Your Free Consultation</CardTitle>
                     <CardDescription>Tell me about your sleep challenges and I'll contact you within 24 hours</CardDescription>
