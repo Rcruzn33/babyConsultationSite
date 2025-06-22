@@ -366,6 +366,21 @@ export default function Admin() {
     }
   };
 
+  const deleteConsultation = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this consultation?")) return;
+    
+    try {
+      const response = await fetch(`/api/consultations/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setConsultations(prev => prev.filter(c => c.id !== id));
+      }
+    } catch (error) {
+      console.error("Failed to delete consultation:", error);
+    }
+  };
+
   const approveTestimonial = async (id: number) => {
     try {
       const response = await fetch(`/api/testimonials/${id}/approve`, {
@@ -595,6 +610,13 @@ export default function Admin() {
                             <option value="completed">Completed</option>
                             <option value="cancelled">Cancelled</option>
                           </select>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteConsultation(consultation.id)}
+                          >
+                            Delete
+                          </Button>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4 mb-2 text-sm">
