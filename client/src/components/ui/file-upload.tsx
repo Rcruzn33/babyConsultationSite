@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,11 @@ interface FileUploadProps {
 export function FileUpload({ onUpload, currentUrl, label, accept = "image/*" }: FileUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(currentUrl || "");
+
+  // Sync preview with currentUrl prop changes
+  useEffect(() => {
+    setPreview(currentUrl || "");
+  }, [currentUrl]);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
