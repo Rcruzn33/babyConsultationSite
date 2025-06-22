@@ -8,6 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileUpload } from "@/components/ui/file-upload";
+import { useAuth } from "@/hooks/use-auth";
+import { AdminUserManagement } from "@/components/AdminUserManagement";
+import { LogOut, User, Shield, Home } from "lucide-react";
+import { Link } from "wouter";
 
 interface Contact {
   id: number;
@@ -533,6 +537,12 @@ export default function Admin() {
   const pendingConsultations = consultations.filter(c => c.status === 'pending').length;
   const pendingTestimonials = testimonials.filter(t => !t.approved).length;
 
+  const { user, logoutMutation } = useAuth();
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -541,6 +551,39 @@ export default function Admin() {
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             <p className="text-gray-600">Manage your baby sleep consulting business</p>
           </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <User className="h-4 w-4" />
+              <span>Welcome, {user?.username}</span>
+              <Shield className="h-4 w-4 text-green-600" />
+            </div>
+            
+            <Link href="/">
+              <Button variant="outline" size="sm">
+                <Home className="h-4 w-4 mr-2" />
+                Main Site
+              </Button>
+            </Link>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              {logoutMutation.isPending ? "Logging out..." : "Logout"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Admin User Management Section */}
+        <div className="mb-8">
+          <AdminUserManagement />
+        </div>
+
+        <div className="mb-8 flex justify-between items-center">
           <a 
             href="/" 
             className="text-baby-blue hover:text-soft-pink transition-colors font-medium"
