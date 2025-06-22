@@ -21,32 +21,7 @@ export function AdminManagement() {
     queryKey: ["/api/admin/users"],
   });
 
-  const updateUserMutation = useMutation({
-    mutationFn: async ({ userId, updates }: { userId: number; updates: Partial<SafeUser> }) => {
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
-        credentials: "include",
-      });
-      if (!response.ok) throw new Error("Failed to update user");
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      toast({
-        title: "Success",
-        description: "User permissions updated successfully",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
+
 
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: number) => {
@@ -76,12 +51,7 @@ export function AdminManagement() {
     },
   });
 
-  const handlePermissionChange = (userId: number, permission: string, value: boolean) => {
-    updateUserMutation.mutate({
-      userId,
-      updates: { [permission]: value }
-    });
-  };
+
 
   const handleDeleteUser = (userId: number, username: string) => {
     if (confirm(`Are you sure you want to delete admin "${username}"? This action cannot be undone.`)) {
@@ -170,94 +140,24 @@ export function AdminManagement() {
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <Settings className="h-4 w-4" />
-                Permissions
+                Admin Status
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`contacts-${user.id}`}
-                    checked={user.canManageContacts !== false}
-                    onCheckedChange={(checked) => 
-                      handlePermissionChange(user.id, 'canManageContacts', checked as boolean)
-                    }
-                    disabled={updateUserMutation.isPending || user.id === currentUser?.id}
-                  />
-                  <label
-                    htmlFor={`contacts-${user.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Manage Contacts
-                  </label>
+                <div className="text-sm">
+                  <span className="font-medium">Role:</span> {user.role}
                 </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`consultations-${user.id}`}
-                    checked={user.canManageConsultations !== false}
-                    onCheckedChange={(checked) => 
-                      handlePermissionChange(user.id, 'canManageConsultations', checked as boolean)
-                    }
-                    disabled={updateUserMutation.isPending || user.id === currentUser?.id}
-                  />
-                  <label
-                    htmlFor={`consultations-${user.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Manage Consultations
-                  </label>
+                <div className="text-sm">
+                  <span className="font-medium">Status:</span> 
+                  <Badge variant="default" className="ml-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                    Full Access
+                  </Badge>
                 </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`blog-${user.id}`}
-                    checked={user.canManageBlog !== false}
-                    onCheckedChange={(checked) => 
-                      handlePermissionChange(user.id, 'canManageBlog', checked as boolean)
-                    }
-                    disabled={updateUserMutation.isPending || user.id === currentUser?.id}
-                  />
-                  <label
-                    htmlFor={`blog-${user.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Manage Blog Posts
-                  </label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`testimonials-${user.id}`}
-                    checked={user.canManageTestimonials !== false}
-                    onCheckedChange={(checked) => 
-                      handlePermissionChange(user.id, 'canManageTestimonials', checked as boolean)
-                    }
-                    disabled={updateUserMutation.isPending || user.id === currentUser?.id}
-                  />
-                  <label
-                    htmlFor={`testimonials-${user.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Manage Testimonials
-                  </label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`users-${user.id}`}
-                    checked={user.canManageUsers === true}
-                    onCheckedChange={(checked) => 
-                      handlePermissionChange(user.id, 'canManageUsers', checked as boolean)
-                    }
-                    disabled={updateUserMutation.isPending || user.id === currentUser?.id}
-                  />
-                  <label
-                    htmlFor={`users-${user.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Manage Users & Permissions
-                  </label>
-                </div>
+                {user.approvedAt && (
+                  <div className="text-sm text-muted-foreground">
+                    <span className="font-medium">Approved:</span> {format(new Date(user.approvedAt), "MMM d, yyyy")}
+                  </div>
+                )}
               </div>
             </div>
           </div>

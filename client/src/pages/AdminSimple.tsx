@@ -890,7 +890,8 @@ export default function Admin() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="users" className="space-y-4">
+          <TabsContent value="users" className="space-y-6">
+            <AdminManagement />
             <AdminUserManagement />
           </TabsContent>
         </Tabs>
