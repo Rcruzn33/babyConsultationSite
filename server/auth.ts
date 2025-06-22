@@ -9,6 +9,7 @@ import {
   resetPasswordSchema 
 } from "@shared/schema";
 import { z } from "zod";
+import "./types";
 
 const scryptAsync = promisify(scrypt);
 
@@ -58,14 +59,7 @@ export async function requireApprovedAdmin(req: Request, res: Response, next: Ne
   }
 }
 
-// Extend Express Request type
-declare global {
-  namespace Express {
-    interface Request {
-      user?: any;
-    }
-  }
-}
+
 
 // Auth route handlers
 export async function handleRegister(req: Request, res: Response) {
