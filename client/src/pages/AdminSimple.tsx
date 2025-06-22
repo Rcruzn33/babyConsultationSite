@@ -578,11 +578,6 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Admin User Management Section */}
-        <div className="mb-8">
-          <AdminUserManagement />
-        </div>
-
         <div className="mb-8 flex justify-between items-center">
           <a 
             href="/" 
@@ -593,7 +588,7 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="contacts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="contacts">
               Contacts ({pendingContacts})
             </TabsTrigger>
@@ -603,6 +598,9 @@ export default function Admin() {
             <TabsTrigger value="blog">Blog Posts ({blogPosts.length})</TabsTrigger>
             <TabsTrigger value="testimonials">
               Testimonials ({pendingTestimonials} pending)
+            </TabsTrigger>
+            <TabsTrigger value="users">
+              Settings
             </TabsTrigger>
           </TabsList>
 
@@ -889,6 +887,10 @@ export default function Admin() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="users" className="space-y-4">
+            <AdminUserManagement />
           </TabsContent>
         </Tabs>
       </div>
