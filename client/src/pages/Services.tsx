@@ -42,12 +42,14 @@ export default function Services() {
   });
 
   const onSubmit = async (data: ConsultationFormData) => {
+    console.log('=== FORM SUBMISSION STARTED ===');
+    console.log('Form data:', data);
+    console.log('Form errors:', form.formState.errors);
+    
     setIsSubmitting(true);
     
     try {
-      console.log('Form validation errors:', form.formState.errors);
-      console.log('Submitting consultation data:', data);
-      
+      console.log('Making API request...');
       const response = await fetch('/api/consultations', {
         method: 'POST',
         headers: {
@@ -56,59 +58,51 @@ export default function Services() {
         body: JSON.stringify(data),
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
-      console.log('Response headers:', response.headers);
+      console.log('API Response received:', {
+        status: response.status,
+        ok: response.ok,
+        statusText: response.statusText,
+        url: response.url
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Failed to book consultation: ${response.status} ${errorText}`);
+        console.error('API Error response:', errorText);
+        throw new Error(`API Error: ${response.status} ${errorText}`);
       }
 
-      // Clone response before reading to avoid "body already read" error
-      const responseClone = response.clone();
-      let result;
-      try {
-        result = await response.json();
-        console.log('Success result:', result);
-      } catch (jsonError) {
-        console.error('JSON parsing error:', jsonError);
-        const textResponse = await responseClone.text();
-        console.log('Raw response text:', textResponse);
-        throw new Error('Invalid response format');
-      }
+      const result = await response.json();
+      console.log('API Success result:', result);
+      console.log('About to show success toast...');
 
+      // Show success message
+      alert("Consultation booked successfully! I'll contact you within 24 hours to schedule our call.");
+      
       toast({
         title: "Consultation booked!",
         description: "I'll contact you within 24 hours to schedule our call.",
       });
       
-      // Reset form after successful submission
-      form.reset({
-        parentName: "",
-        email: "",
-        phone: "",
-        childAge: "",
-        sleepChallenges: "",
-        consultationType: "",
-        preferredDate: "",
-      });
+      console.log('Success toast triggered, resetting form...');
+      form.reset();
+      console.log('=== FORM SUBMISSION COMPLETED SUCCESSFULLY ===');
+      
     } catch (error: any) {
-      console.error('Consultation submission error:', error);
-      console.error('Error details:', {
-        message: error?.message || String(error),
-        stack: error?.stack,
-        name: error?.name || 'Unknown'
-      });
+      console.error('=== FORM SUBMISSION ERROR ===');
+      console.error('Error caught:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error message:', error?.message);
+      console.error('Error stack:', error?.stack);
       
       toast({
         title: "Booking failed",
         description: "Please try again or contact me directly.",
         variant: "destructive",
       });
+      console.log('Error toast triggered');
     } finally {
       setIsSubmitting(false);
+      console.log('=== FORM SUBMISSION FINISHED ===');
     }
   };
   const services = [
