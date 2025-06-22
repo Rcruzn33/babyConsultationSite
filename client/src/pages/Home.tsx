@@ -93,7 +93,7 @@ export default function Home() {
               <div className="w-14 h-14 sm:w-16 sm:h-16 bg-baby-blue rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
                 <Heart className="text-white h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-3 sm:mb-4">Gentle Methods</h3>
+              <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-3 sm:mb-4">Personalized Methods</h3>
               <p className="text-sm sm:text-base text-medium-gray leading-relaxed">
                 No harsh cry-it-out methods. We use responsive, gentle techniques that 
                 respect your baby's needs and your parenting style.
