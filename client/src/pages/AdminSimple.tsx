@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FileUpload } from "@/components/ui/file-upload";
 
 interface Contact {
   id: number;
@@ -152,13 +153,20 @@ const CreateBlogPostForm = ({ onPostCreated }: { onPostCreated: () => void }) =>
             />
           </div>
           <div>
-            <Label htmlFor="imageUrl">Image URL (Optional)</Label>
-            <Input
-              id="imageUrl"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-              placeholder="https://example.com/image.jpg"
+            <FileUpload
+              label="Featured Image (Optional)"
+              currentUrl={formData.imageUrl}
+              onUpload={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
             />
+            <div className="mt-2">
+              <Label htmlFor="imageUrl">Or enter image URL</Label>
+              <Input
+                id="imageUrl"
+                value={formData.imageUrl}
+                onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
           </div>
           <div>
             <Label htmlFor="content">Content</Label>
@@ -303,14 +311,21 @@ export default function Admin() {
               />
             </div>
             <div>
-              <Label htmlFor="photoUrl">Photo URL (Optional)</Label>
-              <Input
-                id="photoUrl"
-                value={formData.photoUrl}
-                onChange={(e) => setFormData(prev => ({ ...prev, photoUrl: e.target.value }))}
-                placeholder="https://example.com/photo.jpg"
-                type="url"
+              <FileUpload
+                label="Photo (Optional)"
+                currentUrl={formData.photoUrl}
+                onUpload={(url) => setFormData(prev => ({ ...prev, photoUrl: url }))}
               />
+              <div className="mt-2">
+                <Label htmlFor="photoUrl">Or enter photo URL</Label>
+                <Input
+                  id="photoUrl"
+                  value={formData.photoUrl}
+                  onChange={(e) => setFormData(prev => ({ ...prev, photoUrl: e.target.value }))}
+                  placeholder="https://example.com/photo.jpg"
+                  type="url"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
