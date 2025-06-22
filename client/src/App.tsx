@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/ProtectedRoute";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Services from "@/pages/Services";
@@ -13,6 +15,7 @@ import Blog from "@/pages/BlogDynamic";
 import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/AdminSimple";
+import AdminAuth from "@/pages/AdminAuth";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -24,27 +27,36 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/contact" component={Contact} />
-      <Route path="/admin" component={Admin} />
+      <Route path="/admin/auth" component={AdminAuth} />
+      <ProtectedRoute path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-function App() {
+function AppContent() {
   const [location] = useLocation();
-  const isAdminPage = location === "/admin";
+  const isAdminPage = location === "/admin" || location.startsWith("/admin/");
 
   return (
+    <div className="min-h-screen bg-cream">
+      {!isAdminPage && <Navigation />}
+      <Router />
+      {!isAdminPage && <Footer />}
+      {!isAdminPage && <BackToTop />}
+    </div>
+  );
+}
+
+function App() {
+  return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <div className="min-h-screen bg-cream">
-          {!isAdminPage && <Navigation />}
-          <Router />
-          {!isAdminPage && <Footer />}
-          {!isAdminPage && <BackToTop />}
-        </div>
-        <Toaster />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <AppContent />
+          <Toaster />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
