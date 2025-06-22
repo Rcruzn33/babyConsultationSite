@@ -56,6 +56,7 @@ export const testimonials = pgTable("testimonials", {
   childAge: varchar("child_age", { length: 100 }),
   testimonial: text("testimonial").notNull(),
   rating: integer("rating").notNull(),
+  photoUrl: text("photo_url"),
   approved: boolean("approved").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -98,6 +99,7 @@ export const insertTestimonialSchema = createInsertSchema(testimonials).pick({
   childAge: true,
   testimonial: true,
   rating: true,
+  photoUrl: true,
 });
 
 // Types

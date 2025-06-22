@@ -51,6 +51,7 @@ interface Testimonial {
   childAge?: string;
   testimonial: string;
   rating: number;
+  photoUrl?: string;
   approved: boolean;
   createdAt: string;
 }
@@ -230,6 +231,7 @@ export default function Admin() {
       childAge: '',
       testimonial: '',
       rating: 5,
+      photoUrl: '',
       approved: true
     });
 
@@ -245,6 +247,7 @@ export default function Admin() {
         childAge: formData.childAge || undefined,
         testimonial: formData.testimonial,
         rating: formData.rating,
+        photoUrl: formData.photoUrl || undefined,
         approved: formData.approved
       });
 
@@ -253,6 +256,7 @@ export default function Admin() {
         childAge: '',
         testimonial: '',
         rating: 5,
+        photoUrl: '',
         approved: true
       });
       onTestimonialCreated();
@@ -296,6 +300,16 @@ export default function Admin() {
                 placeholder="Enter testimonial text"
                 rows={4}
                 required
+              />
+            </div>
+            <div>
+              <Label htmlFor="photoUrl">Photo URL (Optional)</Label>
+              <Input
+                id="photoUrl"
+                value={formData.photoUrl}
+                onChange={(e) => setFormData(prev => ({ ...prev, photoUrl: e.target.value }))}
+                placeholder="https://example.com/photo.jpg"
+                type="url"
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
