@@ -56,6 +56,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (data: { user: User }) => {
       queryClient.setQueryData(["/api/auth/me"], data);
+      // Invalidate to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       toast({
         title: "Welcome back!",
         description: "Successfully logged in to admin dashboard.",
