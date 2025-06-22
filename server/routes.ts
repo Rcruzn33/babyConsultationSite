@@ -51,9 +51,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = insertConsultationSchema.parse(req.body);
       const consultation = await storage.createConsultation(validatedData);
       res.json({ success: true, consultation });
-    } catch (error) {
-      console.error(`Consultation creation error: ${error}`);
-      res.status(400).json({ error: "Invalid consultation data" });
+    } catch (error: any) {
+      if (error.name === 'ZodError') {
+        console.error('Consultation validation error:', error.errors);
+        res.status(400).json({ error: "Invalid consultation data", details: error.errors });
+      } else {
+        console.error(`Consultation creation error: ${error}`);
+        res.status(500).json({ error: "Failed to create consultation" });
+      }
     }
   });
 

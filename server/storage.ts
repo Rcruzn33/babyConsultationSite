@@ -79,7 +79,17 @@ export class PostgresStorage implements IStorage {
 
   // Consultation methods
   async createConsultation(consultation: InsertConsultation): Promise<Consultation> {
-    const result = await db.insert(consultations).values(consultation).returning();
+    // Handle date conversion if preferredDate is a string
+    const consultationData = {
+      ...consultation,
+      preferredDate: consultation.preferredDate instanceof Date 
+        ? consultation.preferredDate 
+        : consultation.preferredDate 
+          ? new Date(consultation.preferredDate) 
+          : null
+    };
+    
+    const result = await db.insert(consultations).values(consultationData).returning();
     return result[0];
   }
 
