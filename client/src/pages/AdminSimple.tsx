@@ -456,6 +456,7 @@ export default function Admin() {
     childAge?: string;
     testimonial: string;
     rating: number;
+    photoUrl?: string;
     approved: boolean;
   }) => {
     try {
