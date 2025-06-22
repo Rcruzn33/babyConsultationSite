@@ -113,10 +113,10 @@ export default function Services() {
       popular: true,
       features: [
         "Comprehensive sleep assessment",
+        "Personalized daily schedule and activities",
         "Personalized sleep plan",
-        "2 weeks unlimited text support",
+        "Unlimited support",
         "Follow-up calls",
-        "Plan adjustments",
       ],
     },
     {
