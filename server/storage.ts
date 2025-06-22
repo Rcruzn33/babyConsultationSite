@@ -18,7 +18,15 @@ export interface IStorage {
   // User management
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, updates: Partial<User>): Promise<void>;
+  approveUser(userId: number, approvedById: number): Promise<void>;
+  getPendingUsers(): Promise<User[]>;
+  getAllUsers(): Promise<User[]>;
+  setResetToken(email: string, token: string, expiry: Date): Promise<void>;
+  getUserByResetToken(token: string): Promise<User | undefined>;
+  resetPassword(token: string, newPassword: string): Promise<void>;
   
   // Contact management
   createContact(contact: InsertContact): Promise<Contact>;
@@ -60,9 +68,54 @@ export class PostgresStorage implements IStorage {
     return result[0];
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    return result[0];
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     const result = await db.insert(users).values(insertUser).returning();
     return result[0];
+  }
+
+  async updateUser(id: number, updates: Partial<User>): Promise<void> {
+    await db.update(users).set(updates).where(eq(users.id, id));
+  }
+
+  async approveUser(userId: number, approvedById: number): Promise<void> {
+    await db.update(users).set({ 
+      isApproved: true, 
+      approvedBy: approvedById, 
+      approvedAt: new Date() 
+    }).where(eq(users.id, userId));
+  }
+
+  async getPendingUsers(): Promise<User[]> {
+    return await db.select().from(users).where(eq(users.isApproved, false)).orderBy(users.createdAt);
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users).orderBy(users.createdAt);
+  }
+
+  async setResetToken(email: string, token: string, expiry: Date): Promise<void> {
+    await db.update(users).set({ 
+      resetToken: token, 
+      resetTokenExpiry: expiry 
+    }).where(eq(users.email, email));
+  }
+
+  async getUserByResetToken(token: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.resetToken, token)).limit(1);
+    return result[0];
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    await db.update(users).set({ 
+      password: newPassword, 
+      resetToken: null, 
+      resetTokenExpiry: null 
+    }).where(eq(users.resetToken, token));
   }
 
   // Contact methods
