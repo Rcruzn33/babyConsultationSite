@@ -77,8 +77,11 @@ export default function AdminAuth() {
 
   const onLogin = (data: LoginFormData) => {
     loginMutation.mutate(data, {
-      onSuccess: () => {
-        navigate('/admin');
+      onSuccess: (response) => {
+        // Force navigation after successful login
+        setTimeout(() => {
+          navigate('/admin');
+        }, 100);
       }
     });
   };
