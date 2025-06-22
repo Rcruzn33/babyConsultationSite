@@ -74,14 +74,14 @@ export const insertContactSchema = createInsertSchema(contacts).pick({
   message: true,
 });
 
-export const insertConsultationSchema = createInsertSchema(consultations).pick({
-  parentName: true,
-  email: true,
-  phone: true,
-  childAge: true,
-  sleepChallenges: true,
-  consultationType: true,
-  preferredDate: true,
+export const insertConsultationSchema = z.object({
+  parentName: z.string().min(1, "Parent name is required"),
+  email: z.string().email("Valid email is required"),
+  phone: z.string().optional(),
+  childAge: z.string().min(1, "Child age is required"),
+  sleepChallenges: z.string().min(1, "Sleep challenges description is required"),
+  consultationType: z.string().min(1, "Consultation type is required"),
+  preferredDate: z.string().optional().transform((val) => val && val.trim() !== '' ? new Date(val) : null)
 });
 
 export const insertBlogPostSchema = createInsertSchema(blogPosts).pick({
