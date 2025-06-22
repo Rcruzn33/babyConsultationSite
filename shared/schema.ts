@@ -81,7 +81,7 @@ export const insertConsultationSchema = z.object({
   childAge: z.string().min(1, "Child age is required"),
   sleepChallenges: z.string().min(1, "Sleep challenges description is required"),
   consultationType: z.string().min(1, "Consultation type is required"),
-  preferredDate: z.string().optional().transform((val) => val && val.trim() !== '' ? new Date(val) : null)
+  preferredDate: z.union([z.string(), z.date(), z.null()]).optional()
 });
 
 export const insertBlogPostSchema = createInsertSchema(blogPosts).pick({
