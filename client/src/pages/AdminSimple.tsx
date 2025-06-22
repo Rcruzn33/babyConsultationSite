@@ -615,7 +615,9 @@ export default function Admin() {
             )}
           </TabsList>
 
-          <TabsContent value="contacts" className="space-y-4">
+          <>
+          {user?.canManageContacts && (
+            <TabsContent value="contacts" className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Contact Form Submissions</CardTitle>
@@ -676,8 +678,10 @@ export default function Admin() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
-          <TabsContent value="consultations" className="space-y-4">
+          {user?.canManageConsultations && (
+            <TabsContent value="consultations" className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Consultation Bookings</CardTitle>
@@ -766,8 +770,10 @@ export default function Admin() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
-          <TabsContent value="blog" className="space-y-4">
+          {user?.canManageBlog && (
+            <TabsContent value="blog" className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Blog Posts</CardTitle>
@@ -832,8 +838,10 @@ export default function Admin() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
-          <TabsContent value="testimonials" className="space-y-4">
+          {user?.canManageTestimonials && (
+            <TabsContent value="testimonials" className="space-y-4">
             <CreateTestimonialForm onTestimonialCreated={loadData} />
             <Card>
               <CardHeader>
@@ -899,11 +907,15 @@ export default function Admin() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
-          <TabsContent value="users" className="space-y-6">
-            <AdminManagement />
-            <AdminUserManagement />
-          </TabsContent>
+          {user?.canManageUsers && (
+            <TabsContent value="users" className="space-y-6">
+              <AdminManagement />
+              <AdminUserManagement />
+            </TabsContent>
+          )}
+          </>
         </Tabs>
       </div>
     </div>
