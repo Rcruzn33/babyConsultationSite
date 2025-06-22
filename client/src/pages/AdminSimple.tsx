@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileUpload } from "@/components/ui/file-upload";
 import { useAuth } from "@/hooks/use-auth";
 import { AdminUserManagement } from "@/components/AdminUserManagement";
+import { AdminManagement } from "@/components/AdminManagement";
 import { LogOut, User, Shield, Home } from "lucide-react";
 import { Link } from "wouter";
 
