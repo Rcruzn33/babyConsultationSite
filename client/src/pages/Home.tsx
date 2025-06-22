@@ -95,8 +95,8 @@ export default function Home() {
               </div>
               <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-3 sm:mb-4">Personalized Methods</h3>
               <p className="text-sm sm:text-base text-medium-gray leading-relaxed">
-                No harsh cry-it-out methods. We use responsive, gentle techniques that 
-                respect your baby's needs and your parenting style.
+                Utilize a variety of responsive techniques that are customized for your child and your family. 
+                Methods are based on the developmental, emotional, and biological needs of your child.
               </p>
             </div>
 
