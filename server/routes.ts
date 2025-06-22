@@ -5,6 +5,18 @@ import path from "path";
 import fs from "fs";
 import { storage } from "./storage";
 import { insertContactSchema, insertConsultationSchema, insertBlogPostSchema, insertTestimonialSchema } from "@shared/schema";
+import {
+  handleRegister,
+  handleLogin,
+  handleLogout,
+  handleGetCurrentUser,
+  handleForgotPassword,
+  handleResetPassword,
+  handleGetPendingUsers,
+  handleApproveUser,
+  requireApprovedAdmin
+} from "./auth";
+import "./types";
 
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "client", "public", "uploads");
@@ -35,6 +47,18 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Authentication routes
+  app.post("/api/auth/register", handleRegister);
+  app.post("/api/auth/login", handleLogin);
+  app.post("/api/auth/logout", handleLogout);
+  app.get("/api/auth/me", handleGetCurrentUser);
+  app.post("/api/auth/forgot-password", handleForgotPassword);
+  app.post("/api/auth/reset-password", handleResetPassword);
+  
+  // Admin management routes (require approved admin)
+  app.get("/api/admin/pending-users", requireApprovedAdmin, handleGetPendingUsers);
+  app.post("/api/admin/approve-user/:userId", requireApprovedAdmin, handleApproveUser);
+
   // File upload endpoint
   app.post("/api/upload", upload.single('image'), (req, res) => {
     try {
