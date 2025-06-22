@@ -58,6 +58,7 @@ export default function Services() {
 
       console.log('Response status:', response.status);
       console.log('Response ok:', response.ok);
+      console.log('Response headers:', response.headers);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -65,16 +66,42 @@ export default function Services() {
         throw new Error(`Failed to book consultation: ${response.status} ${errorText}`);
       }
 
-      const result = await response.json();
-      console.log('Success result:', result);
+      // Clone response before reading to avoid "body already read" error
+      const responseClone = response.clone();
+      let result;
+      try {
+        result = await response.json();
+        console.log('Success result:', result);
+      } catch (jsonError) {
+        console.error('JSON parsing error:', jsonError);
+        const textResponse = await responseClone.text();
+        console.log('Raw response text:', textResponse);
+        throw new Error('Invalid response format');
+      }
 
       toast({
         title: "Consultation booked!",
         description: "I'll contact you within 24 hours to schedule our call.",
       });
-      form.reset();
-    } catch (error) {
+      
+      // Reset form after successful submission
+      form.reset({
+        parentName: "",
+        email: "",
+        phone: "",
+        childAge: "",
+        sleepChallenges: "",
+        consultationType: "",
+        preferredDate: "",
+      });
+    } catch (error: any) {
       console.error('Consultation submission error:', error);
+      console.error('Error details:', {
+        message: error?.message || String(error),
+        stack: error?.stack,
+        name: error?.name || 'Unknown'
+      });
+      
       toast({
         title: "Booking failed",
         description: "Please try again or contact me directly.",
