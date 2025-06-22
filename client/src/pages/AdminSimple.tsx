@@ -381,6 +381,21 @@ export default function Admin() {
     }
   };
 
+  const deleteContact = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this contact submission?")) return;
+    
+    try {
+      const response = await fetch(`/api/contacts/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setContacts(prev => prev.filter(c => c.id !== id));
+      }
+    } catch (error) {
+      console.error("Failed to delete contact:", error);
+    }
+  };
+
   const approveTestimonial = async (id: number) => {
     try {
       const response = await fetch(`/api/testimonials/${id}/approve`, {
@@ -543,6 +558,13 @@ export default function Admin() {
                             }
                           >
                             Mark as {contact.responded ? "Unread" : "Read"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteContact(contact.id)}
+                          >
+                            Delete
                           </Button>
                         </div>
                       </div>

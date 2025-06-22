@@ -24,6 +24,7 @@ export interface IStorage {
   createContact(contact: InsertContact): Promise<Contact>;
   getAllContacts(): Promise<Contact[]>;
   updateContactStatus(id: number, responded: boolean): Promise<void>;
+  deleteContact(id: number): Promise<void>;
   
   // Consultation management
   createConsultation(consultation: InsertConsultation): Promise<Consultation>;
@@ -76,6 +77,10 @@ export class PostgresStorage implements IStorage {
 
   async updateContactStatus(id: number, responded: boolean): Promise<void> {
     await db.update(contacts).set({ responded }).where(eq(contacts.id, id));
+  }
+
+  async deleteContact(id: number): Promise<void> {
+    await db.delete(contacts).where(eq(contacts.id, id));
   }
 
   // Consultation methods

@@ -45,6 +45,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete contact (admin only)
+  app.delete("/api/contacts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteContact(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error(`Delete contact error: ${error}`);
+      res.status(500).json({ error: "Failed to delete contact" });
+    }
+  });
+
   // Consultation booking
   app.post("/api/consultations", async (req, res) => {
     try {
