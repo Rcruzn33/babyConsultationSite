@@ -45,6 +45,8 @@ export default function Services() {
     setIsSubmitting(true);
     
     try {
+      console.log('Submitting consultation data:', data);
+      
       const response = await fetch('/api/consultations', {
         method: 'POST',
         headers: {
@@ -53,9 +55,17 @@ export default function Services() {
         body: JSON.stringify(data),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
       if (!response.ok) {
-        throw new Error('Failed to book consultation');
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to book consultation: ${response.status} ${errorText}`);
       }
+
+      const result = await response.json();
+      console.log('Success result:', result);
 
       toast({
         title: "Consultation booked!",
@@ -63,6 +73,7 @@ export default function Services() {
       });
       form.reset();
     } catch (error) {
+      console.error('Consultation submission error:', error);
       toast({
         title: "Booking failed",
         description: "Please try again or contact me directly.",
