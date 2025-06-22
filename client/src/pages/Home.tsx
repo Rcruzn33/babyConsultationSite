@@ -106,8 +106,8 @@ export default function Home() {
               </div>
               <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-3 sm:mb-4">Expert Guidance</h3>
               <p className="text-sm sm:text-base text-medium-gray leading-relaxed">
-                Certified sleep consultant with 8+ years of experience helping families 
-                achieve better sleep through personalized plans.
+                Experienced sleep consultant and newborn care specialist helping families 
+                achieve better sleep through education, guidance, and personalized plans.
               </p>
             </div>
 
