@@ -16,6 +16,7 @@ import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 import Admin from "@/pages/AdminSimple";
 import AdminAuth from "@/pages/AdminAuth";
+import PasswordReset from "@/pages/PasswordReset";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/contact" component={Contact} />
       <Route path="/admin/auth" component={AdminAuth} />
+      <Route path="/admin/reset-password" component={PasswordReset} />
       <ProtectedRoute path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
