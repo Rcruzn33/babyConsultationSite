@@ -236,9 +236,16 @@ export default function Services() {
                   </CardHeader>
                   <CardContent>
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
-                        console.error('Form validation failed:', errors);
-                      })} className="space-y-4">
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        console.log('Form submit event triggered');
+                        console.log('Form is valid:', form.formState.isValid);
+                        console.log('Form errors:', form.formState.errors);
+                        console.log('Form values:', form.getValues());
+                        form.handleSubmit(onSubmit, (errors) => {
+                          console.error('Form validation failed:', errors);
+                        })(e);
+                      }} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <FormField
                             control={form.control}
@@ -359,7 +366,15 @@ export default function Services() {
                           type="submit" 
                           className="w-full bg-baby-blue hover:bg-soft-pink"
                           disabled={isSubmitting}
-                          onClick={() => console.log('Submit button clicked')}
+                          onClick={(e) => {
+                            console.log('Submit button clicked');
+                            console.log('Button event:', e);
+                            console.log('Form state before click:', {
+                              isValid: form.formState.isValid,
+                              isSubmitting: form.formState.isSubmitting,
+                              errors: form.formState.errors
+                            });
+                          }}
                         >
                           {isSubmitting ? "Booking..." : "Book Free Consultation"}
                         </Button>
