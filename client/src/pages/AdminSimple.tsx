@@ -323,7 +323,6 @@ export default function Admin() {
                   value={formData.photoUrl}
                   onChange={(e) => setFormData(prev => ({ ...prev, photoUrl: e.target.value }))}
                   placeholder="https://example.com/photo.jpg"
-                  type="url"
                 />
               </div>
             </div>
