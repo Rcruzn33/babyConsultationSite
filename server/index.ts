@@ -9,6 +9,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Trust proxy for production deployment
+app.set('trust proxy', 1);
+
 // Session configuration
 const PgSession = ConnectPgSimple(session);
 app.use(session({
@@ -18,9 +21,10 @@ app.use(session({
   }),
   secret: process.env.SESSION_SECRET || "your-secret-key-change-in-production",
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
+  name: 'connect.sid',
   cookie: {
-    secure: process.env.NODE_ENV === "production",
+    secure: false, // Set to false temporarily for debugging
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     sameSite: "lax",
