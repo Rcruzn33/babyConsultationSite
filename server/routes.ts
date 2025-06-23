@@ -4,6 +4,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { storage } from "./storage";
+import { sendContactNotificationEmail } from "./email";
 import { insertContactSchema, insertConsultationSchema, insertBlogPostSchema, insertTestimonialSchema } from "@shared/schema";
 import {
   handleRegister,
@@ -123,6 +124,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertContactSchema.parse(req.body);
       const contact = await storage.createContact(validatedData);
+      
+      // Send notification email to all admin users with contact management permissions
+      try {
+        const adminUsers = await storage.getAllUsers();
+        const notificationPromises = adminUsers
+          .filter(user => user.canManageContacts && user.isApproved)
+          .map(admin => 
+            sendContactNotificationEmail(admin.email, contact.name, contact.email, contact.subject)
+          );
+        
+        await Promise.all(notificationPromises);
+      } catch (emailError) {
+        console.error("Failed to send contact notification emails:", emailError);
+        // Don't fail the contact submission if email fails
+      }
+      
       res.json({ success: true, contact });
     } catch (error) {
       console.error(`Contact creation error: ${error}`);
