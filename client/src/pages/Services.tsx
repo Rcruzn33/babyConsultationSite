@@ -106,6 +106,7 @@ export default function Services() {
     {
       icon: Bed,
       title: "Complete Sleep Package",
+      price: "$297",
       bgColor: "bg-soft-pink/10",
       iconBg: "bg-soft-pink",
       buttonBg: "bg-soft-pink",
@@ -352,7 +353,6 @@ export default function Services() {
                           type="submit" 
                           className="w-full bg-baby-blue hover:bg-soft-pink"
                           disabled={isSubmitting}
-
                         >
                           {isSubmitting ? "Booking..." : "Book Free Consultation"}
                         </Button>
