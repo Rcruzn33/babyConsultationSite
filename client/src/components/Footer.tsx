@@ -74,7 +74,18 @@ export default function Footer() {
 
         <div className="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400">
           <p>
-            &copy; 2024 Happy Baby Sleeping. All rights reserved. | Privacy Policy | Terms of Service
+            &copy; 2025 Happy Baby Sleeping. All rights reserved. | 
+            <Link href="/privacy-policy">
+              <span className="hover:text-baby-blue transition-colors cursor-pointer ml-1 mr-1">
+                Privacy Policy
+              </span>
+            </Link>
+            | 
+            <Link href="/terms-of-service">
+              <span className="hover:text-baby-blue transition-colors cursor-pointer ml-1">
+                Terms of Service
+              </span>
+            </Link>
           </p>
         </div>
       </div>
