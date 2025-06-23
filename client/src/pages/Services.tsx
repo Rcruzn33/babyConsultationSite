@@ -106,6 +106,7 @@ export default function Services() {
     {
       icon: Bed,
       title: "Complete Sleep Package",
+      price: "$297",
       bgColor: "bg-soft-pink/10",
       iconBg: "bg-soft-pink",
       buttonBg: "bg-soft-pink",
