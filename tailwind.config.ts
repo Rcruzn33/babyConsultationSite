@@ -61,6 +61,14 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        // Baby Sleep Theme Colors
+        "cream": "var(--cream)",
+        "baby-blue": "var(--baby-blue)",
+        "soft-pink": "var(--soft-pink)",
+        "pastel-yellow": "var(--pastel-yellow)",
+        "mint": "var(--mint)",
+        "soft-dark": "var(--soft-dark)",
+        "medium-gray": "var(--medium-gray)",
       },
       keyframes: {
         "accordion-down": {
