@@ -106,13 +106,13 @@ export default function Services() {
     {
       icon: Bed,
       title: "Complete Sleep Package",
-      price: "$497",
       bgColor: "bg-soft-pink/10",
       iconBg: "bg-soft-pink",
       buttonBg: "bg-soft-pink",
       popular: true,
       features: [
         "Comprehensive sleep assessment",
+        "Three days naps and nighttime sleep monitoring",
         "Personalized daily schedule and activities",
         "Personalized sleep plan",
         "Unlimited support",
