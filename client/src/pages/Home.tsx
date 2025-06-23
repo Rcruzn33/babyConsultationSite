@@ -81,10 +81,13 @@ export default function Home() {
       <section className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">Why Families Choose Us</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">Why Families Choose My Services:</h2>
             <p className="text-lg sm:text-xl text-medium-gray max-w-3xl mx-auto">
-              Our gentle, evidence-based approach helps babies learn healthy sleep habits 
-              while supporting parents through every step.
+              My sleep training approach is holistic and addresses your child’s full 24-hour sleep cycle—including naps, nighttime sleep, feedings, bedtime routines, and daytime activities. It’s designed to establish healthy sleep habits, support overall well-being, and help your child thrive and reach important developmental milestones.
+
+              The results are built to last. As your child grows, I will adjust the schedule to support transitions, sleep regressions, family changes, travel, and more. Throughout the process, I offer parents valuable guidance to better understand their child’s needs and provide support every step of the way.
+
+              I will closely monitor your child for three full days and nights, and will continue to offer support and follow-up monitoring if needed.
             </p>
           </div>
 
@@ -95,7 +98,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-3 sm:mb-4">Personalized Methods</h3>
               <p className="text-sm sm:text-base text-medium-gray leading-relaxed">
-                Utilize a variety of responsive techniques that are customized for your child and your family. 
+                Utilize a variety of techniques that are customized for your child and your family. 
                 Methods are based on the developmental, emotional, and biological needs of your child.
               </p>
             </div>
@@ -117,8 +120,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl sm:text-2xl font-semibold text-soft-dark mb-3 sm:mb-4">Ongoing Support</h3>
               <p className="text-sm sm:text-base text-medium-gray leading-relaxed">
-                2 weeks of unlimited text support, follow-up calls, and plan adjustments 
-                to ensure lasting success for your family.
+                Unlimited text support, follow-up calls, and plan adjustments to ensure lasting success for your family.
               </p>
             </div>
           </div>
