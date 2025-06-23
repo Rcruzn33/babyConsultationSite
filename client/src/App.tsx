@@ -15,6 +15,8 @@ import Services from "@/pages/Services";
 import Blog from "@/pages/BlogDynamic";
 import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
 import Admin from "@/pages/AdminSimple";
 import AdminAuth from "@/pages/AdminAuth";
 import PasswordReset from "@/pages/PasswordReset";
@@ -29,6 +31,8 @@ function Router() {
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/contact" component={Contact} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/admin/auth" component={AdminAuth} />
       <Route path="/admin/reset-password" component={PasswordReset} />
       <ProtectedRoute path="/admin" component={Admin} />
