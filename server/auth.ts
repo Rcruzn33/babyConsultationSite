@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
+import { sendUserApprovedEmail } from "./email";
 import { 
   adminRegistrationSchema, 
   adminLoginSchema, 
@@ -246,9 +247,22 @@ export async function handleApproveUser(req: Request, res: Response) {
       return res.status(401).json({ error: "Authentication required" });
     }
 
+    // Get user details before approval
+    const user = await storage.getUser(parseInt(userId));
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
     await storage.approveUser(parseInt(userId), approverId);
     
-    // In a real app, you would send an approval email here
+    // Send approval email notification
+    try {
+      await sendUserApprovedEmail(user.email, user.username);
+    } catch (emailError) {
+      console.error("Failed to send approval email:", emailError);
+      // Don't fail the approval if email fails
+    }
+    
     res.json({ message: "User approved successfully" });
   } catch (error) {
     console.error("Approve user error:", error);
