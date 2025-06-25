@@ -11,7 +11,7 @@ export default function Footer() {
               Happy Baby Sleeping
             </h3>
             <p className="text-gray-300 leading-relaxed mb-6">
-              Helping families achieve peaceful nights through gentle, evidence-based 
+              Helping families achieve peaceful nights through evidence-based 
               sleep solutions. Every baby can learn to sleep well with the right approach and support.
             </p>
           </div>
