@@ -12,6 +12,16 @@ app.use(express.urlencoded({ extended: false }));
 // Trust proxy for production deployment
 app.set('trust proxy', 1);
 
+// Redirect www to non-www
+app.use((req, res, next) => {
+  if (req.headers.host && req.headers.host.startsWith('www.')) {
+    const redirectHost = req.headers.host.slice(4); // Remove 'www.'
+    const redirectUrl = `${req.protocol}://${redirectHost}${req.originalUrl}`;
+    return res.redirect(301, redirectUrl);
+  }
+  next();
+});
+
 // Session configuration
 const PgSession = ConnectPgSimple(session);
 app.use(session({
