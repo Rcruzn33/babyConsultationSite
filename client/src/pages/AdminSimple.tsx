@@ -11,7 +11,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { useAuth } from "@/hooks/use-auth";
 import { AdminUserManagement } from "@/components/AdminUserManagement";
 import { AdminManagement } from "@/components/AdminManagement";
-import { LogOut, User, Shield, Home } from "lucide-react";
+import { LogOut, User, Shield, Home, Mail } from "lucide-react";
 import { Link } from "wouter";
 
 interface Contact {
@@ -429,6 +429,31 @@ export default function Admin() {
     }
   };
 
+  const createEmailReply = (contact: Contact) => {
+    const subject = `Re: ${contact.subject}`;
+    const body = `Hello ${contact.name},
+
+Thank you for reaching out to Happy Baby Sleeping regarding "${contact.subject}".
+
+Your original message:
+"${contact.message}"
+
+[Your reply here]
+
+Best regards,
+Happy Baby Sleeping Team
+
+---
+Contact Details:
+Phone: ${contact.phone || 'Not provided'}
+Email: ${contact.email}
+Submitted: ${formatDate(contact.createdAt)}`;
+
+    const mailtoLink = `mailto:${contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    window.open(mailtoLink, '_blank');
+  };
+
   const approveTestimonial = async (id: number) => {
     try {
       const response = await fetch(`/api/testimonials/${id}/approve`, {
@@ -641,6 +666,15 @@ export default function Admin() {
                           <Badge variant={contact.responded ? "default" : "secondary"}>
                             {contact.responded ? "Responded" : "New"}
                           </Badge>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => createEmailReply(contact)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            <Mail className="h-4 w-4 mr-1" />
+                            Reply via Email
+                          </Button>
                           <Button
                             size="sm"
                             variant="outline"
