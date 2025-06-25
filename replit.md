@@ -1,0 +1,89 @@
+# Baby Sleep Consulting Website
+
+## Overview
+
+This is a full-stack web application for a baby sleep consulting business called "Happy Baby Sleeping". The application serves as both a public-facing website for potential clients and an admin dashboard for managing business operations. Built with modern web technologies, it provides a complete solution for a sleep consulting practice including contact management, consultation booking, blog content management, and customer testimonials.
+
+## System Architecture
+
+The application follows a traditional full-stack architecture with clear separation between frontend and backend:
+
+- **Frontend**: React-based single-page application built with Vite
+- **Backend**: Express.js server with TypeScript
+- **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
+- **Authentication**: Session-based authentication using express-session with PostgreSQL store
+- **File Storage**: Local file system for image uploads
+- **Email**: SendGrid integration for transactional emails
+
+## Key Components
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript
+- **Routing**: Wouter for client-side routing
+- **State Management**: TanStack Query for server state management
+- **UI Components**: Custom components built on Radix UI primitives with shadcn/ui styling
+- **Styling**: Tailwind CSS with custom theme colors (baby-blue, soft-pink, etc.)
+- **Forms**: React Hook Form with Zod validation
+
+### Backend Architecture
+- **Server**: Express.js with TypeScript
+- **Database Layer**: Drizzle ORM with PostgreSQL
+- **Authentication**: Custom auth middleware with password hashing using Node.js crypto
+- **File Uploads**: Multer middleware for handling image uploads
+- **Session Management**: express-session with connect-pg-simple for PostgreSQL session store
+- **Email Service**: SendGrid for automated email notifications
+
+### Database Schema
+The application uses five main tables:
+- **users**: Admin user management with role-based permissions
+- **contacts**: Contact form submissions from website visitors
+- **consultations**: Consultation booking requests with status tracking
+- **blog_posts**: CMS for blog content with published/draft states
+- **testimonials**: Customer testimonials with approval workflow
+
+## Data Flow
+
+1. **Public Website Flow**:
+   - Visitors browse services, blog posts, and testimonials
+   - Contact forms and consultation bookings are submitted via API
+   - Data is stored in PostgreSQL and email notifications are sent
+
+2. **Admin Authentication Flow**:
+   - New admins register and await approval from existing admins
+   - Session-based authentication maintains login state
+   - Role-based permissions control access to different admin functions
+
+3. **Content Management Flow**:
+   - Admins create and manage blog posts with rich text content
+   - Image uploads are handled locally and served statically
+   - Content approval workflows for testimonials and user accounts
+
+## External Dependencies
+
+- **@neondatabase/serverless**: Database connection pool for PostgreSQL
+- **@sendgrid/mail**: Email service for transactional emails
+- **@radix-ui/***: Headless UI component primitives
+- **@tanstack/react-query**: Server state management and caching
+- **drizzle-orm**: Type-safe database ORM
+- **express-session**: Session management
+- **multer**: File upload handling
+- **zod**: Runtime type validation
+
+## Deployment Strategy
+
+The application is configured for deployment on Replit with the following setup:
+- **Build Process**: Vite builds the frontend, esbuild bundles the backend
+- **Runtime**: Node.js 20 with PostgreSQL 16
+- **Environment**: Development and production modes with different configurations
+- **Static Assets**: Frontend builds to `dist/public`, backend to `dist/`
+- **Database**: PostgreSQL with Drizzle migrations managed via `drizzle-kit`
+
+The deployment uses autoscale targeting with build and run commands configured for production deployment. Local development runs both frontend and backend in parallel with hot reloading enabled.
+
+## Changelog
+
+- June 25, 2025. Initial setup
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.

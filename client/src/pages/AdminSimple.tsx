@@ -454,6 +454,37 @@ Submitted: ${formatDate(contact.createdAt)}`;
     window.open(mailtoLink, '_blank');
   };
 
+  const createConsultationEmailReply = (consultation: Consultation) => {
+    const subject = `Re: ${consultation.consultationType} Consultation Request`;
+    const body = `Hello ${consultation.parentName},
+
+Thank you for booking a consultation with Happy Baby Sleeping for your ${consultation.childAge} child.
+
+Your consultation details:
+- Consultation Type: ${consultation.consultationType}
+- Child's Age: ${consultation.childAge}
+- Preferred Date: ${consultation.preferredDate || 'Not specified'}
+- Sleep Challenges: "${consultation.sleepChallenges}"
+
+I'll be in touch to schedule our consultation at your convenience.
+
+[Your reply here]
+
+Best regards,
+Happy Baby Sleeping Team
+
+---
+Contact Details:
+Phone: ${consultation.phone || 'Not provided'}
+Email: ${consultation.email}
+Status: ${consultation.status}
+Submitted: ${formatDate(consultation.createdAt)}`;
+
+    const mailtoLink = `mailto:${consultation.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    window.open(mailtoLink, '_blank');
+  };
+
   const approveTestimonial = async (id: number) => {
     try {
       const response = await fetch(`/api/testimonials/${id}/approve`, {
@@ -792,8 +823,19 @@ Submitted: ${formatDate(contact.createdAt)}`;
                           <p className="mt-1 text-sm">{consultation.notes}</p>
                         </div>
                       )}
-                      <div className="text-xs text-gray-500">
-                        Submitted: {formatDate(consultation.createdAt)}
+                      <div className="flex justify-between items-center">
+                        <div className="text-xs text-gray-500">
+                          Submitted: {formatDate(consultation.createdAt)}
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => createConsultationEmailReply(consultation)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          <Mail className="h-4 w-4 mr-1" />
+                          Reply via Email
+                        </Button>
                       </div>
                     </Card>
                   ))}
