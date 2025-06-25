@@ -80,9 +80,12 @@ The application is configured for deployment on Replit with the following setup:
 
 The deployment uses autoscale targeting with build and run commands configured for production deployment. Local development runs both frontend and backend in parallel with hot reloading enabled.
 
-## Changelog
+## Recent Changes
 
-- June 25, 2025. Initial setup
+- **June 25, 2025**: Fixed application startup issues by resolving syntax errors in Services.tsx and adding missing Tailwind color configurations
+- **June 25, 2025**: Added reply via email functionality to admin dashboard for both contacts and consultations with pre-filled email templates
+- **June 25, 2025**: Implemented server-side www to non-www redirect middleware for domain consistency
+- **June 25, 2025**: Resolved DNS configuration for www subdomain using CNAME records pointing to root domain
 
 ## User Preferences
 
