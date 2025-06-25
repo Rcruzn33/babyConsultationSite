@@ -83,7 +83,7 @@ export default function Home() {
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">Why Families Choose My Services:</h2>
             <p className="text-lg sm:text-xl text-medium-gray max-w-3xl mx-auto">
-              My sleep training approach is holistic and addresses your child’s full 24-hour sleep—including naps, nighttime sleep, feedings, bedtime routines, and daytime activities. It’s designed to establish healthy sleep habits, support overall well-being, and help your child thrive and reach important developmental milestones.
+              My sleep training approach is holistic and covers your child’s full 24-hour sleep—including naps, nighttime sleep, feedings, bedtime routines, and daytime activities. It’s designed to establish healthy sleep habits, support overall well-being, and help your child thrive and reach important developmental milestones.
 
               The results are built to last. I will adjust the schedule to support transitions, sleep regressions, family changes, travel, and more. Throughout the process, I offer parents valuable guidance to better understand their child’s needs and provide support every step of the way.
             </p>
@@ -132,7 +132,7 @@ export default function Home() {
             Ready for Peaceful Nights?
           </h2>
           <p className="text-lg sm:text-xl text-medium-gray mb-6 sm:mb-8 leading-relaxed">
-            Join hundreds of families who've transformed their sleep with gentle, effective methods. 
+            Join hundreds of families who've transformed their sleep with effective methods. 
             Your journey to better sleep starts with a free consultation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
