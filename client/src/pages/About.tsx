@@ -13,9 +13,17 @@ export default function About() {
                 <h1 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4 sm:mb-6">
                   Hello and Welcome! I am Yanina, a dedicated pediatric sleep coach and newborn care specialist and safe sleep ambassador.
                 </h1>
-                <p className="text-base sm:text-lg text-medium-gray leading-relaxed mb-4 sm:mb-6">
-                  My journey began with a bachelor's degree in psychology, which laid the foundation for my understanding of child development, sleep cycles, pattern development, family dynamics, and the emotional and physical needs of babies and parents. While pursuing my academic study, I met two incredible, highly professional, newborn care specialists who introduced me to this profession and gave me valuable training. Over the years, I have combined this academic background with extensive real world experience, helping many families create nurturing environments and healthy sleep habits for their little ones. I specialize in sleep training for infant and toddlers and newborn care. I will do my best to meet each family's unique needs and parenting style. If you need help navigating your baby's first days at home or if you are having sleepless nights with a toddler, I am here to guide you with compassion, knowledge and practical solutions. My goal is to empower parents with the confidence and tools they need to thrive, not just survive in the early months and years of parenthood. I look forward to supporting you and your family on this beautiful journey.  
-                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                  <p className="text-base sm:text-lg text-medium-gray leading-relaxed">
+                    My journey began with a bachelor's degree in psychology, which laid the foundation for my understanding of child development, sleep cycles, pattern development, family dynamics, and the emotional and physical needs of babies and parents. While pursuing my academic study, I met two incredible, highly professional, newborn care specialists who introduced me to this profession and gave me valuable training.
+                  </p>
+                  <p className="text-base sm:text-lg text-medium-gray leading-relaxed">
+                    Over the years, I have combined this academic background with extensive real world experience, helping many families create nurturing environments and healthy sleep habits for their little ones. I specialize in sleep training for infant and toddlers and newborn care. I will do my best to meet each family's unique needs and parenting style.
+                  </p>
+                  <p className="text-base sm:text-lg text-medium-gray leading-relaxed">
+                    If you need help navigating your baby's first days at home or if you are having sleepless nights with a toddler, I am here to guide you with compassion, knowledge and practical solutions. My goal is to empower parents with the confidence and tools they need to thrive, not just survive in the early months and years of parenthood. I look forward to supporting you and your family on this beautiful journey.
+                  </p>
+                </div>
                 <p className="text-base sm:text-lg text-medium-gray leading-relaxed">
                   I believe every baby can learn to sleep well with the right approach, 
                   patience, and support. My methods are rooted in child development research 
