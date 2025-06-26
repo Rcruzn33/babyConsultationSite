@@ -11,12 +11,10 @@ export default function About() {
             <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4 sm:mb-6">
-                  Meet Yana, Your Sleep Consultant
+                  Hello and Welcome! I am Yanina, a dedicated pediatric sleep coach and newborn care specialist and safe sleep ambassador.
                 </h1>
                 <p className="text-base sm:text-lg text-medium-gray leading-relaxed mb-4 sm:mb-6">
-                  As a certified pediatric sleep consultant and mother of two, I understand 
-                  the exhaustion and overwhelm that comes with sleepless nights. My mission 
-                  is to help families find gentle, effective solutions that work for everyone.
+                  My journey began with a bachelor's degree in psychology, which laid the foundation for my understanding of child development, sleep cycles, pattern development, family dynamics, and the emotional and physical needs of babies and parents. While pursuing my academic study, I met two incredible, highly professional, newborn care specialists who introduced me to this profession and gave me valuable training. Over the years, I have combined this academic background with extensive real world experience, helping many families create nurturing environments and healthy sleep habits for their little ones. I specialize in sleep training for infant and toddlers and newborn care. I will do my best to meet each family's unique needs and parenting style. If you need help navigating your baby's first days at home or if you are having sleepless nights with a toddler, I am here to guide you with compassion, knowledge and practical solutions. My goal is to empower parents with the confidence and tools they need to thrive, not just survive in the early months and years of parenthood. I look forward to supporting you and your family on this beautiful journey.  
                 </p>
                 <p className="text-base sm:text-lg text-medium-gray leading-relaxed">
                   I believe every baby can learn to sleep well with the right approach, 
@@ -28,7 +26,7 @@ export default function About() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center space-x-3 justify-center lg:justify-start">
                   <CheckCircle className="text-baby-blue h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-medium-gray">Certified Pediatric Sleep Consultant</span>
+                  <span className="text-sm sm:text-base text-medium-gray">Pediatric Sleep Consultant</span>
                 </div>
                 <div className="flex items-center space-x-3 justify-center lg:justify-start">
                   <CheckCircle className="text-baby-blue h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" />
@@ -36,11 +34,11 @@ export default function About() {
                 </div>
                 <div className="flex items-center space-x-3 justify-center lg:justify-start">
                   <CheckCircle className="text-baby-blue h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-medium-gray">Mother of Two</span>
+                  <span className="text-sm sm:text-base text-medium-gray">Mother of One</span>
                 </div>
                 <div className="flex items-center space-x-3 justify-center lg:justify-start">
                   <CheckCircle className="text-baby-blue h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" />
-                  <span className="text-sm sm:text-base text-medium-gray">Gentle Sleep Training Specialist</span>
+                  <span className="text-sm sm:text-base text-medium-gray">Newborn Care Specialist</span>
                 </div>
               </div>
             </div>
