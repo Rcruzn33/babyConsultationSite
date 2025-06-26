@@ -86,6 +86,7 @@ The deployment uses autoscale targeting with build and run commands configured f
 - **June 25, 2025**: Added reply via email functionality to admin dashboard for both contacts and consultations with pre-filled email templates
 - **June 25, 2025**: Implemented server-side www to non-www redirect middleware for domain consistency
 - **June 25, 2025**: Resolved DNS configuration for www subdomain using CNAME records pointing to root domain
+- **June 26, 2025**: Removed Group Workshop section from Services page, now showing only Free Consultation and Complete Sleep Package
 
 ## User Preferences
 
