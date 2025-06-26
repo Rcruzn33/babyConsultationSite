@@ -87,6 +87,7 @@ The deployment uses autoscale targeting with build and run commands configured f
 - **June 25, 2025**: Implemented server-side www to non-www redirect middleware for domain consistency
 - **June 25, 2025**: Resolved DNS configuration for www subdomain using CNAME records pointing to root domain
 - **June 26, 2025**: Removed Group Workshop section from Services page, now showing only Free Consultation and Complete Sleep Package
+- **June 26, 2025**: Updated Privacy Policy with comprehensive new content and proper contact information
 
 ## User Preferences
 
