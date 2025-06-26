@@ -9,7 +9,7 @@ export default function TermsOfService() {
           
           <div className="prose prose-lg max-w-none text-gray-700">
             <p className="mb-6">
-              <strong>Last updated:</strong> January 2025
+              <strong>Last updated:</strong> June 2025
             </p>
 
             <h2 className="text-2xl font-semibold text-soft-dark mt-8 mb-4">
@@ -36,14 +36,14 @@ export default function TermsOfService() {
               Consultation Process
             </h2>
             <p className="mb-6">
-              Our consultations are educational in nature and provide guidance based on evidence-based sleep practices. We are not medical professionals and do not provide medical advice. Always consult with your pediatrician before implementing any sleep changes.
+              The consultations are educational in nature and provide guidance based on evidence-based sleep practices. I am not a medical professional and do not provide medical advice. Always consult with your pediatrician before implementing any sleep changes.
             </p>
 
             <h2 className="text-2xl font-semibold text-soft-dark mt-8 mb-4">
               Payment and Refunds
             </h2>
             <p className="mb-6">
-              Payment is required before services are rendered. Refund policies will be discussed during the consultation booking process and may vary based on the specific service package selected.
+              Payment is required before services are rendered. There are no Refunds after sleep training starts. 
             </p>
 
             <h2 className="text-2xl font-semibold text-soft-dark mt-8 mb-4">
@@ -57,14 +57,14 @@ export default function TermsOfService() {
               Confidentiality
             </h2>
             <p className="mb-6">
-              We maintain strict confidentiality regarding all client information and will not share personal details without explicit consent, except as required by law.
+              There is a strict confidentiality regarding all client information and will not share personal details without explicit consent, except as required by law.
             </p>
 
             <h2 className="text-2xl font-semibold text-soft-dark mt-8 mb-4">
               Contact Information
             </h2>
             <p className="mb-6">
-              For questions about these Terms of Service, please contact us at:
+              For questions about these Terms of Service, please contact at:
             </p>
             <p className="mb-2">
               <strong>Email:</strong> happybabysleeping@gmail.com
