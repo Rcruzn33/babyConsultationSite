@@ -11,7 +11,7 @@ export default function About() {
             <div className="space-y-6 sm:space-y-8 text-center lg:text-left">
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4 sm:mb-6">
-                  Hello and Welcome! I am Yanina, a dedicated pediatric sleep coach and newborn care specialist and safe sleep ambassador.
+                  Hello and Welcome! I am Yanina, your sleep coach.
                 </h1>
                 <p className="text-base sm:text-lg text-medium-gray leading-relaxed mb-4 sm:mb-6">
                   My journey began with a bachelor's degree in psychology, which laid the foundation for my understanding of child development, sleep cycles, pattern development, family dynamics, and the emotional and physical needs of babies and parents. While pursuing my academic study, I met two incredible, highly professional, newborn care specialists who introduced me to this profession and gave me valuable training.
