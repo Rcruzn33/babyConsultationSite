@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Phone, Bed, Users, Check, Calendar } from "lucide-react";
+import { Phone, Bed, Check, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const consultationFormSchema = z.object({
@@ -92,7 +92,6 @@ export default function Services() {
     {
       icon: Phone,
       title: "Free Consultation",
-      price: "$0",
       bgColor: "bg-baby-blue/5",
       iconBg: "bg-baby-blue",
       buttonBg: "bg-baby-blue",
@@ -121,20 +120,7 @@ export default function Services() {
         "Schedule adjustment due to child's growth",
       ],
     },
-    {
-      icon: Users,
-      title: "Group Workshop",
-      price: "$97",
-      bgColor: "bg-mint/10",
-      iconBg: "bg-mint",
-      buttonBg: "bg-mint",
-      features: [
-        "2-hour online workshop",
-        "Learn foundational principles",
-        "Q&A session",
-        "Resource materials",
-      ],
-    },
+
   ];
 
   return (
@@ -175,9 +161,6 @@ export default function Services() {
                     <h3 className="text-xl sm:text-2xl font-bold text-soft-dark mb-2">
                       {service.title}
                     </h3>
-                    <div className="text-2xl sm:text-3xl font-bold text-baby-blue">
-                      {service.price}
-                    </div>
                   </div>
                   <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                     {service.features.map((feature, featureIndex) => (
@@ -190,15 +173,11 @@ export default function Services() {
                   <Button 
                     className={`w-full ${service.buttonBg} text-white py-3 rounded-full font-semibold hover:bg-baby-blue transition-colors touch-target`}
                     onClick={() => {
-                      const packageType = service.title === "Free Consultation" ? "free-consultation" :
-                                        service.title === "Complete Sleep Package" ? "complete-package" :
-                                        "family-package";
+                      const packageType = service.title === "Free Consultation" ? "free-consultation" : "complete-package";
                       scrollToForm(packageType);
                     }}
                   >
-                    {service.title === "Free Consultation" ? "Schedule Free Call" : 
-                     service.title === "Complete Sleep Package" ? "Get Started Today" : 
-                     "Join Workshop"}
+                    {service.title === "Free Consultation" ? "Schedule Free Call" : "Get Started Today"}
                   </Button>
                 </div>
               );
