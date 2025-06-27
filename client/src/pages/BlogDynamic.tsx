@@ -1,147 +1,96 @@
-import { useQuery } from "@tanstack/react-query";
-import { Calendar, Clock, ArrowRight } from "lucide-react";
+import { ArrowLeft, Moon, Sparkles, Calendar } from "lucide-react";
 import { Link } from "wouter";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
-interface BlogPost {
-  id: number;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  imageUrl?: string;
-  published: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export default function Blog() {
-  const [visibleCount, setVisibleCount] = useState(3);
-  
-  const { data: blogPosts = [], isLoading } = useQuery({
-    queryKey: ["/api/blog", "published"],
-    queryFn: async () => {
-      const response = await fetch("/api/blog?published=true");
-      if (!response.ok) throw new Error("Failed to fetch blog posts");
-      return response.json() as Promise<BlogPost[]>;
-    },
-  });
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const estimateReadTime = (content: string) => {
-    const wordsPerMinute = 200;
-    const wordCount = content.split(' ').length;
-    return Math.ceil(wordCount / wordsPerMinute);
-  };
-
-  const loadMoreArticles = () => {
-    setVisibleCount(prev => prev + 3);
-  };
-
-  const visiblePosts = blogPosts.slice(0, visibleCount);
-  const hasMorePosts = visibleCount < blogPosts.length;
-
   return (
     <main className="min-h-screen bg-cream">
       {/* Hero Section */}
       <section className="py-16 sm:py-24 bg-gradient-to-br from-baby-blue/20 via-soft-pink/10 to-mint/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-soft-dark mb-6">
-            Sleep Tips & Insights
+            Blog Coming Soon
           </h1>
           <p className="text-lg sm:text-xl text-medium-gray leading-relaxed">
-            Expert advice, practical strategies, and evidence-based guidance to help your family 
-            get the peaceful sleep you deserve.
+            We're preparing valuable content about baby sleep tips, expert advice, and 
+            evidence-based strategies to help your family get better rest.
           </p>
         </div>
       </section>
 
-      {/* Blog Posts */}
+      {/* Under Construction Content */}
       <section className="py-16 sm:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {isLoading ? (
-            <div className="text-center">
-              <div className="text-medium-gray text-lg">Loading articles...</div>
-            </div>
-          ) : blogPosts.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {visiblePosts.map((post, index) => (
-                  <article 
-                    key={post.id} 
-                    className={`${index === 0 ? 'md:col-span-2 lg:col-span-1' : ''} bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow`}
-                  >
-                    {post.imageUrl ? (
-                      <img 
-                        src={post.imageUrl} 
-                        alt={post.title}
-                        className={`${index === 0 ? 'h-48' : 'h-48'} w-full object-cover`}
-                      />
-                    ) : (
-                      <div className={`${index === 0 ? 'h-48' : 'h-48'} bg-gradient-to-br ${
-                        index % 6 === 0 ? 'from-baby-blue to-soft-pink' :
-                        index % 6 === 1 ? 'from-soft-pink to-mint' :
-                        index % 6 === 2 ? 'from-mint to-baby-blue' :
-                        index % 6 === 3 ? 'from-baby-blue/50 to-soft-pink/50' :
-                        index % 6 === 4 ? 'from-soft-pink/50 to-mint/50' :
-                        'from-mint/50 to-baby-blue/50'
-                      }`}></div>
-                    )}
-                    <div className={`${index === 0 ? 'p-6 sm:p-8' : 'p-6'}`}>
-                      <div className="flex items-center text-sm text-medium-gray mb-3">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        {formatDate(post.createdAt)}
-                        <span className="mx-2">•</span>
-                        <Clock className="h-4 w-4 mr-2" />
-                        {estimateReadTime(post.content)} min read
-                      </div>
-                      <h2 className={`${index === 0 ? 'text-xl sm:text-2xl' : 'text-lg'} font-bold text-soft-dark mb-3 leading-tight`}>
-                        {post.title}
-                      </h2>
-                      <p className={`text-medium-gray mb-4 ${index === 0 ? 'leading-relaxed' : 'text-sm leading-relaxed'}`}>
-                        {post.excerpt}
-                      </p>
-                      <Link href={`/blog/${post.slug}`}>
-                        <span className={`text-baby-blue font-semibold hover:text-soft-pink transition-colors cursor-pointer ${index === 0 ? '' : 'text-sm'}`}>
-                          Read More →
-                        </span>
-                      </Link>
-                    </div>
-                  </article>
-                ))}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-12">
+            {/* Icon */}
+            <div className="flex justify-center mb-8">
+              <div className="bg-gradient-to-br from-baby-blue to-soft-pink rounded-full p-6">
+                <Moon className="h-12 w-12 text-white" />
               </div>
-              
-              {/* Load More Button */}
-              {hasMorePosts && (
-                <div className="text-center mt-12">
-                  <Button 
-                    onClick={loadMoreArticles}
-                    className="bg-baby-blue hover:bg-baby-blue/90 text-white px-8 py-3 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105"
-                  >
-                    Load More Articles
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="text-center py-16">
-              <h2 className="text-2xl font-bold text-soft-dark mb-4">No Articles Yet</h2>
-              <p className="text-medium-gray">
-                We're working on creating helpful sleep tips and insights for you. Check back soon!
-              </p>
             </div>
-          )}
+            
+            {/* Main Message */}
+            <h2 className="text-2xl sm:text-3xl font-bold text-soft-dark mb-6">
+              Under Construction
+            </h2>
+            
+            <p className="text-lg text-medium-gray mb-8 leading-relaxed">
+              Our blog is currently being prepared with expert sleep consulting content. 
+              We're working hard to bring you valuable insights, practical tips, and 
+              evidence-based strategies to help your baby sleep better.
+            </p>
+            
+            {/* Features Coming Soon */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="flex items-center justify-center md:justify-start">
+                <Sparkles className="h-5 w-5 text-baby-blue mr-3" />
+                <span className="text-medium-gray">Sleep Training Tips</span>
+              </div>
+              <div className="flex items-center justify-center md:justify-start">
+                <Sparkles className="h-5 w-5 text-soft-pink mr-3" />
+                <span className="text-medium-gray">Expert Advice</span>
+              </div>
+              <div className="flex items-center justify-center md:justify-start">
+                <Calendar className="h-5 w-5 text-mint mr-3" />
+                <span className="text-medium-gray">Age-Specific Guidance</span>
+              </div>
+              <div className="flex items-center justify-center md:justify-start">
+                <Moon className="h-5 w-5 text-baby-blue mr-3" />
+                <span className="text-medium-gray">Sleep Success Stories</span>
+              </div>
+            </div>
+            
+            {/* Call to Action */}
+            <div className="space-y-4">
+              <p className="text-medium-gray">
+                In the meantime, feel free to explore our services or get in touch for a consultation.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/services">
+                  <Button className="bg-baby-blue hover:bg-baby-blue/90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+                    View Services
+                  </Button>
+                </Link>
+                
+                <Link href="/contact">
+                  <Button variant="outline" className="border-baby-blue text-baby-blue hover:bg-baby-blue hover:text-white px-8 py-3 rounded-full font-semibold transition-all duration-300">
+                    Contact Us
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+          
+          {/* Back to Home */}
+          <div className="mt-12">
+            <Link href="/">
+              <span className="text-baby-blue hover:text-soft-pink transition-colors cursor-pointer inline-flex items-center font-semibold">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Home
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
     </main>
