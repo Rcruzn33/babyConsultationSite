@@ -49,6 +49,14 @@ app.use("/uploads", (req, res, next) => {
 });
 app.use("/uploads", express.static(uploadsPath));
 
+// Serve attached assets statically
+const attachedAssetsPath = path.join(process.cwd(), "attached_assets");
+app.use("/attached_assets", (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+});
+app.use("/attached_assets", express.static(attachedAssetsPath));
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
