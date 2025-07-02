@@ -57,7 +57,7 @@ export default function Home() {
 
             <div className="relative mt-8 lg:mt-0">
               <img
-                src="https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+                src="https://images.unsplash.com/photo-1544965503-7ad532d62e9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
                 alt="Peaceful baby sleeping in nursery"
                 className="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto"
               />
