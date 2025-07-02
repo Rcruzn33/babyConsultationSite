@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,6 +26,7 @@ type ConsultationFormData = z.infer<typeof consultationFormSchema>;
 
 export default function Services() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedService, setSelectedService] = useState<string>("");
   const { toast } = useToast();
 
   const form = useForm<ConsultationFormData>({
@@ -36,10 +37,29 @@ export default function Services() {
       phone: "",
       childAge: "",
       sleepChallenges: "",
-      consultationType: "",
+      consultationType: selectedService,
       preferredDate: "",
     },
   });
+
+  // Update form when service is selected
+  const handleServiceSelect = (serviceTitle: string) => {
+    setSelectedService(serviceTitle);
+    form.setValue("consultationType", serviceTitle);
+    
+    // Scroll to form
+    const formElement = document.getElementById("consultation-form");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Sync form when selectedService changes
+  useEffect(() => {
+    if (selectedService) {
+      form.setValue("consultationType", selectedService);
+    }
+  }, [selectedService, form]);
 
   const scrollToForm = (packageType: string) => {
     // Set the selected package in the form
@@ -187,10 +207,7 @@ export default function Services() {
                   </ul>
                   <Button 
                     className={`w-full ${service.buttonBg} text-white py-3 rounded-full font-semibold hover:bg-baby-blue transition-colors touch-target`}
-                    onClick={() => {
-                      const packageType = service.title === "Free Consultation" ? "free-consultation" : "complete-package";
-                      scrollToForm(packageType);
-                    }}
+                    onClick={() => handleServiceSelect(service.title)}
                   >
                     {service.title === "Free Consultation" ? "Schedule Free Call" : "Get Started Today"}
                   </Button>
@@ -299,9 +316,9 @@ export default function Services() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="free-consultation">Free Consultation</SelectItem>
-                                  <SelectItem value="complete-package">Complete Sleep Package</SelectItem>
-                                  <SelectItem value="family-package">Family Sleep Package</SelectItem>
+                                  <SelectItem value="Free Consultation">Free Consultation</SelectItem>
+                                  <SelectItem value="Complete Sleep Package">Complete Sleep Package</SelectItem>
+                                  <SelectItem value="Newborn Care">Newborn Care</SelectItem>
                                 </SelectContent>
                               </Select>
                               <FormMessage />
