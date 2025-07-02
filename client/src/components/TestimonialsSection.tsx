@@ -38,9 +38,6 @@ export default function TestimonialsSection() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">What Parents Say</h2>
-            <p className="text-lg sm:text-xl text-medium-gray max-w-3xl mx-auto">
-              Real stories from families who have found peaceful nights with our gentle approach.
-            </p>
           </div>
           <div className="text-center">
             <div className="text-medium-gray">Loading testimonials...</div>
@@ -56,9 +53,6 @@ export default function TestimonialsSection() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">What Parents Say</h2>
-            <p className="text-lg sm:text-xl text-medium-gray max-w-3xl mx-auto">
-              Real stories from families who have found peaceful nights with our gentle approach.
-            </p>
           </div>
           <div className="text-center">
             <div className="text-red-500">Error loading testimonials: {error.message}</div>
@@ -75,9 +69,6 @@ export default function TestimonialsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">What Parents Say</h2>
-          <p className="text-lg sm:text-xl text-medium-gray max-w-3xl mx-auto">
-            Real stories from families who have found peaceful nights with our gentle approach.
-          </p>
         </div>
 
         {testimonials.length > 0 ? (
