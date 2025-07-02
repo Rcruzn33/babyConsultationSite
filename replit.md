@@ -92,6 +92,7 @@ The deployment uses autoscale targeting with build and run commands configured f
 - **June 27, 2025**: Added third service option "Newborn Care" to Services page with comprehensive feature list and mint color scheme
 - **June 27, 2025**: Updated Services page form to auto-select service type when clicking service cards and scroll to consultation form
 - **June 27, 2025**: Removed descriptive paragraph under "What Parents Say" section on About page for cleaner presentation
+- **June 27, 2025**: Updated main page hero image to feature baby sleeping with white natural color theme
 
 ## User Preferences
 
