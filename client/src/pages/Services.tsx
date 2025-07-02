@@ -131,7 +131,7 @@ export default function Services() {
       popular: true,
       features: [
         "Comprehensive sleep assessment",
-        "Three days nap and nighttime sleep monitoring",
+        "Day and Night sleep monitoring",
         "Personalized daily schedule and daytime activities",
         "Personalized sleep plan",
         "Child's room assessment",

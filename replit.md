@@ -90,6 +90,8 @@ The deployment uses autoscale targeting with build and run commands configured f
 - **June 26, 2025**: Updated Privacy Policy with comprehensive new content and proper contact information
 - **June 27, 2025**: Created "under construction" blog page with professional messaging while keeping full blog functionality available in admin dashboard
 - **June 27, 2025**: Added third service option "Newborn Care" to Services page with comprehensive feature list and mint color scheme
+- **June 27, 2025**: Updated Services page form to auto-select service type when clicking service cards and scroll to consultation form
+- **June 27, 2025**: Removed descriptive paragraph under "What Parents Say" section on About page for cleaner presentation
 
 ## User Preferences
 
