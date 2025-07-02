@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Phone, Bed, Check, Calendar } from "lucide-react";
+import { Phone, Bed, Check, Calendar, Baby } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const consultationFormSchema = z.object({
@@ -120,7 +120,22 @@ export default function Services() {
         "Schedule adjustment due to child's growth",
       ],
     },
-
+    {
+      icon: Baby,
+      title: "Newborn Care",
+      bgColor: "bg-mint/10",
+      iconBg: "bg-mint",
+      buttonBg: "bg-mint",
+      features: [
+        "Prenatal and Postpartum education",
+        "Creating sustainable routines from day 1",
+        "One-on-one newborn care consultation",
+        "Custom newborn care sleep plan",
+        "Education on feeding, soothing, routines, and more",
+        "Gentle methods that support both child and parents",
+        "In home or virtual assistance",
+      ],
+    },
   ];
 
   return (
@@ -137,7 +152,7 @@ export default function Services() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
             {services.map((service, index) => {
               const IconComponent = service.icon;
               return (

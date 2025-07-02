@@ -89,6 +89,7 @@ The deployment uses autoscale targeting with build and run commands configured f
 - **June 26, 2025**: Removed Group Workshop section from Services page, now showing only Free Consultation and Complete Sleep Package
 - **June 26, 2025**: Updated Privacy Policy with comprehensive new content and proper contact information
 - **June 27, 2025**: Created "under construction" blog page with professional messaging while keeping full blog functionality available in admin dashboard
+- **June 27, 2025**: Added third service option "Newborn Care" to Services page with comprehensive feature list and mint color scheme
 
 ## User Preferences
 
