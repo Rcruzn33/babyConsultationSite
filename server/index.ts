@@ -57,6 +57,11 @@ app.use("/attached_assets", (req, res, next) => {
 });
 app.use("/attached_assets", express.static(attachedAssetsPath));
 
+// Serve admin access page
+app.get("/admin-access", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "admin-direct.html"));
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
