@@ -203,6 +203,8 @@ const CreateBlogPostForm = ({ onPostCreated }: { onPostCreated: () => void }) =>
 };
 
 export default function Admin() {
+  // All hooks must be called at the top level, before any conditional returns
+  const { user, logoutMutation } = useAuth();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -593,8 +595,6 @@ Submitted: ${formatDate(consultation.createdAt)}`;
   const pendingContacts = contacts.filter(c => !c.responded).length;
   const pendingConsultations = consultations.filter(c => c.status === 'pending').length;
   const pendingTestimonials = testimonials.filter(t => !t.approved).length;
-
-  const { user, logoutMutation } = useAuth();
 
   const handleLogout = () => {
     logoutMutation.mutate();
