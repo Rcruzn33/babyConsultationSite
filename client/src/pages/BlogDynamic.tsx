@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import type { BlogPost } from "@/../../shared/schema";
+import type { BlogPost } from "../../../shared/schema";
 
 export default function Blog() {
   const { data: blogPosts, isLoading, error } = useQuery<BlogPost[]>({
@@ -16,6 +16,8 @@ export default function Blog() {
       return response.json();
     },
   });
+
+  console.log("Blog component - isLoading:", isLoading, "error:", error, "blogPosts:", blogPosts);
 
   if (isLoading) {
     return (
@@ -52,8 +54,8 @@ export default function Blog() {
   }
 
   const publishedPosts = blogPosts || [];
-  const featuredPost = publishedPosts.find(post => post.featured) || publishedPosts[0];
-  const regularPosts = publishedPosts.filter(post => post.id !== featuredPost?.id);
+  const featuredPost = publishedPosts[0]; // Use first post as featured
+  const regularPosts = publishedPosts.slice(1); // Rest of the posts
 
   return (
     <main className="min-h-screen bg-cream">
@@ -121,10 +123,10 @@ export default function Blog() {
                       <div className="p-6 sm:p-8 lg:p-12">
                         <div className="flex items-center text-medium-gray text-xs sm:text-sm mb-4">
                           <Calendar className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                          <span>{format(new Date(featuredPost.publishedAt!), "MMMM d, yyyy")}</span>
+                          <span>{format(new Date(featuredPost.createdAt), "MMMM d, yyyy")}</span>
                           <span className="mx-2">•</span>
                           <Clock className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                          <span>{featuredPost.readingTime || 5} min read</span>
+                          <span>5 min read</span>
                         </div>
                         <h2 className="text-2xl sm:text-3xl font-bold text-soft-dark mb-4">
                           {featuredPost.title}
@@ -166,10 +168,10 @@ export default function Blog() {
                       <div className="p-4 sm:p-6">
                         <div className="flex items-center text-medium-gray text-xs sm:text-sm mb-3">
                           <Calendar className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                          <span>{format(new Date(post.publishedAt!), "MMM d, yyyy")}</span>
+                          <span>{format(new Date(post.createdAt), "MMM d, yyyy")}</span>
                           <span className="mx-2">•</span>
                           <Clock className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-                          <span>{post.readingTime || 5} min read</span>
+                          <span>5 min read</span>
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold text-soft-dark mb-3">
                           {post.title}
