@@ -1,5 +1,6 @@
 import { Star } from "lucide-react";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import friendWebsitePic from "@assets/friend website pic_1751661228509.jpeg";
 
 export default function About() {
 
@@ -34,7 +35,7 @@ export default function About() {
 
             <div className="relative mt-8 lg:mt-0">
               <img
-                src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+                src={friendWebsitePic}
                 alt="Yana, certified sleep consultant"
                 className="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto"
               />
