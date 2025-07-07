@@ -1,0 +1,52 @@
+{
+  "name": "baby-sleep-consulting",
+  "version": "1.0.0",
+  "description": "Baby Sleep Consulting Website - Professional sleep consulting services for babies and families",
+  "main": "server.js",
+  "homepage": "https://yourusername.github.io/baby-sleep-consulting",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/baby-sleep-consulting.git"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client-src && npm run build",
+    "build:server": "tsc server/**/*.ts --outDir dist/server",
+    "build:github": "node build-for-github.js",
+    "deploy": "npm run build:github && gh-pages -d .",
+    "db:push": "drizzle-kit push:pg",
+    "db:studio": "drizzle-kit studio"
+  },
+  "keywords": [
+    "baby",
+    "sleep",
+    "consulting",
+    "parenting",
+    "infant",
+    "sleep-training",
+    "family",
+    "wellness"
+  ],
+  "author": "Happy Baby Sleeping",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "dotenv": "^16.3.1",
+    "pg": "^8.11.3",
+    "bcrypt": "^5.1.1",
+    "@sendgrid/mail": "^7.7.0",
+    "drizzle-orm": "^0.29.0",
+    "@neondatabase/serverless": "^0.6.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.0",
+    "typescript": "^5.0.0",
+    "nodemon": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
