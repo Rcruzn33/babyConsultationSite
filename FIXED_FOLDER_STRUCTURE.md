@@ -1,49 +1,61 @@
-# Fixed Folder Structure for GitHub Upload
+# Fix Git Connection Issue
 
-## The Problem
-Your build was failing because the folder structure in your GitHub repository doesn't match what the build system expects.
+## Problem
+Your GitHub repository was cleared, but your local git still has references to the old remote branches. This causes the "Remote ref of current branch is missing" error.
 
-## The Solution
-I've fixed the folder structure. You need to upload these changes to your GitHub repository:
+## Solution
 
-### Required Folder Structure:
+Since you can't use git commands directly due to restrictions, here's the easiest approach:
+
+### Method 1: Upload Files Manually (Recommended)
+
+1. **Ignore the git error** - it's just a sync issue
+2. **Upload files directly to GitHub** using the web interface
+3. **Use the content I provided** in the previous messages
+
+### Method 2: Fix Git Connection (If you have shell access)
+
+If you can access the terminal/shell:
+
+```bash
+cd github-deploy
+git checkout main
+git pull origin main
+git add .
+git commit -m "Upload complete baby sleep website"
+git push origin main
 ```
-your-repo/
-├── client/
-│   └── src/
-│       ├── App.tsx
-│       ├── main.tsx
-│       ├── index.css
-│       ├── components/
-│       ├── hooks/
-│       ├── lib/
-│       └── pages/
-├── server/
-├── shared/
-├── attached_assets/
-├── package.json
-├── vite.config.ts
-└── other config files...
-```
 
-## What You Need to Do:
+### Method 3: Create New Repository Connection
 
-1. **Delete the current `client-src` folder** in your GitHub repository
-2. **Upload the new `client` folder** (with the `src` subfolder structure)
-3. **Redeploy on Render**
+1. Go to your GitHub repository
+2. Get the new clone URL
+3. Create a fresh connection
 
-## Quick Upload Steps:
+## Key Files to Upload
 
-1. Go to: https://github.com/Rcruzn33/babyConsultationSite
-2. Delete the `client-src` folder
-3. Upload the entire `client` folder from your `github-deploy` directory here
-4. Commit changes
-5. Go back to Render and trigger a new deployment
+Since the git sync is broken, focus on manually uploading these critical files:
 
-## Why This Fixes the Issue:
-The build system expects files to be in `client/src/` but your files were in `client-src/`. This mismatch caused the "vite: not found" error because it couldn't locate the source files.
+### Root Files:
+- `package.json` (most important)
+- `vite.config.ts`
+- `tailwind.config.ts`
+- `tsconfig.json`
+- `drizzle.config.ts`
+- `postcss.config.js`
+- `components.json`
 
-## After Upload:
-Your Render build should now work correctly with:
-- Build Command: `npm install && npm run build`
-- Start Command: `npm start`
+### Folders:
+- `client/src/` (entire folder with all React files)
+- `server/` (entire folder with all backend files)
+- `shared/` (database schema)
+- `attached_assets/` (your images)
+
+## After Upload
+
+Once files are uploaded to GitHub:
+1. Go to Render
+2. Trigger a new deployment
+3. The build should work with the correct folder structure
+
+The git error won't affect the deployment - it's just a local sync issue.
