@@ -1,19 +1,13 @@
-# How to Fix Git Connection in Replit
+# Git Command Guide - SSL Certificate Fix
 
-## Where to Find the Shell/Terminal
+## Current Issue
+- SSL certificate error persists in production
+- Git conflicts preventing push to GitHub
+- Need to resolve conflicts and deploy SSL fix
 
-1. **In Replit, look at the bottom tabs** - you should see:
-   - Console
-   - Shell (this is where you type commands)
-   - Git (this is where you're seeing the error)
+## Step-by-Step Git Fix
 
-2. **Click on "Shell" tab** - this opens the terminal where you can type commands
-
-## Commands to Fix the Git Connection
-
-Once you're in the Shell tab, type these commands one by one:
-
-### Step 1: Navigate to the correct folder
+### Step 1: Navigate to the github-deploy directory
 ```bash
 cd github-deploy
 ```
@@ -23,19 +17,20 @@ cd github-deploy
 git status
 ```
 
-### Step 3: Pull from remote (this might fix the connection)
+### Step 3: Pull latest changes first
 ```bash
-git pull origin main --allow-unrelated-histories
+git pull origin main --rebase
 ```
 
-### Step 4: Add all files
+### Step 4: If conflicts occur, resolve them manually
+- Edit any files that show conflicts
+- Look for `<<<<<<<`, `=======`, and `>>>>>>>` markers
+- Choose the correct version and remove the conflict markers
+
+### Step 5: Add and commit changes
 ```bash
 git add .
-```
-
-### Step 5: Commit changes
-```bash
-git commit -m "Upload complete baby sleep website"
+git commit -m "Fix SSL certificate validation for production database"
 ```
 
 ### Step 6: Push to GitHub
@@ -43,24 +38,37 @@ git commit -m "Upload complete baby sleep website"
 git push origin main
 ```
 
-## If Commands Don't Work
+## Files That Need SSL Fix
 
-If the Shell tab is not available or commands don't work:
+The following files need to be updated with SSL configuration:
 
-1. **Use the manual upload method** I described earlier
-2. **Go directly to GitHub** and upload files through the web interface
-3. **Copy and paste** the file contents I provided
-
-## Alternative: Reset Git Connection
-
-If the above doesn't work, try:
-
-```bash
-cd github-deploy
-git remote remove origin
-git remote add origin https://github.com/Rcruzn33/babyConsultationSite.git
-git branch -M main
-git push -u origin main
+### server/db.ts
+```typescript
+export const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 ```
 
-The Shell tab is your terminal - that's where you can type these Git commands!
+### server/index.ts (session store section)
+```typescript
+  store: new PgSession({
+    conString: process.env.DATABASE_URL,
+    createTableIfMissing: true,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  }),
+```
+
+## Alternative: Force Push (if conflicts persist)
+If you're comfortable overwriting remote changes:
+```bash
+git push origin main --force
+```
+
+## After Successful Push
+1. GitHub should automatically trigger Render deployment
+2. Check Render logs for successful deployment
+3. SSL certificate error should be resolved
+
+## Manual Deployment Alternative
+If git issues persist, you can manually edit files directly in your GitHub repository through the web interface, then trigger a manual deployment in Render.
