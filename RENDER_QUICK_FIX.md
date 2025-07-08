@@ -1,43 +1,54 @@
-# Quick Render Deployment Fix
+# RENDER QUICK FIX - Hostname Resolution Error
 
-## Your Files Are Now on GitHub ✓
+## Progress Made ✅
+- SSL/TLS error is FIXED! 
+- New error: "getaddrinfo ENOTFOUND host" - hostname resolution issue
 
-Great! Your complete website is now uploaded to GitHub with the correct folder structure.
+## What This Means
+The database connection is trying to connect but can't find the hostname. This suggests:
+1. DATABASE_URL hostname might be incorrect
+2. Network connectivity issue
+3. Database service might be down
 
-## Next Steps for Render Deployment
+## Quick Debug Steps
 
-### 1. Go to Render Dashboard
-- Visit: https://render.com
-- Log into your account
-- Find your existing baby sleep website service
+### Step 1: Check Your DATABASE_URL Format
+In Render dashboard, your DATABASE_URL should look like:
+```
+postgresql://username:password@ep-example-123456.us-east-1.aws.neon.tech:5432/database?sslmode=require
+```
 
-### 2. Trigger New Deployment
-- Click "Manual Deploy" or "Deploy Latest Commit"
-- This will pull the latest files from GitHub
+**Check for these common issues:**
+- Make sure there are no extra spaces
+- Verify the hostname is complete (includes .neon.tech or similar)
+- Ensure port 5432 is included
+- Username and password are correct
 
-### 3. Check Build Settings
-Make sure these are set correctly:
-- **Build Command**: `npm install && npm run build`
-- **Start Command**: `npm start`
-- **Node Version**: 18 or higher
+### Step 2: Verify Database Service Status
+1. Check if your database provider (Neon/Supabase/etc.) is online
+2. Test the connection from your local machine if possible
+3. Verify the database hasn't been suspended or deleted
 
-### 4. Environment Variables
-Ensure these are set:
-- `DATABASE_URL` (your PostgreSQL database URL)
-- `SESSION_SECRET` (any random string)
-- `NODE_ENV=production`
+### Step 3: Test Connection
+Try copying your DATABASE_URL and testing it locally:
+```bash
+psql "your-database-url-here"
+```
 
-### 5. Expected Build Success
-With the correct folder structure now uploaded, your build should succeed because:
-- ✓ `package.json` has all dependencies
-- ✓ `client/src/` folder structure is correct (not `client-src/`)
-- ✓ All configuration files are in place
-- ✓ Vite build will find the React files properly
+### Step 4: Alternative DATABASE_URL Formats
+If using Neon, try these formats:
+```
+postgresql://username:password@ep-example-123456.us-east-1.aws.neon.tech:5432/database?sslmode=require
+```
 
-## If Build Still Fails
-Check the build logs for specific errors. The most common issues are resolved:
-- ✓ Missing dependencies (fixed with complete package.json)
-- ✓ Wrong folder structure (fixed with client/src/)
-- ✓ Missing config files (all uploaded)
+If using Supabase:
+```
+postgresql://postgres:password@db.example.supabase.co:5432/postgres?sslmode=require
+```
 
-Your website should deploy successfully now!
+## Next Steps
+1. Double-check your DATABASE_URL format in Render
+2. Verify your database service is active
+3. Try redeploying after confirming the URL is correct
+
+The SSL issue is resolved - now we just need to fix the hostname resolution!
