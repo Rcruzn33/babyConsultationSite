@@ -28,6 +28,7 @@ app.use(session({
   store: new PgSession({
     conString: process.env.DATABASE_URL,
     createTableIfMissing: true,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   }),
   secret: process.env.SESSION_SECRET || "your-secret-key-change-in-production",
   resave: false,
