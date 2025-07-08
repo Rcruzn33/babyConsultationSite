@@ -28,6 +28,7 @@ app.use(session({
   store: new PgSession({
     conString: process.env.DATABASE_URL,
     createTableIfMissing: true,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   }),
   secret: process.env.SESSION_SECRET || "your-secret-key-change-in-production",
   resave: false,
@@ -115,7 +116,7 @@ app.use((req, res, next) => {
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = 5000;
+  const port = process.env.PORT || 5000;
   server.listen({
     port,
     host: "0.0.0.0",
