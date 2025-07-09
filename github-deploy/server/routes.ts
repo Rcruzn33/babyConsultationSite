@@ -239,11 +239,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Blog posts
   app.get("/api/blog", async (req, res) => {
     try {
+      console.log(`Blog request: publishedOnly=${req.query.published}`);
       const publishedOnly = req.query.published === "true";
       const posts = await storage.getAllBlogPosts(publishedOnly);
+      console.log(`Blog posts fetched: ${posts.length} posts`);
       res.json(posts);
     } catch (error) {
       console.error(`Get blog posts error: ${error}`);
+      console.error(`Error stack: ${error.stack}`);
       res.status(500).json({ error: "Failed to fetch blog posts" });
     }
   });
@@ -298,6 +301,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Testimonials
   app.get("/api/testimonials", async (req, res) => {
     try {
+      console.log(`Testimonials request: approved=${req.query.approved}`);
       const approvedOnly = req.query.approved === "true";
       const isAdminRequest = req.query.approved !== "true";
       
@@ -314,9 +318,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const testimonials = approvedOnly 
         ? await storage.getApprovedTestimonials()
         : await storage.getAllTestimonials();
+      console.log(`Testimonials fetched: ${testimonials.length} testimonials`);
       res.json(testimonials);
     } catch (error) {
       console.error(`Get testimonials error: ${error}`);
+      console.error(`Error stack: ${error.stack}`);
       res.status(500).json({ error: "Failed to fetch testimonials" });
     }
   });
