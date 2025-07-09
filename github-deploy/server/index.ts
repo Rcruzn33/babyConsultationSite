@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 // Session configuration
 const PgSession = ConnectPgSimple(session);
 app.use(session({
-   store: new PgSession({
+     store: new PgSession({
     conString: process.env.DATABASE_URL,
     createTableIfMissing: true,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
