@@ -116,8 +116,7 @@ app.use((req, res, next) => {
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  // Use the PORT environment variable provided by Render, fallback to 10000 for production
-const port = process.env.PORT || (process.env.NODE_ENV === 'production' ? 10000 : 5000);
+const port = parseInt(process.env.PORT || '10000', 10);
   server.listen({
     port,
     host: "0.0.0.0",
