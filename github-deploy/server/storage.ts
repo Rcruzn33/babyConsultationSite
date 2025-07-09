@@ -177,12 +177,22 @@ export class PostgresStorage implements IStorage {
     return result[0];
   }
 
-  async getAllBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
+async getAllBlogPosts(publishedOnly = false): Promise<BlogPost[]> {
+  try {
+    console.log(`Storage: getAllBlogPosts called with publishedOnly=${publishedOnly}`);
     if (publishedOnly) {
-      return await db.select().from(blogPosts).where(eq(blogPosts.published, true)).orderBy(blogPosts.createdAt);
+      const result = await db.select().from(blogPosts).where(eq(blogPosts.published, true)).orderBy(blogPosts.createdAt);
+      console.log(`Storage: Found ${result.length} published blog posts`);
+      return result;
     }
-    return await db.select().from(blogPosts).orderBy(blogPosts.createdAt);
+    const result = await db.select().from(blogPosts).orderBy(blogPosts.createdAt);
+    console.log(`Storage: Found ${result.length} total blog posts`);
+    return result;
+  } catch (error) {
+    console.error(`Storage: getAllBlogPosts error:`, error);
+    throw error;
   }
+}
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
     const result = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1);
@@ -203,9 +213,17 @@ export class PostgresStorage implements IStorage {
     return await db.select().from(testimonials).where(eq(testimonials.approved, true)).orderBy(testimonials.createdAt);
   }
 
-  async getAllTestimonials(): Promise<Testimonial[]> {
-    return await db.select().from(testimonials).orderBy(testimonials.createdAt);
+async getApprovedTestimonials(): Promise<Testimonial[]> {
+  try {
+    console.log(`Storage: getApprovedTestimonials called`);
+    const result = await db.select().from(testimonials).where(eq(testimonials.approved, true)).orderBy(testimonials.createdAt);
+    console.log(`Storage: Found ${result.length} approved testimonials`);
+    return result;
+  } catch (error) {
+    console.error(`Storage: getApprovedTestimonials error:`, error);
+    throw error;
   }
+}
 
   async approveTestimonial(id: number): Promise<void> {
     await db.update(testimonials).set({ approved: true }).where(eq(testimonials.id, id));
