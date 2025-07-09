@@ -10,16 +10,14 @@ if (!process.env.DATABASE_URL) {
     "DATABASE_URL must be set. Did you forget to provision a database?",
   );
 }
+
 console.log("Database initialization - NODE_ENV:", process.env.NODE_ENV);
 console.log("Database initialization - DATABASE_URL exists:", !!process.env.DATABASE_URL);
 console.log("Database initialization - Using SSL:", process.env.NODE_ENV === 'production');
-// Configure Neon for production SSL
-if (process.env.NODE_ENV === 'production') {
-  neonConfig.ssl = true;
-  neonConfig.sslmode = 'require';
-}
 
 export const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 export const db = drizzle({ client: pool, schema });
+
