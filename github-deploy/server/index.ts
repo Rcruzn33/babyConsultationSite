@@ -113,8 +113,8 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Use the PORT environment variable provided by Render, fallback to 5000 for local development
-  const port = process.env.PORT || 5000;
+  // Use the PORT environment variable provided by Render, fallback to 10000 for production
+  const port = process.env.PORT || (process.env.NODE_ENV === 'production' ? 10000 : 5000);
   server.listen({
     port,
     host: "0.0.0.0",
