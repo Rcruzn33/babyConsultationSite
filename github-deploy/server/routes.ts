@@ -236,17 +236,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Blog posts
-  app.get("/api/blog", async (req, res) => {
-    try {
-      const publishedOnly = req.query.published === "true";
-      const posts = await storage.getAllBlogPosts(publishedOnly);
-      res.json(posts);
-    } catch (error) {
-      console.error(`Get blog posts error: ${error}`);
-      res.status(500).json({ error: "Failed to fetch blog posts" });
-    }
-  });
+// Blog posts
+app.get("/api/blog", async (req, res) => {
+  try {
+    console.log(`Blog request: publishedOnly=${req.query.published}`);
+    const publishedOnly = req.query.published === "true";
+    const posts = await storage.getAllBlogPosts(publishedOnly);
+    console.log(`Blog posts fetched: ${posts.length} posts`);
+    res.json(posts);
+  } catch (error) {
+    console.error(`Get blog posts error: ${error}`);
+    console.error(`Error stack: ${error.stack}`);
+    res.status(500).json({ error: "Failed to fetch blog posts" });
+  }
+});
 
   app.get("/api/blog/:slug", async (req, res) => {
     try {
@@ -295,31 +298,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Testimonials
-  app.get("/api/testimonials", async (req, res) => {
-    try {
-      const approvedOnly = req.query.approved === "true";
-      const isAdminRequest = req.query.approved !== "true";
-      
-      if (isAdminRequest) {
-        // Require admin auth for getting all testimonials
-        const authResult = await new Promise<boolean>((resolve) => {
-          requireApprovedAdmin(req, res, (err) => {
-            resolve(!err);
-          });
+// Testimonials
+app.get("/api/testimonials", async (req, res) => {
+  try {
+    console.log(`Testimonials request: approved=${req.query.approved}`);
+    const approvedOnly = req.query.approved === "true";
+    const isAdminRequest = req.query.approved !== "true";
+    
+    if (isAdminRequest) {
+      // Require admin auth for getting all testimonials
+      const authResult = await new Promise<boolean>((resolve) => {
+        requireApprovedAdmin(req, res, (err) => {
+          resolve(!err);
         });
-        if (!authResult) return;
-      }
-      
-      const testimonials = approvedOnly 
-        ? await storage.getApprovedTestimonials()
-        : await storage.getAllTestimonials();
-      res.json(testimonials);
-    } catch (error) {
-      console.error(`Get testimonials error: ${error}`);
-      res.status(500).json({ error: "Failed to fetch testimonials" });
+      });
+      if (!authResult) return;
     }
-  });
+    
+    const testimonials = approvedOnly 
+      ? await storage.getApprovedTestimonials()
+      : await storage.getAllTestimonials();
+    console.log(`Testimonials fetched: ${testimonials.length} testimonials`);
+    res.json(testimonials);
+  } catch (error) {
+    console.error(`Get testimonials error: ${error}`);
+    console.error(`Error stack: ${error.stack}`);
+    res.status(500).json({ error: "Failed to fetch testimonials" });
+  }
+});
 
   app.post("/api/testimonials", requireApprovedAdmin, async (req, res) => {
     try {
