@@ -371,6 +371,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test database connection endpoint
+  app.get("/api/test-db", async (req, res) => {
+    try {
+      // Test basic connectivity
+      const userResult = await db.select().from(users).limit(1);
+      
+      // Test if blog_posts table exists
+      const blogResult = await db.select().from(blogPosts).limit(1);
+      
+      // Test if testimonials table exists
+      const testimonialResult = await db.select().from(testimonials).limit(1);
+      
+      res.json({ 
+        status: "Database connected", 
+        userCount: userResult.length,
+        blogPostCount: blogResult.length,
+        testimonialCount: testimonialResult.length,
+        tablesExist: true
+      });
+    } catch (error) {
+      console.error("Database test error:", error);
+      res.status(500).json({ 
+        error: "Database connection failed", 
+        details: error.message,
+        stack: error.stack 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
