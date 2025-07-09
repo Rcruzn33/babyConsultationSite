@@ -236,20 +236,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-// Blog posts
-app.get("/api/blog", async (req, res) => {
-  try {
-    console.log(`Blog request: publishedOnly=${req.query.published}`);
-    const publishedOnly = req.query.published === "true";
-    const posts = await storage.getAllBlogPosts(publishedOnly);
-    console.log(`Blog posts fetched: ${posts.length} posts`);
-    res.json(posts);
-  } catch (error) {
-    console.error(`Get blog posts error: ${error}`);
-    console.error(`Error stack: ${error.stack}`);
-    res.status(500).json({ error: "Failed to fetch blog posts" });
-  }
-});
+  // Blog posts
+  app.get("/api/blog", async (req, res) => {
+    try {
+      console.log(`Blog request: publishedOnly=${req.query.published}`);
+      const publishedOnly = req.query.published === "true";
+      const posts = await storage.getAllBlogPosts(publishedOnly);
+      console.log(`Blog posts fetched: ${posts.length} posts`);
+      res.json(posts);
+    } catch (error) {
+      console.error(`Get blog posts error: ${error}`);
+      console.error(`Error stack: ${error.stack}`);
+      res.status(500).json({ error: "Failed to fetch blog posts" });
+    }
+  });
 
   app.get("/api/blog/:slug", async (req, res) => {
     try {
@@ -298,34 +298,34 @@ app.get("/api/blog", async (req, res) => {
     }
   });
 
-// Testimonials
-app.get("/api/testimonials", async (req, res) => {
-  try {
-    console.log(`Testimonials request: approved=${req.query.approved}`);
-    const approvedOnly = req.query.approved === "true";
-    const isAdminRequest = req.query.approved !== "true";
-    
-    if (isAdminRequest) {
-      // Require admin auth for getting all testimonials
-      const authResult = await new Promise<boolean>((resolve) => {
-        requireApprovedAdmin(req, res, (err) => {
-          resolve(!err);
+  // Testimonials
+  app.get("/api/testimonials", async (req, res) => {
+    try {
+      console.log(`Testimonials request: approved=${req.query.approved}`);
+      const approvedOnly = req.query.approved === "true";
+      const isAdminRequest = req.query.approved !== "true";
+      
+      if (isAdminRequest) {
+        // Require admin auth for getting all testimonials
+        const authResult = await new Promise<boolean>((resolve) => {
+          requireApprovedAdmin(req, res, (err) => {
+            resolve(!err);
+          });
         });
-      });
-      if (!authResult) return;
+        if (!authResult) return;
+      }
+      
+      const testimonials = approvedOnly 
+        ? await storage.getApprovedTestimonials()
+        : await storage.getAllTestimonials();
+      console.log(`Testimonials fetched: ${testimonials.length} testimonials`);
+      res.json(testimonials);
+    } catch (error) {
+      console.error(`Get testimonials error: ${error}`);
+      console.error(`Error stack: ${error.stack}`);
+      res.status(500).json({ error: "Failed to fetch testimonials" });
     }
-    
-    const testimonials = approvedOnly 
-      ? await storage.getApprovedTestimonials()
-      : await storage.getAllTestimonials();
-    console.log(`Testimonials fetched: ${testimonials.length} testimonials`);
-    res.json(testimonials);
-  } catch (error) {
-    console.error(`Get testimonials error: ${error}`);
-    console.error(`Error stack: ${error.stack}`);
-    res.status(500).json({ error: "Failed to fetch testimonials" });
-  }
-});
+  });
 
   app.post("/api/testimonials", requireApprovedAdmin, async (req, res) => {
     try {
@@ -370,34 +370,36 @@ app.get("/api/testimonials", async (req, res) => {
       res.status(500).json({ error: "Failed to delete testimonial" });
     }
   });
+
   // Test database connection endpoint
-app.get("/api/test-db", async (req, res) => {
-  try {
-    // Test basic connectivity
-    const userResult = await db.select().from(users).limit(1);
-    
-    // Test if blog_posts table exists
-    const blogResult = await db.select().from(blogPosts).limit(1);
-    
-    // Test if testimonials table exists
-    const testimonialResult = await db.select().from(testimonials).limit(1);
-    
-    res.json({ 
-      status: "Database connected", 
-      userCount: userResult.length,
-      blogPostCount: blogResult.length,
-      testimonialCount: testimonialResult.length,
-      tablesExist: true
-    });
-  } catch (error) {
-    console.error("Database test error:", error);
-    res.status(500).json({ 
-      error: "Database connection failed", 
-      details: error.message,
-      stack: error.stack 
-    });
-  }
-});
+  app.get("/api/test-db", async (req, res) => {
+    try {
+      // Test basic connectivity
+      const userResult = await db.select().from(users).limit(1);
+      
+      // Test if blog_posts table exists
+      const blogResult = await db.select().from(blogPosts).limit(1);
+      
+      // Test if testimonials table exists
+      const testimonialResult = await db.select().from(testimonials).limit(1);
+      
+      res.json({ 
+        status: "Database connected", 
+        userCount: userResult.length,
+        blogPostCount: blogResult.length,
+        testimonialCount: testimonialResult.length,
+        tablesExist: true
+      });
+    } catch (error) {
+      console.error("Database test error:", error);
+      res.status(500).json({ 
+        error: "Database connection failed", 
+        details: error.message,
+        stack: error.stack 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
