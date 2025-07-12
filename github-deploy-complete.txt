@@ -1,0 +1,54 @@
+Complete GitHub Repository Deployment to VPS
+
+Run these commands on your VPS to deploy the full React application:
+
+# 1. Stop current simple server
+sudo pkill -f "node /tmp/server.js"
+
+# 2. Clone the complete repository
+cd /var/www
+sudo git clone https://github.com/yourusername/baby-sleep-consulting.git
+cd baby-sleep-consulting
+
+# 3. Install dependencies
+sudo npm install
+
+# 4. Build the React application
+sudo npm run build
+
+# 5. Create production server
+sudo cat > production-server.js << 'EOF'
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = 80;
+
+// Serve static files from the build directory
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Handle React routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Baby Sleep Whisperer running on port ${PORT}`);
+});
+EOF
+
+# 6. Install Express
+sudo npm install express
+
+# 7. Run the complete application
+sudo node production-server.js
+
+This will deploy the complete React application with:
+- Professional hero section with two-column layout
+- Custom hero image
+- Complete navigation system
+- All service pages (About, Services, Blog, Contact)
+- Professional styling and animations
+- Responsive design
+- Admin dashboard functionality
+
+The website will be identical to your Render deployment at http://31.97.99.104
