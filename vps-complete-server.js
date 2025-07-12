@@ -1,770 +1,684 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-
 const PORT = 3000;
 
-// Complete Baby Sleep Consulting Website HTML
-const htmlContent = `<!DOCTYPE html>
+// Serve static files
+function serveStatic(req, res, filePath, contentType) {
+    try {
+        if (fs.existsSync(filePath)) {
+            const content = fs.readFileSync(filePath);
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(content);
+            return true;
+        }
+    } catch (err) {
+        console.error('Error serving static file:', err);
+    }
+    return false;
+}
+
+const server = http.createServer((req, res) => {
+    console.log('Request received:', req.method, req.url);
+    
+    const url = req.url;
+    
+    // Serve static assets
+    if (url.startsWith('/attached_assets/')) {
+        const filePath = path.join('/var/www', url);
+        if (serveStatic(req, res, filePath, 'image/jpeg')) return;
+        if (serveStatic(req, res, filePath, 'image/png')) return;
+    }
+    
+    // Serve main HTML for all other routes
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(`<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Baby Sleeping - Professional Sleep Consulting</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'baby-blue': '#87CEEB',
-                        'soft-pink': '#FFB6C1',
-                        'mint': '#98FB98',
-                        'cream': '#FFF8DC',
-                        'soft-dark': '#2F4F4F',
-                        'medium-gray': '#696969'
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Baby Sleep Whisperer - Expert Sleep Consulting for Peaceful Nights</title>
+    <meta name="description" content="Professional baby sleep consulting services. Expert guidance for healthy sleep habits, personalized methods, and ongoing support for your family.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .hero-gradient {
-            background: linear-gradient(135deg, rgba(135, 206, 235, 0.2) 0%, rgba(255, 182, 193, 0.1) 50%, rgba(152, 251, 152, 0.2) 100%);
+        :root {
+            --cream: #fefbf3;
+            --baby-blue: #87ceeb;
+            --soft-pink: #ffb6c1;
+            --pastel-yellow: #fff8dc;
+            --mint: #98fb98;
+            --soft-dark: #333333;
+            --medium-gray: #666666;
+            --light-gray: #f5f5f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--cream);
+            color: var(--soft-dark);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation */
+        nav {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 4.5rem;
+        }
+
+        .nav-logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--baby-blue);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            opacity: 0.8;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--medium-gray);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--baby-blue);
+        }
+
+        .nav-btn {
+            background: var(--soft-pink);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--baby-blue);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, 
+                hsla(207, 90%, 84%, 0.2) 0%, 
+                hsla(338, 100%, 92%, 0.1) 50%, 
+                hsla(150, 50%, 88%, 0.2) 100%);
+            padding: 5rem 0 7rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                hsla(207, 90%, 84%, 0.15) 0%, 
+                hsla(338, 100%, 92%, 0.08) 50%, 
+                hsla(150, 50%, 88%, 0.15) 100%);
+            z-index: 1;
+        }
+
+        .hero-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text {
+            text-align: left;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--soft-dark);
+            line-height: 1.1;
+        }
+
+        .hero-title .highlight {
+            color: var(--baby-blue);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--medium-gray);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.2rem;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 0.8rem 2.2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--soft-pink);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--baby-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--baby-blue);
+            border: 2px solid var(--baby-blue);
+        }
+
+        .btn-outline:hover {
+            background: var(--baby-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--baby-blue);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .hero-stat-label {
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+            font-weight: 500;
+        }
+
+        .hero-stat:nth-child(2) .hero-stat-number {
+            color: var(--soft-pink);
+        }
+
+        .hero-stat:nth-child(3) .hero-stat-number {
+            color: var(--mint);
+        }
+
+        .hero-stat:nth-child(4) .hero-stat-number {
+            color: var(--baby-blue);
+        }
+
+        .hero-image {
+            position: relative;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .hero-badge {
+            position: absolute;
+            bottom: -2rem;
+            left: -2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hero-badge-icon {
+            width: 3rem;
+            height: 3rem;
+            background: var(--mint);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .hero-badge-text {
+            font-weight: 600;
+            color: var(--soft-dark);
+            font-size: 0.9rem;
+        }
+
+        .hero-badge-subtext {
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+        }
+
+        /* Why Choose Us Section */
+        .why-section {
+            padding: 7rem 0;
+            background: white;
+        }
+
+        .section-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--soft-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: var(--medium-gray);
+            max-width: 50rem;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .feature-card:nth-child(1) {
+            background: rgba(135, 206, 235, 0.08);
+        }
+
+        .feature-card:nth-child(2) {
+            background: rgba(255, 182, 193, 0.12);
+        }
+
+        .feature-card:nth-child(3) {
+            background: rgba(152, 251, 152, 0.12);
+        }
+
+        .feature-icon {
+            width: 4.5rem;
+            height: 4.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.2rem;
+            color: white;
+        }
+
+        .feature-card:nth-child(1) .feature-icon {
+            background: var(--baby-blue);
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            background: var(--soft-pink);
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background: var(--mint);
+        }
+
+        .feature-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--soft-dark);
+            margin-bottom: 1.2rem;
+        }
+
+        .feature-description {
+            color: var(--medium-gray);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 7rem 0;
+            background: linear-gradient(135deg, 
+                hsla(207, 90%, 84%, 0.15) 0%, 
+                hsla(338, 100%, 92%, 0.08) 50%, 
+                hsla(150, 50%, 88%, 0.15) 100%);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+            margin-top: 2.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--soft-dark);
+            color: white;
+            padding: 4rem 0 1.5rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            color: white;
+        }
+
+        .footer-section p,
+        .footer-section li {
+            color: #ccc;
+            margin-bottom: 0.6rem;
+            line-height: 1.6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li:hover {
+            color: var(--baby-blue);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #555;
+            padding-top: 1.5rem;
+            color: #ccc;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .hero-title {
+                font-size: 2.8rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-stats {
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .hero-badge {
+                position: static;
+                margin-top: 1.5rem;
+                display: inline-flex;
+            }
+
+            .section-title {
+                font-size: 2.2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
-<body class="bg-cream">
-    <div id="root"></div>
-    
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-        
-        function App() {
-            const [currentPage, setCurrentPage] = useState('home');
-            const [showAdmin, setShowAdmin] = useState(false);
-            const [contacts, setContacts] = useState([]);
-            const [consultations, setConsultations] = useState([]);
-            
-            useEffect(() => {
-                if (showAdmin) {
-                    setContacts([
-                        { id: 1, name: 'Sarah Johnson', email: 'sarah@example.com', phone: '(555) 123-4567', message: 'Looking for help with my 6-month-old sleep schedule', createdAt: '2025-01-10' },
-                        { id: 2, name: 'Mike Chen', email: 'mike@example.com', phone: '(555) 987-6543', message: 'Need guidance for newborn sleep patterns', createdAt: '2025-01-09' },
-                        { id: 3, name: 'Jessica Williams', email: 'jess@example.com', phone: '(555) 456-7890', message: 'Struggling with bedtime routine for toddler', createdAt: '2025-01-08' }
-                    ]);
-                    setConsultations([
-                        { id: 1, name: 'Emma Davis', email: 'emma@example.com', phone: '(555) 456-7890', serviceType: 'Complete Sleep Package', childAge: '4-6 months', sleepIssues: 'Frequent night wakings, difficulty falling asleep', goals: 'Sleep through the night', createdAt: '2025-01-11' },
-                        { id: 2, name: 'Tom Wilson', email: 'tom@example.com', phone: '(555) 234-5678', serviceType: 'Newborn Care', childAge: '0-3 months', sleepIssues: 'Day/night confusion, short naps', goals: 'Establish good sleep habits early', createdAt: '2025-01-10' },
-                        { id: 3, name: 'Anna Rodriguez', email: 'anna@example.com', phone: '(555) 345-6789', serviceType: 'Free Consultation', childAge: '7-12 months', sleepIssues: 'Waking every 2 hours at night', goals: 'Longer sleep stretches', createdAt: '2025-01-09' }
-                    ]);
-                }
-            }, [showAdmin]);
-            
-            const submitContact = async (formData) => {
-                alert('Thank you! Your message has been sent successfully. We will get back to you within 24 hours.');
-                return true;
-            };
-            
-            const submitConsultation = async (formData) => {
-                alert('Thank you! Your consultation request has been submitted. We will contact you within 24 hours to schedule your appointment.');
-                return true;
-            };
-            
-            if (showAdmin) {
-                return (
-                    <div className="min-h-screen bg-gray-50">
-                        <header className="bg-white shadow-sm border-b">
-                            <div className="max-w-7xl mx-auto px-4 py-4">
-                                <div className="flex justify-between items-center">
-                                    <h1 className="text-2xl font-bold text-soft-dark">Admin Dashboard</h1>
-                                    <button
-                                        onClick={() => setShowAdmin(false)}
-                                        className="px-4 py-2 bg-baby-blue text-white rounded-lg hover:bg-baby-blue/80 transition-colors"
-                                    >
-                                        Back to Website
-                                    </button>
-                                </div>
-                            </div>
-                        </header>
-                        
-                        <main className="max-w-7xl mx-auto px-4 py-8">
-                            <div className="grid lg:grid-cols-2 gap-8">
-                                <div className="bg-white rounded-lg shadow-sm p-6">
-                                    <h2 className="text-xl font-bold text-soft-dark mb-4">Contact Messages ({contacts.length})</h2>
-                                    <div className="space-y-4 max-h-96 overflow-y-auto">
-                                        {contacts.map(contact => (
-                                            <div key={contact.id} className="border-l-4 border-baby-blue pl-4 py-3 bg-gray-50 rounded-r-lg">
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <h3 className="font-semibold text-soft-dark">{contact.name}</h3>
-                                                        <p className="text-sm text-medium-gray">{contact.email}</p>
-                                                        <p className="text-sm text-medium-gray">{contact.phone}</p>
-                                                    </div>
-                                                    <span className="text-xs text-medium-gray bg-white px-2 py-1 rounded">{contact.createdAt}</span>
-                                                </div>
-                                                <p className="text-sm text-soft-dark mt-2">{contact.message}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                
-                                <div className="bg-white rounded-lg shadow-sm p-6">
-                                    <h2 className="text-xl font-bold text-soft-dark mb-4">Consultation Requests ({consultations.length})</h2>
-                                    <div className="space-y-4 max-h-96 overflow-y-auto">
-                                        {consultations.map(consultation => (
-                                            <div key={consultation.id} className="border-l-4 border-soft-pink pl-4 py-3 bg-gray-50 rounded-r-lg">
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <h3 className="font-semibold text-soft-dark">{consultation.name}</h3>
-                                                        <p className="text-sm text-medium-gray">{consultation.email}</p>
-                                                        <p className="text-sm text-medium-gray">{consultation.phone}</p>
-                                                        <p className="text-sm font-medium text-soft-pink mt-1">
-                                                            {consultation.serviceType} - Child: {consultation.childAge}
-                                                        </p>
-                                                    </div>
-                                                    <span className="text-xs text-medium-gray bg-white px-2 py-1 rounded">{consultation.createdAt}</span>
-                                                </div>
-                                                <p className="text-sm text-soft-dark mt-2"><strong>Issues:</strong> {consultation.sleepIssues}</p>
-                                                <p className="text-sm text-soft-dark mt-1"><strong>Goals:</strong> {consultation.goals}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </main>
-                    </div>
-                );
-            }
-            
-            return (
-                <div className="min-h-screen bg-cream">
-                    <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50">
-                        <nav className="max-w-7xl mx-auto px-4 py-4">
-                            <div className="flex justify-between items-center">
-                                <div className="flex items-center space-x-2">
-                                    <span className="text-2xl">🌙</span>
-                                    <h1 className="text-xl font-bold text-soft-dark">Happy Baby Sleeping</h1>
-                                </div>
-                                <div className="flex space-x-6">
-                                    <button
-                                        onClick={() => setCurrentPage('home')}
-                                        className={\`px-3 py-2 rounded-lg transition-colors \${
-                                            currentPage === 'home' ? 'bg-baby-blue text-white' : 'text-soft-dark hover:bg-baby-blue/10'
-                                        }\`}
-                                    >
-                                        Home
-                                    </button>
-                                    <button
-                                        onClick={() => setCurrentPage('services')}
-                                        className={\`px-3 py-2 rounded-lg transition-colors \${
-                                            currentPage === 'services' ? 'bg-baby-blue text-white' : 'text-soft-dark hover:bg-baby-blue/10'
-                                        }\`}
-                                    >
-                                        Services
-                                    </button>
-                                    <button
-                                        onClick={() => setCurrentPage('about')}
-                                        className={\`px-3 py-2 rounded-lg transition-colors \${
-                                            currentPage === 'about' ? 'bg-baby-blue text-white' : 'text-soft-dark hover:bg-baby-blue/10'
-                                        }\`}
-                                    >
-                                        About
-                                    </button>
-                                    <button
-                                        onClick={() => setCurrentPage('contact')}
-                                        className={\`px-3 py-2 rounded-lg transition-colors \${
-                                            currentPage === 'contact' ? 'bg-baby-blue text-white' : 'text-soft-dark hover:bg-baby-blue/10'
-                                        }\`}
-                                    >
-                                        Contact
-                                    </button>
-                                    <button
-                                        onClick={() => setShowAdmin(true)}
-                                        className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                                    >
-                                        Admin Dashboard
-                                    </button>
-                                </div>
-                            </div>
-                        </nav>
-                    </header>
-                    
-                    <main>
-                        {currentPage === 'home' && <HomePage />}
-                        {currentPage === 'services' && <ServicesPage onSubmitConsultation={submitConsultation} />}
-                        {currentPage === 'about' && <AboutPage />}
-                        {currentPage === 'contact' && <ContactPage onSubmitContact={submitContact} />}
-                    </main>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-content">
+                <a href="#home" class="nav-logo">Baby Sleep Whisperer</a>
+                <div class="nav-links">
+                    <a href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#services">Services</a>
+                    <a href="#blog">Blog</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#contact" class="nav-btn">Book Consultation</a>
                 </div>
-            );
-        }
-        
-        function HomePage() {
-            return (
-                <div>
-                    <section className="relative overflow-hidden hero-gradient">
-                        <div className="relative max-w-7xl mx-auto px-4 py-20">
-                            <div className="grid lg:grid-cols-2 gap-12 items-center">
-                                <div className="text-center lg:text-left">
-                                    <h1 className="text-5xl lg:text-6xl font-bold text-soft-dark mb-6 leading-tight">
-                                        Peaceful Nights for Your{' '}
-                                        <span className="text-baby-blue">Little One</span>
-                                    </h1>
-                                    <p className="text-xl text-medium-gray mb-8">
-                                        Expert sleep consulting for healthy sleep habits and family rest. 
-                                        Transform your nights with professional guidance.
-                                    </p>
-                                    <div className="text-center lg:text-left mb-8">
-                                        <h2 className="text-2xl font-bold text-soft-dark mb-6">
-                                            Sweet Dreams Start Here 🌙✨
-                                        </h2>
-                                        <button
-                                            onClick={() => setCurrentPage('services')}
-                                            className="bg-baby-blue text-white px-8 py-3 rounded-lg hover:bg-baby-blue/90 transition-colors font-semibold text-lg"
-                                        >
-                                            Get Started Today
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="mt-8 lg:mt-0">
-                                    <div className="relative">
-                                        <img 
-                                            src="/attached_assets/image_1751435091363.jpeg" 
-                                            alt="Peaceful baby sleeping" 
-                                            className="rounded-3xl shadow-2xl w-full"
-                                            style={{objectFit: 'cover', height: '400px'}}
-                                        />
-                                        <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-soft-dark/20 to-transparent"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <section className="py-20 bg-white">
-                        <div className="max-w-7xl mx-auto px-4">
-                            <div className="text-center mb-12">
-                                <h2 className="text-3xl font-bold text-soft-dark mb-4">Choose Your Sleep Solution</h2>
-                                <p className="text-medium-gray text-lg">Professional guidance tailored to your family's needs</p>
-                            </div>
-                            <div className="grid md:grid-cols-3 gap-8">
-                                <div className="bg-baby-blue/10 p-8 rounded-2xl text-center border-2 border-baby-blue/20 hover:shadow-lg transition-shadow">
-                                    <div className="text-4xl mb-4">🌙</div>
-                                    <h3 className="text-xl font-bold text-baby-blue mb-4">Free Consultation</h3>
-                                    <p className="text-medium-gray mb-4">30-minute assessment call</p>
-                                    <div className="text-4xl font-bold text-baby-blue mb-4">FREE</div>
-                                    <ul className="text-sm text-medium-gray space-y-2 mb-6">
-                                        <li>• Initial sleep assessment</li>
-                                        <li>• Personalized recommendations</li>
-                                        <li>• Resource sharing</li>
-                                        <li>• No commitment required</li>
-                                    </ul>
-                                    <button className="w-full bg-baby-blue text-white py-2 rounded-lg hover:bg-baby-blue/90 transition-colors">
-                                        Book Free Call
-                                    </button>
-                                </div>
-                                
-                                <div className="bg-soft-pink/10 p-8 rounded-2xl text-center border-2 border-soft-pink/20 hover:shadow-lg transition-shadow">
-                                    <div className="text-4xl mb-4">💤</div>
-                                    <h3 className="text-xl font-bold text-soft-pink mb-4">Complete Sleep Package</h3>
-                                    <p className="text-medium-gray mb-4">Full training and support</p>
-                                    <div className="text-4xl font-bold text-soft-pink mb-4">$299</div>
-                                    <ul className="text-sm text-medium-gray space-y-2 mb-6">
-                                        <li>• Comprehensive sleep plan</li>
-                                        <li>• 2 weeks of daily support</li>
-                                        <li>• Phone and text support</li>
-                                        <li>• Plan adjustments as needed</li>
-                                        <li>• Follow-up sessions</li>
-                                    </ul>
-                                    <button className="w-full bg-soft-pink text-white py-2 rounded-lg hover:bg-soft-pink/90 transition-colors">
-                                        Start Sleep Training
-                                    </button>
-                                </div>
-                                
-                                <div className="bg-mint/10 p-8 rounded-2xl text-center border-2 border-mint/20 hover:shadow-lg transition-shadow">
-                                    <div className="text-4xl mb-4">👶</div>
-                                    <h3 className="text-xl font-bold text-mint mb-4">Newborn Care</h3>
-                                    <p className="text-medium-gray mb-4">Specialized infant care</p>
-                                    <div className="text-4xl font-bold text-mint mb-4">$199</div>
-                                    <ul className="text-sm text-medium-gray space-y-2 mb-6">
-                                        <li>• Gentle sleep shaping</li>
-                                        <li>• Feeding and sleep schedule</li>
-                                        <li>• Newborn care guidance</li>
-                                        <li>• 1 week of support</li>
-                                        <li>• Safe sleep education</li>
-                                    </ul>
-                                    <button className="w-full bg-mint text-white py-2 rounded-lg hover:bg-mint/90 transition-colors">
-                                        Get Newborn Help
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <section className="py-20 bg-gray-50">
-                        <div className="max-w-7xl mx-auto px-4">
-                            <div className="text-center mb-12">
-                                <h2 className="text-3xl font-bold text-soft-dark mb-4">Why Choose Happy Baby Sleeping?</h2>
-                            </div>
-                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                                <div className="text-center">
-                                    <div className="text-3xl mb-4">🎓</div>
-                                    <h3 className="font-bold text-soft-dark mb-2">Certified Experts</h3>
-                                    <p className="text-medium-gray text-sm">Professional sleep consultants with proven methods</p>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-3xl mb-4">💝</div>
-                                    <h3 className="font-bold text-soft-dark mb-2">Personalized Care</h3>
-                                    <p className="text-medium-gray text-sm">Tailored solutions for your family's unique needs</p>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-3xl mb-4">📞</div>
-                                    <h3 className="font-bold text-soft-dark mb-2">Ongoing Support</h3>
-                                    <p className="text-medium-gray text-sm">Daily check-ins and adjustments as needed</p>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-3xl mb-4">⭐</div>
-                                    <h3 className="font-bold text-soft-dark mb-2">Proven Results</h3>
-                                    <p className="text-medium-gray text-sm">Thousands of families sleeping better</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            );
-        }
-        
-        function ServicesPage({ onSubmitConsultation }) {
-            const [formData, setFormData] = useState({
-                name: '',
-                email: '',
-                phone: '',
-                serviceType: '',
-                childAge: '',
-                sleepIssues: '',
-                goals: ''
-            });
-            
-            const handleSubmit = async (e) => {
-                e.preventDefault();
-                const success = await onSubmitConsultation(formData);
-                if (success) {
-                    setFormData({
-                        name: '',
-                        email: '',
-                        phone: '',
-                        serviceType: '',
-                        childAge: '',
-                        sleepIssues: '',
-                        goals: ''
-                    });
-                }
-            };
-            
-            return (
-                <div className="py-16">
-                    <div className="max-w-7xl mx-auto px-4">
-                        <div className="text-center mb-12">
-                            <h1 className="text-4xl font-bold text-soft-dark mb-4">Our Services</h1>
-                            <p className="text-xl text-medium-gray">Choose the perfect solution for your family</p>
-                        </div>
-                        
-                        <div className="grid md:grid-cols-3 gap-8 mb-12">
-                            <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-baby-blue/20">
-                                <div className="text-center">
-                                    <div className="text-4xl mb-4">🌙</div>
-                                    <h3 className="text-xl font-bold text-baby-blue mb-4">Free Consultation</h3>
-                                    <div className="text-3xl font-bold text-baby-blue mb-4">FREE</div>
-                                    <ul className="text-sm text-medium-gray space-y-2 mb-6 text-left">
-                                        <li>• 30-minute phone/video call</li>
-                                        <li>• Sleep assessment questionnaire</li>
-                                        <li>• Personalized recommendations</li>
-                                        <li>• Resource sharing</li>
-                                        <li>• No commitment required</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-soft-pink/20">
-                                <div className="text-center">
-                                    <div className="text-4xl mb-4">💤</div>
-                                    <h3 className="text-xl font-bold text-soft-pink mb-4">Complete Sleep Package</h3>
-                                    <div className="text-3xl font-bold text-soft-pink mb-4">$299</div>
-                                    <ul className="text-sm text-medium-gray space-y-2 mb-6 text-left">
-                                        <li>• Comprehensive sleep plan</li>
-                                        <li>• 2 weeks of daily support</li>
-                                        <li>• Phone/text support</li>
-                                        <li>• Plan adjustments as needed</li>
-                                        <li>• Follow-up sessions</li>
-                                        <li>• Sleep tracking tools</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-mint/20">
-                                <div className="text-center">
-                                    <div className="text-4xl mb-4">👶</div>
-                                    <h3 className="text-xl font-bold text-mint mb-4">Newborn Care</h3>
-                                    <div className="text-3xl font-bold text-mint mb-4">$199</div>
-                                    <ul className="text-sm text-medium-gray space-y-2 mb-6 text-left">
-                                        <li>• Gentle sleep shaping</li>
-                                        <li>• Feeding and sleep schedule</li>
-                                        <li>• Newborn care guidance</li>
-                                        <li>• 1 week of support</li>
-                                        <li>• Safe sleep education</li>
-                                        <li>• Parent education</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
-                            <h2 className="text-2xl font-bold text-soft-dark mb-6 text-center">Book Your Consultation</h2>
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-soft-dark mb-2">Name *</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={formData.name}
-                                            onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-soft-dark mb-2">Email *</label>
-                                        <input
-                                            type="email"
-                                            required
-                                            value={formData.email}
-                                            onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                        />
-                                    </div>
-                                </div>
-                                
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-soft-dark mb-2">Phone</label>
-                                        <input
-                                            type="tel"
-                                            value={formData.phone}
-                                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-soft-dark mb-2">Service Type *</label>
-                                        <select
-                                            required
-                                            value={formData.serviceType}
-                                            onChange={(e) => setFormData({...formData, serviceType: e.target.value})}
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                        >
-                                            <option value="">Select a service</option>
-                                            <option value="Free Consultation">Free Consultation</option>
-                                            <option value="Complete Sleep Package">Complete Sleep Package ($299)</option>
-                                            <option value="Newborn Care">Newborn Care ($199)</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <label className="block text-sm font-medium text-soft-dark mb-2">Child's Age *</label>
-                                    <select
-                                        required
-                                        value={formData.childAge}
-                                        onChange={(e) => setFormData({...formData, childAge: e.target.value})}
-                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                    >
-                                        <option value="">Select age range</option>
-                                        <option value="0-3 months">0-3 months (Newborn)</option>
-                                        <option value="4-6 months">4-6 months (Infant)</option>
-                                        <option value="7-12 months">7-12 months (Mobile infant)</option>
-                                        <option value="1-2 years">1-2 years (Toddler)</option>
-                                        <option value="2+ years">2+ years (Preschooler)</option>
-                                    </select>
-                                </div>
-                                
-                                <div>
-                                    <label className="block text-sm font-medium text-soft-dark mb-2">Sleep Issues *</label>
-                                    <textarea
-                                        required
-                                        rows="4"
-                                        value={formData.sleepIssues}
-                                        onChange={(e) => setFormData({...formData, sleepIssues: e.target.value})}
-                                        placeholder="Please describe your child's current sleep challenges (e.g., frequent night wakings, difficulty falling asleep, short naps, early morning wake-ups)..."
-                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                    ></textarea>
-                                </div>
-                                
-                                <div>
-                                    <label className="block text-sm font-medium text-soft-dark mb-2">Goals</label>
-                                    <textarea
-                                        rows="3"
-                                        value={formData.goals}
-                                        onChange={(e) => setFormData({...formData, goals: e.target.value})}
-                                        placeholder="What are your sleep goals for your child? (e.g., sleep through the night, longer naps, better bedtime routine)..."
-                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                    ></textarea>
-                                </div>
-                                
-                                <button
-                                    type="submit"
-                                    className="w-full bg-baby-blue text-white py-3 px-6 rounded-lg hover:bg-baby-blue/90 transition-colors font-semibold"
-                                >
-                                    Book Consultation
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-        
-        function AboutPage() {
-            return (
-                <div className="py-16">
-                    <div className="max-w-7xl mx-auto px-4">
-                        <div className="text-center mb-12">
-                            <h1 className="text-4xl font-bold text-soft-dark mb-4">About Happy Baby Sleeping</h1>
-                            <p className="text-xl text-medium-gray">Professional sleep consulting with a personal touch</p>
-                        </div>
-                        
-                        <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
-                            <div>
-                                <h2 className="text-2xl font-bold text-soft-dark mb-6">Our Mission</h2>
-                                <p className="text-medium-gray mb-4">
-                                    At Happy Baby Sleeping, we believe every family deserves peaceful nights and restful sleep. 
-                                    Our certified sleep consultants work with families to create personalized sleep solutions 
-                                    that fit your unique needs and parenting style.
-                                </p>
-                                <p className="text-medium-gray mb-4">
-                                    We understand that every child is different, and there's no one-size-fits-all approach to sleep. 
-                                    That's why we take the time to understand your family's specific challenges and create a 
-                                    customized plan that works for you.
-                                </p>
-                                <p className="text-medium-gray">
-                                    Our gentle, evidence-based methods help establish healthy sleep habits while respecting 
-                                    your family's comfort level and parenting philosophy.
-                                </p>
-                            </div>
-                            <div>
-                                <div className="bg-baby-blue/10 p-8 rounded-2xl">
-                                    <h3 className="text-xl font-bold text-baby-blue mb-4">Why Choose Us?</h3>
-                                    <ul className="space-y-3 text-medium-gray">
-                                        <li>• Certified sleep consultants with years of experience</li>
-                                        <li>• Personalized approach tailored to your family</li>
-                                        <li>• Ongoing support throughout the process</li>
-                                        <li>• Proven methods with thousands of success stories</li>
-                                        <li>• Family-centered solutions that work</li>
-                                        <li>• Flexible packages to fit your budget</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="bg-white rounded-2xl shadow-lg p-8">
-                            <h2 className="text-2xl font-bold text-soft-dark mb-6 text-center">What Parents Say</h2>
-                            <div className="grid md:grid-cols-3 gap-8">
-                                <div className="text-center">
-                                    <div className="text-yellow-400 text-2xl mb-2">⭐⭐⭐⭐⭐</div>
-                                    <p className="text-medium-gray italic mb-4">
-                                        "Amazing results! Our baby went from waking up 5 times a night to sleeping through the night in just one week."
-                                    </p>
-                                    <p className="font-semibold text-soft-dark">- Sarah M.</p>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-yellow-400 text-2xl mb-2">⭐⭐⭐⭐⭐</div>
-                                    <p className="text-medium-gray italic mb-4">
-                                        "The personalized approach made all the difference. Finally, our whole family is getting the sleep we need."
-                                    </p>
-                                    <p className="font-semibold text-soft-dark">- Mike & Jenny K.</p>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-yellow-400 text-2xl mb-2">⭐⭐⭐⭐⭐</div>
-                                    <p className="text-medium-gray italic mb-4">
-                                        "Professional, caring, and effective. The ongoing support was invaluable during the process."
-                                    </p>
-                                    <p className="font-semibold text-soft-dark">- Emma R.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-        
-        function ContactPage({ onSubmitContact }) {
-            const [formData, setFormData] = useState({
-                name: '',
-                email: '',
-                phone: '',
-                message: ''
-            });
-            
-            const handleSubmit = async (e) => {
-                e.preventDefault();
-                const success = await onSubmitContact(formData);
-                if (success) {
-                    setFormData({
-                        name: '',
-                        email: '',
-                        phone: '',
-                        message: ''
-                    });
-                }
-            };
-            
-            return (
-                <div className="py-16">
-                    <div className="max-w-4xl mx-auto px-4">
-                        <div className="text-center mb-12">
-                            <h1 className="text-4xl font-bold text-soft-dark mb-4">Contact Us</h1>
-                            <p className="text-xl text-medium-gray">Ready to start your journey to better sleep?</p>
-                        </div>
-                        
-                        <div className="grid md:grid-cols-2 gap-12">
-                            <div>
-                                <h2 className="text-2xl font-bold text-soft-dark mb-6">Get In Touch</h2>
-                                <div className="space-y-4 mb-8">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-baby-blue rounded-full flex items-center justify-center">
-                                            <span className="text-white text-sm">📧</span>
-                                        </div>
-                                        <span className="text-medium-gray">info@happybabysleeping.com</span>
-                                    </div>
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-baby-blue rounded-full flex items-center justify-center">
-                                            <span className="text-white text-sm">📱</span>
-                                        </div>
-                                        <span className="text-medium-gray">(555) 123-4567</span>
-                                    </div>
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-baby-blue rounded-full flex items-center justify-center">
-                                            <span className="text-white text-sm">🕐</span>
-                                        </div>
-                                        <span className="text-medium-gray">Mon-Fri: 9AM-6PM EST</span>
-                                    </div>
-                                </div>
-                                
-                                <div className="bg-baby-blue/10 p-6 rounded-2xl">
-                                    <h3 className="font-bold text-baby-blue mb-3">Quick Response Promise</h3>
-                                    <p className="text-medium-gray text-sm">
-                                        We typically respond to all inquiries within 24 hours. 
-                                        For urgent questions, please call us directly.
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <div className="bg-white rounded-2xl shadow-lg p-8">
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-soft-dark mb-2">Name *</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={formData.name}
-                                            onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-soft-dark mb-2">Email *</label>
-                                        <input
-                                            type="email"
-                                            required
-                                            value={formData.email}
-                                            onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-soft-dark mb-2">Phone</label>
-                                        <input
-                                            type="tel"
-                                            value={formData.phone}
-                                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-soft-dark mb-2">Message *</label>
-                                        <textarea
-                                            required
-                                            rows="5"
-                                            value={formData.message}
-                                            onChange={(e) => setFormData({...formData, message: e.target.value})}
-                                            placeholder="Tell us about your child's sleep challenges and how we can help..."
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
-                                        ></textarea>
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        className="w-full bg-baby-blue text-white py-3 px-6 rounded-lg hover:bg-baby-blue/90 transition-colors font-semibold"
-                                    >
-                                        Send Message
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-        
-        ReactDOM.render(<App />, document.getElementById('root'));
-    </script>
-</body>
-</html>`;
+            </div>
+        </div>
+    </nav>
 
-// Create HTTP server
-const server = http.createServer((req, res) => {
-    const url = req.url;
-    
-    // Handle static files (images)
-    if (url.startsWith('/attached_assets/')) {
-        const filePath = path.join('/var/www', url);
-        
-        try {
-            if (fs.existsSync(filePath)) {
-                const ext = path.extname(filePath).toLowerCase();
-                let contentType = 'text/plain';
-                
-                switch (ext) {
-                    case '.jpg':
-                    case '.jpeg':
-                        contentType = 'image/jpeg';
-                        break;
-                    case '.png':
-                        contentType = 'image/png';
-                        break;
-                    case '.gif':
-                        contentType = 'image/gif';
-                        break;
-                }
-                
-                res.writeHead(200, { 'Content-Type': contentType });
-                fs.createReadStream(filePath).pipe(res);
-                return;
-            }
-        } catch (error) {
-            console.error('Error serving static file:', error);
-        }
-    }
-    
-    // Serve the main application
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end(htmlContent);
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Peaceful Nights for Your <span class="highlight">Little One</span></h1>
+                    <p class="hero-subtitle">Expert sleep consulting tailored specifically to your child to help develop healthy sleep habits, giving your whole family the rest you deserve.</p>
+                    <div class="hero-buttons">
+                        <a href="#contact" class="btn btn-primary">Book Free Consultation</a>
+                        <a href="#services" class="btn btn-outline">View Services</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">100+</span>
+                            <span class="hero-stat-label">Families Helped</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">Proven</span>
+                            <span class="hero-stat-label">Methods</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">Expert</span>
+                            <span class="hero-stat-label">Guidance</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">Excellent</span>
+                            <span class="hero-stat-label">Results</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="/attached_assets/image_1751435091363.jpeg" alt="Peaceful baby sleeping in nursery" onerror="this.src='https://images.unsplash.com/photo-1555252333-9f8e92e65df9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'">
+                    <div class="hero-badge">
+                        <div class="hero-badge-icon">🌙</div>
+                        <div>
+                            <div class="hero-badge-text">Sleep Success</div>
+                            <div class="hero-badge-subtext">Within 2 weeks</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="why-section" id="about">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Why Families Choose My Services:</h2>
+                <p class="section-subtitle">My sleep training approach is holistic and covers your child's full 24-hours —including naps, nighttime sleep, feedings, bedtime routines, and daytime activities. It's designed to establish healthy sleep habits, support overall well-being, and help your child thrive and reach important developmental milestones. The results are built to last.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💖</div>
+                    <h3 class="feature-title">Personalized Methods</h3>
+                    <p class="feature-description">Utilize a variety of techniques that are customized for your child and your family. Methods are based on the developmental, emotional, and biological needs of your child.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3 class="feature-title">Expert Guidance</h3>
+                    <p class="feature-description">Experienced sleep consultant and newborn care specialist helping families achieve better sleep through education, guidance, and personalized plans.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🕐</div>
+                    <h3 class="feature-title">Ongoing Support</h3>
+                    <p class="feature-description">Unlimited text support, follow-up calls, and plan adjustments to ensure lasting success for your family.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="contact">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Ready for Peaceful Nights?</h2>
+                <p class="section-subtitle">Join hundreds of families who've transformed their sleep with effective methods. Your journey to better sleep starts with a free consultation.</p>
+            </div>
+            <div class="cta-buttons">
+                <a href="mailto:happybabysleeping@gmail.com" class="btn btn-primary">Book Free Consultation</a>
+                <a href="#services" class="btn btn-outline">View All Services</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="section-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Baby Sleep Whisperer</h4>
+                    <p>Professional sleep consulting for peaceful nights and happy families. Expert guidance tailored to your child's unique needs.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li>Free Consultation</li>
+                        <li>Complete Sleep Package</li>
+                        <li>Newborn Care</li>
+                        <li>Sleep Training Plans</li>
+                        <li>Follow-up Support</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li>Sleep Tips & Guides</li>
+                        <li>Blog Articles</li>
+                        <li>Parent Resources</li>
+                        <li>Success Stories</li>
+                        <li>FAQ</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: happybabysleeping@gmail.com</p>
+                    <p>Phone: (661) 470-6815</p>
+                    <p>Response within 48 hours</p>
+                    <p>Available 7 days a week</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Baby Sleep Whisperer. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>`);
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Baby Sleep Consulting Server running on port ${PORT}`);
+    console.log(`Baby Sleep Whisperer Server running on port ${PORT}`);
     console.log(`Website accessible at: http://31.97.99.104`);
-    console.log(`Local test: http://localhost:${PORT}`);
+    console.log(`Server started at: ${new Date().toISOString()}`);
 });
