@@ -1,0 +1,72 @@
+Run this optimized single command on your VPS:
+
+sudo bash -c 'cat > /tmp/server.js << "EOF"
+const http = require("http");
+const server = http.createServer((req, res) => {
+  res.writeHead(200, {"Content-Type": "text/html"});
+  res.end(`<!DOCTYPE html>
+<html>
+<head>
+    <title>Baby Sleep Whisperer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #fefbf3; }
+        .header { background: white; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .logo { color: #87ceeb; font-size: 1.5rem; font-weight: bold; }
+        .hero { padding: 4rem 2rem; text-align: center; }
+        .hero h1 { font-size: 3rem; color: #87ceeb; margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; color: #666; margin-bottom: 2rem; }
+        .btn { background: #ffb6c1; color: white; padding: 1rem 2rem; border: none; border-radius: 25px; font-size: 1.1rem; cursor: pointer; text-decoration: none; display: inline-block; }
+        .features { padding: 4rem 2rem; background: white; }
+        .features h2 { text-align: center; font-size: 2rem; margin-bottom: 2rem; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+        .feature-card { text-align: center; padding: 2rem; border-radius: 1rem; background: #f9f9f9; }
+        .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .feature-title { font-size: 1.3rem; margin-bottom: 1rem; color: #333; }
+        .feature-desc { color: #666; }
+        .footer { background: #333; color: white; padding: 2rem; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Baby Sleep Whisperer</div>
+    </div>
+    
+    <div class="hero">
+        <h1>Peaceful Nights for Your Little One</h1>
+        <p>Expert sleep consulting tailored specifically to your child to help develop healthy sleep habits, giving your whole family the rest you deserve.</p>
+        <a href="#" class="btn">Book Free Consultation</a>
+    </div>
+    
+    <div class="features">
+        <h2>Why Families Choose My Services</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">💖</div>
+                <h3 class="feature-title">Personalized Methods</h3>
+                <p class="feature-desc">Utilize a variety of techniques that are customized for your child and your family.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎓</div>
+                <h3 class="feature-title">Expert Guidance</h3>
+                <p class="feature-desc">Experienced sleep consultant helping families achieve better sleep through education.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🕐</div>
+                <h3 class="feature-title">Ongoing Support</h3>
+                <p class="feature-desc">Unlimited text support, follow-up calls, and plan adjustments to ensure lasting success.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2025 Baby Sleep Whisperer | happybabysleeping@gmail.com | (661) 470-6815</p>
+    </div>
+</body>
+</html>`);
+});
+server.listen(80, "0.0.0.0", () => {
+  console.log("Baby Sleep Whisperer running on port 80");
+});
+EOF
+
+node /tmp/server.js'
