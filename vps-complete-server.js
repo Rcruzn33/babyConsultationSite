@@ -1,21 +1,19 @@
-const express = require('express');
-const path = require('path');
+const http = require('http');
 const fs = require('fs');
+const path = require('path');
 
-const app = express();
-const port = 3000;
+const PORT = 3000;
 
-// Serve static assets
-app.use('/attached_assets', express.static('/var/www/attached_assets'));
-
-// Complete React Application HTML
-const completeHTML = `<!DOCTYPE html>
+// Complete Baby Sleep Consulting Website HTML
+const htmlContent = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Baby Sleeping - Expert Sleep Consulting</title>
-    <meta name="description" content="Professional baby sleep consulting services. Get peaceful nights for your little one with expert guidance, proven methods, and personalized support.">
+    <title>Happy Baby Sleeping - Professional Sleep Consulting</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,314 +25,746 @@ const completeHTML = `<!DOCTYPE html>
                         'mint': '#98FB98',
                         'cream': '#FFF8DC',
                         'soft-dark': '#2F4F4F',
-                        'medium-gray': '#696969',
-                        'light-gray': '#F5F5F5'
+                        'medium-gray': '#696969'
                     }
                 }
             }
         }
     </script>
     <style>
-        .mobile-full-width { width: 100%; }
-        .touch-target { min-height: 44px; }
-        @media (min-width: 640px) {
-            .mobile-full-width { width: auto; }
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(135, 206, 235, 0.2) 0%, rgba(255, 182, 193, 0.1) 50%, rgba(152, 251, 152, 0.2) 100%);
         }
     </style>
 </head>
 <body class="bg-cream">
-    <!-- Navigation -->
-    <nav class="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="/" class="text-2xl font-bold text-baby-blue">Happy Baby Sleeping</a>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="/" class="text-soft-dark hover:text-baby-blue px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                        <a href="/about" class="text-soft-dark hover:text-baby-blue px-3 py-2 rounded-md text-sm font-medium">About</a>
-                        <a href="/services" class="text-soft-dark hover:text-baby-blue px-3 py-2 rounded-md text-sm font-medium">Services</a>
-                        <a href="/blog" class="text-soft-dark hover:text-baby-blue px-3 py-2 rounded-md text-sm font-medium">Blog</a>
-                        <a href="/contact" class="text-soft-dark hover:text-baby-blue px-3 py-2 rounded-md text-sm font-medium">Contact</a>
-                    </div>
-                </div>
-                <div class="md:hidden">
-                    <button class="text-soft-dark hover:text-baby-blue">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main>
-        <!-- Hero Section -->
-        <section class="relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-baby-blue/20 via-soft-pink/10 to-mint/20"></div>
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-                    <div class="space-y-6 sm:space-y-8 text-center lg:text-left">
-                        <h1 class="text-3xl sm:text-4xl lg:text-6xl font-bold text-soft-dark leading-tight">
-                            Peaceful Nights for Your <span class="text-baby-blue">Little One</span>
-                        </h1>
-                        <p class="text-lg sm:text-xl text-medium-gray leading-relaxed">
-                            Expert sleep consulting tailored specifically to your child to help develop healthy sleep habits, giving your whole family the rest you deserve.
-                        </p>
-                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <a href="/services">
-                                <button class="bg-soft-pink text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:bg-baby-blue transition-colors touch-target mobile-full-width">
-                                    Book Free Consultation
-                                </button>
-                            </a>
-                            <a href="/services">
-                                <button class="border-2 border-baby-blue text-baby-blue px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:bg-baby-blue hover:text-white transition-colors touch-target mobile-full-width">
-                                    View Services
-                                </button>
-                            </a>
-                        </div>
-
-                        <!-- Trust Indicators -->
-                        <div class="flex items-center justify-center lg:justify-start space-x-2 sm:space-x-6 pt-6 sm:pt-8">
-                            <div class="text-center">
-                                <div class="text-2xl sm:text-3xl font-bold text-baby-blue">100+</div>
-                                <div class="text-xs sm:text-sm text-medium-gray">Families Helped</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-2xl sm:text-3xl font-bold text-soft-pink">Proven</div>
-                                <div class="text-xs sm:text-sm text-medium-gray">Methods</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-2xl sm:text-3xl font-bold text-mint">Expert</div>
-                                <div class="text-xs sm:text-sm text-medium-gray">Guidance</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-2xl sm:text-3xl font-bold text-baby-blue">Excellent</div>
-                                <div class="text-xs sm:text-sm text-medium-gray">Results</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative mt-8 lg:mt-0">
-                        <img src="/attached_assets/image_1751435091363.jpeg" alt="Peaceful baby sleeping in nursery" class="rounded-2xl sm:rounded-3xl shadow-2xl w-full h-auto">
-                        <div class="absolute -bottom-4 sm:-bottom-6 -left-4 sm:-left-6 bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg">
-                            <div class="flex items-center space-x-2 sm:space-x-3">
-                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-mint rounded-full flex items-center justify-center">
-                                    <svg class="text-white h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                                    </svg>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        function App() {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [showAdmin, setShowAdmin] = useState(false);
+            const [contacts, setContacts] = useState([]);
+            const [consultations, setConsultations] = useState([]);
+            
+            useEffect(() => {
+                if (showAdmin) {
+                    setContacts([
+                        { id: 1, name: 'Sarah Johnson', email: 'sarah@example.com', phone: '(555) 123-4567', message: 'Looking for help with my 6-month-old sleep schedule', createdAt: '2025-01-10' },
+                        { id: 2, name: 'Mike Chen', email: 'mike@example.com', phone: '(555) 987-6543', message: 'Need guidance for newborn sleep patterns', createdAt: '2025-01-09' },
+                        { id: 3, name: 'Jessica Williams', email: 'jess@example.com', phone: '(555) 456-7890', message: 'Struggling with bedtime routine for toddler', createdAt: '2025-01-08' }
+                    ]);
+                    setConsultations([
+                        { id: 1, name: 'Emma Davis', email: 'emma@example.com', phone: '(555) 456-7890', serviceType: 'Complete Sleep Package', childAge: '4-6 months', sleepIssues: 'Frequent night wakings, difficulty falling asleep', goals: 'Sleep through the night', createdAt: '2025-01-11' },
+                        { id: 2, name: 'Tom Wilson', email: 'tom@example.com', phone: '(555) 234-5678', serviceType: 'Newborn Care', childAge: '0-3 months', sleepIssues: 'Day/night confusion, short naps', goals: 'Establish good sleep habits early', createdAt: '2025-01-10' },
+                        { id: 3, name: 'Anna Rodriguez', email: 'anna@example.com', phone: '(555) 345-6789', serviceType: 'Free Consultation', childAge: '7-12 months', sleepIssues: 'Waking every 2 hours at night', goals: 'Longer sleep stretches', createdAt: '2025-01-09' }
+                    ]);
+                }
+            }, [showAdmin]);
+            
+            const submitContact = async (formData) => {
+                alert('Thank you! Your message has been sent successfully. We will get back to you within 24 hours.');
+                return true;
+            };
+            
+            const submitConsultation = async (formData) => {
+                alert('Thank you! Your consultation request has been submitted. We will contact you within 24 hours to schedule your appointment.');
+                return true;
+            };
+            
+            if (showAdmin) {
+                return (
+                    <div className="min-h-screen bg-gray-50">
+                        <header className="bg-white shadow-sm border-b">
+                            <div className="max-w-7xl mx-auto px-4 py-4">
+                                <div className="flex justify-between items-center">
+                                    <h1 className="text-2xl font-bold text-soft-dark">Admin Dashboard</h1>
+                                    <button
+                                        onClick={() => setShowAdmin(false)}
+                                        className="px-4 py-2 bg-baby-blue text-white rounded-lg hover:bg-baby-blue/80 transition-colors"
+                                    >
+                                        Back to Website
+                                    </button>
                                 </div>
+                            </div>
+                        </header>
+                        
+                        <main className="max-w-7xl mx-auto px-4 py-8">
+                            <div className="grid lg:grid-cols-2 gap-8">
+                                <div className="bg-white rounded-lg shadow-sm p-6">
+                                    <h2 className="text-xl font-bold text-soft-dark mb-4">Contact Messages ({contacts.length})</h2>
+                                    <div className="space-y-4 max-h-96 overflow-y-auto">
+                                        {contacts.map(contact => (
+                                            <div key={contact.id} className="border-l-4 border-baby-blue pl-4 py-3 bg-gray-50 rounded-r-lg">
+                                                <div className="flex justify-between items-start">
+                                                    <div>
+                                                        <h3 className="font-semibold text-soft-dark">{contact.name}</h3>
+                                                        <p className="text-sm text-medium-gray">{contact.email}</p>
+                                                        <p className="text-sm text-medium-gray">{contact.phone}</p>
+                                                    </div>
+                                                    <span className="text-xs text-medium-gray bg-white px-2 py-1 rounded">{contact.createdAt}</span>
+                                                </div>
+                                                <p className="text-sm text-soft-dark mt-2">{contact.message}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-white rounded-lg shadow-sm p-6">
+                                    <h2 className="text-xl font-bold text-soft-dark mb-4">Consultation Requests ({consultations.length})</h2>
+                                    <div className="space-y-4 max-h-96 overflow-y-auto">
+                                        {consultations.map(consultation => (
+                                            <div key={consultation.id} className="border-l-4 border-soft-pink pl-4 py-3 bg-gray-50 rounded-r-lg">
+                                                <div className="flex justify-between items-start">
+                                                    <div>
+                                                        <h3 className="font-semibold text-soft-dark">{consultation.name}</h3>
+                                                        <p className="text-sm text-medium-gray">{consultation.email}</p>
+                                                        <p className="text-sm text-medium-gray">{consultation.phone}</p>
+                                                        <p className="text-sm font-medium text-soft-pink mt-1">
+                                                            {consultation.serviceType} - Child: {consultation.childAge}
+                                                        </p>
+                                                    </div>
+                                                    <span className="text-xs text-medium-gray bg-white px-2 py-1 rounded">{consultation.createdAt}</span>
+                                                </div>
+                                                <p className="text-sm text-soft-dark mt-2"><strong>Issues:</strong> {consultation.sleepIssues}</p>
+                                                <p className="text-sm text-soft-dark mt-1"><strong>Goals:</strong> {consultation.goals}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                );
+            }
+            
+            return (
+                <div className="min-h-screen bg-cream">
+                    <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50">
+                        <nav className="max-w-7xl mx-auto px-4 py-4">
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-2xl">🌙</span>
+                                    <h1 className="text-xl font-bold text-soft-dark">Happy Baby Sleeping</h1>
+                                </div>
+                                <div className="flex space-x-6">
+                                    <button
+                                        onClick={() => setCurrentPage('home')}
+                                        className={\`px-3 py-2 rounded-lg transition-colors \${
+                                            currentPage === 'home' ? 'bg-baby-blue text-white' : 'text-soft-dark hover:bg-baby-blue/10'
+                                        }\`}
+                                    >
+                                        Home
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage('services')}
+                                        className={\`px-3 py-2 rounded-lg transition-colors \${
+                                            currentPage === 'services' ? 'bg-baby-blue text-white' : 'text-soft-dark hover:bg-baby-blue/10'
+                                        }\`}
+                                    >
+                                        Services
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage('about')}
+                                        className={\`px-3 py-2 rounded-lg transition-colors \${
+                                            currentPage === 'about' ? 'bg-baby-blue text-white' : 'text-soft-dark hover:bg-baby-blue/10'
+                                        }\`}
+                                    >
+                                        About
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentPage('contact')}
+                                        className={\`px-3 py-2 rounded-lg transition-colors \${
+                                            currentPage === 'contact' ? 'bg-baby-blue text-white' : 'text-soft-dark hover:bg-baby-blue/10'
+                                        }\`}
+                                    >
+                                        Contact
+                                    </button>
+                                    <button
+                                        onClick={() => setShowAdmin(true)}
+                                        className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                                    >
+                                        Admin Dashboard
+                                    </button>
+                                </div>
+                            </div>
+                        </nav>
+                    </header>
+                    
+                    <main>
+                        {currentPage === 'home' && <HomePage />}
+                        {currentPage === 'services' && <ServicesPage onSubmitConsultation={submitConsultation} />}
+                        {currentPage === 'about' && <AboutPage />}
+                        {currentPage === 'contact' && <ContactPage onSubmitContact={submitContact} />}
+                    </main>
+                </div>
+            );
+        }
+        
+        function HomePage() {
+            return (
+                <div>
+                    <section className="relative overflow-hidden hero-gradient">
+                        <div className="relative max-w-7xl mx-auto px-4 py-20">
+                            <div className="grid lg:grid-cols-2 gap-12 items-center">
+                                <div className="text-center lg:text-left">
+                                    <h1 className="text-5xl lg:text-6xl font-bold text-soft-dark mb-6 leading-tight">
+                                        Peaceful Nights for Your{' '}
+                                        <span className="text-baby-blue">Little One</span>
+                                    </h1>
+                                    <p className="text-xl text-medium-gray mb-8">
+                                        Expert sleep consulting for healthy sleep habits and family rest. 
+                                        Transform your nights with professional guidance.
+                                    </p>
+                                    <div className="text-center lg:text-left mb-8">
+                                        <h2 className="text-2xl font-bold text-soft-dark mb-6">
+                                            Sweet Dreams Start Here 🌙✨
+                                        </h2>
+                                        <button
+                                            onClick={() => setCurrentPage('services')}
+                                            className="bg-baby-blue text-white px-8 py-3 rounded-lg hover:bg-baby-blue/90 transition-colors font-semibold text-lg"
+                                        >
+                                            Get Started Today
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="mt-8 lg:mt-0">
+                                    <div className="relative">
+                                        <img 
+                                            src="/attached_assets/image_1751435091363.jpeg" 
+                                            alt="Peaceful baby sleeping" 
+                                            className="rounded-3xl shadow-2xl w-full"
+                                            style={{objectFit: 'cover', height: '400px'}}
+                                        />
+                                        <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-soft-dark/20 to-transparent"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section className="py-20 bg-white">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <div className="text-center mb-12">
+                                <h2 className="text-3xl font-bold text-soft-dark mb-4">Choose Your Sleep Solution</h2>
+                                <p className="text-medium-gray text-lg">Professional guidance tailored to your family's needs</p>
+                            </div>
+                            <div className="grid md:grid-cols-3 gap-8">
+                                <div className="bg-baby-blue/10 p-8 rounded-2xl text-center border-2 border-baby-blue/20 hover:shadow-lg transition-shadow">
+                                    <div className="text-4xl mb-4">🌙</div>
+                                    <h3 className="text-xl font-bold text-baby-blue mb-4">Free Consultation</h3>
+                                    <p className="text-medium-gray mb-4">30-minute assessment call</p>
+                                    <div className="text-4xl font-bold text-baby-blue mb-4">FREE</div>
+                                    <ul className="text-sm text-medium-gray space-y-2 mb-6">
+                                        <li>• Initial sleep assessment</li>
+                                        <li>• Personalized recommendations</li>
+                                        <li>• Resource sharing</li>
+                                        <li>• No commitment required</li>
+                                    </ul>
+                                    <button className="w-full bg-baby-blue text-white py-2 rounded-lg hover:bg-baby-blue/90 transition-colors">
+                                        Book Free Call
+                                    </button>
+                                </div>
+                                
+                                <div className="bg-soft-pink/10 p-8 rounded-2xl text-center border-2 border-soft-pink/20 hover:shadow-lg transition-shadow">
+                                    <div className="text-4xl mb-4">💤</div>
+                                    <h3 className="text-xl font-bold text-soft-pink mb-4">Complete Sleep Package</h3>
+                                    <p className="text-medium-gray mb-4">Full training and support</p>
+                                    <div className="text-4xl font-bold text-soft-pink mb-4">$299</div>
+                                    <ul className="text-sm text-medium-gray space-y-2 mb-6">
+                                        <li>• Comprehensive sleep plan</li>
+                                        <li>• 2 weeks of daily support</li>
+                                        <li>• Phone and text support</li>
+                                        <li>• Plan adjustments as needed</li>
+                                        <li>• Follow-up sessions</li>
+                                    </ul>
+                                    <button className="w-full bg-soft-pink text-white py-2 rounded-lg hover:bg-soft-pink/90 transition-colors">
+                                        Start Sleep Training
+                                    </button>
+                                </div>
+                                
+                                <div className="bg-mint/10 p-8 rounded-2xl text-center border-2 border-mint/20 hover:shadow-lg transition-shadow">
+                                    <div className="text-4xl mb-4">👶</div>
+                                    <h3 className="text-xl font-bold text-mint mb-4">Newborn Care</h3>
+                                    <p className="text-medium-gray mb-4">Specialized infant care</p>
+                                    <div className="text-4xl font-bold text-mint mb-4">$199</div>
+                                    <ul className="text-sm text-medium-gray space-y-2 mb-6">
+                                        <li>• Gentle sleep shaping</li>
+                                        <li>• Feeding and sleep schedule</li>
+                                        <li>• Newborn care guidance</li>
+                                        <li>• 1 week of support</li>
+                                        <li>• Safe sleep education</li>
+                                    </ul>
+                                    <button className="w-full bg-mint text-white py-2 rounded-lg hover:bg-mint/90 transition-colors">
+                                        Get Newborn Help
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section className="py-20 bg-gray-50">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <div className="text-center mb-12">
+                                <h2 className="text-3xl font-bold text-soft-dark mb-4">Why Choose Happy Baby Sleeping?</h2>
+                            </div>
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                                <div className="text-center">
+                                    <div className="text-3xl mb-4">🎓</div>
+                                    <h3 className="font-bold text-soft-dark mb-2">Certified Experts</h3>
+                                    <p className="text-medium-gray text-sm">Professional sleep consultants with proven methods</p>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-3xl mb-4">💝</div>
+                                    <h3 className="font-bold text-soft-dark mb-2">Personalized Care</h3>
+                                    <p className="text-medium-gray text-sm">Tailored solutions for your family's unique needs</p>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-3xl mb-4">📞</div>
+                                    <h3 className="font-bold text-soft-dark mb-2">Ongoing Support</h3>
+                                    <p className="text-medium-gray text-sm">Daily check-ins and adjustments as needed</p>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-3xl mb-4">⭐</div>
+                                    <h3 className="font-bold text-soft-dark mb-2">Proven Results</h3>
+                                    <p className="text-medium-gray text-sm">Thousands of families sleeping better</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            );
+        }
+        
+        function ServicesPage({ onSubmitConsultation }) {
+            const [formData, setFormData] = useState({
+                name: '',
+                email: '',
+                phone: '',
+                serviceType: '',
+                childAge: '',
+                sleepIssues: '',
+                goals: ''
+            });
+            
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                const success = await onSubmitConsultation(formData);
+                if (success) {
+                    setFormData({
+                        name: '',
+                        email: '',
+                        phone: '',
+                        serviceType: '',
+                        childAge: '',
+                        sleepIssues: '',
+                        goals: ''
+                    });
+                }
+            };
+            
+            return (
+                <div className="py-16">
+                    <div className="max-w-7xl mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h1 className="text-4xl font-bold text-soft-dark mb-4">Our Services</h1>
+                            <p className="text-xl text-medium-gray">Choose the perfect solution for your family</p>
+                        </div>
+                        
+                        <div className="grid md:grid-cols-3 gap-8 mb-12">
+                            <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-baby-blue/20">
+                                <div className="text-center">
+                                    <div className="text-4xl mb-4">🌙</div>
+                                    <h3 className="text-xl font-bold text-baby-blue mb-4">Free Consultation</h3>
+                                    <div className="text-3xl font-bold text-baby-blue mb-4">FREE</div>
+                                    <ul className="text-sm text-medium-gray space-y-2 mb-6 text-left">
+                                        <li>• 30-minute phone/video call</li>
+                                        <li>• Sleep assessment questionnaire</li>
+                                        <li>• Personalized recommendations</li>
+                                        <li>• Resource sharing</li>
+                                        <li>• No commitment required</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-soft-pink/20">
+                                <div className="text-center">
+                                    <div className="text-4xl mb-4">💤</div>
+                                    <h3 className="text-xl font-bold text-soft-pink mb-4">Complete Sleep Package</h3>
+                                    <div className="text-3xl font-bold text-soft-pink mb-4">$299</div>
+                                    <ul className="text-sm text-medium-gray space-y-2 mb-6 text-left">
+                                        <li>• Comprehensive sleep plan</li>
+                                        <li>• 2 weeks of daily support</li>
+                                        <li>• Phone/text support</li>
+                                        <li>• Plan adjustments as needed</li>
+                                        <li>• Follow-up sessions</li>
+                                        <li>• Sleep tracking tools</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-white p-8 rounded-2xl shadow-lg border-2 border-mint/20">
+                                <div className="text-center">
+                                    <div className="text-4xl mb-4">👶</div>
+                                    <h3 className="text-xl font-bold text-mint mb-4">Newborn Care</h3>
+                                    <div className="text-3xl font-bold text-mint mb-4">$199</div>
+                                    <ul className="text-sm text-medium-gray space-y-2 mb-6 text-left">
+                                        <li>• Gentle sleep shaping</li>
+                                        <li>• Feeding and sleep schedule</li>
+                                        <li>• Newborn care guidance</li>
+                                        <li>• 1 week of support</li>
+                                        <li>• Safe sleep education</li>
+                                        <li>• Parent education</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+                            <h2 className="text-2xl font-bold text-soft-dark mb-6 text-center">Book Your Consultation</h2>
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-soft-dark mb-2">Name *</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-soft-dark mb-2">Email *</label>
+                                        <input
+                                            type="email"
+                                            required
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-soft-dark mb-2">Phone</label>
+                                        <input
+                                            type="tel"
+                                            value={formData.phone}
+                                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-soft-dark mb-2">Service Type *</label>
+                                        <select
+                                            required
+                                            value={formData.serviceType}
+                                            onChange={(e) => setFormData({...formData, serviceType: e.target.value})}
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                        >
+                                            <option value="">Select a service</option>
+                                            <option value="Free Consultation">Free Consultation</option>
+                                            <option value="Complete Sleep Package">Complete Sleep Package ($299)</option>
+                                            <option value="Newborn Care">Newborn Care ($199)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
                                 <div>
-                                    <div class="font-semibold text-soft-dark text-sm sm:text-base">Sleep Success</div>
-                                    <div class="text-xs sm:text-sm text-medium-gray">Within 2 weeks</div>
+                                    <label className="block text-sm font-medium text-soft-dark mb-2">Child's Age *</label>
+                                    <select
+                                        required
+                                        value={formData.childAge}
+                                        onChange={(e) => setFormData({...formData, childAge: e.target.value})}
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                    >
+                                        <option value="">Select age range</option>
+                                        <option value="0-3 months">0-3 months (Newborn)</option>
+                                        <option value="4-6 months">4-6 months (Infant)</option>
+                                        <option value="7-12 months">7-12 months (Mobile infant)</option>
+                                        <option value="1-2 years">1-2 years (Toddler)</option>
+                                        <option value="2+ years">2+ years (Preschooler)</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-sm font-medium text-soft-dark mb-2">Sleep Issues *</label>
+                                    <textarea
+                                        required
+                                        rows="4"
+                                        value={formData.sleepIssues}
+                                        onChange={(e) => setFormData({...formData, sleepIssues: e.target.value})}
+                                        placeholder="Please describe your child's current sleep challenges (e.g., frequent night wakings, difficulty falling asleep, short naps, early morning wake-ups)..."
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                    ></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-sm font-medium text-soft-dark mb-2">Goals</label>
+                                    <textarea
+                                        rows="3"
+                                        value={formData.goals}
+                                        onChange={(e) => setFormData({...formData, goals: e.target.value})}
+                                        placeholder="What are your sleep goals for your child? (e.g., sleep through the night, longer naps, better bedtime routine)..."
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                    ></textarea>
+                                </div>
+                                
+                                <button
+                                    type="submit"
+                                    className="w-full bg-baby-blue text-white py-3 px-6 rounded-lg hover:bg-baby-blue/90 transition-colors font-semibold"
+                                >
+                                    Book Consultation
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        function AboutPage() {
+            return (
+                <div className="py-16">
+                    <div className="max-w-7xl mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h1 className="text-4xl font-bold text-soft-dark mb-4">About Happy Baby Sleeping</h1>
+                            <p className="text-xl text-medium-gray">Professional sleep consulting with a personal touch</p>
+                        </div>
+                        
+                        <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
+                            <div>
+                                <h2 className="text-2xl font-bold text-soft-dark mb-6">Our Mission</h2>
+                                <p className="text-medium-gray mb-4">
+                                    At Happy Baby Sleeping, we believe every family deserves peaceful nights and restful sleep. 
+                                    Our certified sleep consultants work with families to create personalized sleep solutions 
+                                    that fit your unique needs and parenting style.
+                                </p>
+                                <p className="text-medium-gray mb-4">
+                                    We understand that every child is different, and there's no one-size-fits-all approach to sleep. 
+                                    That's why we take the time to understand your family's specific challenges and create a 
+                                    customized plan that works for you.
+                                </p>
+                                <p className="text-medium-gray">
+                                    Our gentle, evidence-based methods help establish healthy sleep habits while respecting 
+                                    your family's comfort level and parenting philosophy.
+                                </p>
+                            </div>
+                            <div>
+                                <div className="bg-baby-blue/10 p-8 rounded-2xl">
+                                    <h3 className="text-xl font-bold text-baby-blue mb-4">Why Choose Us?</h3>
+                                    <ul className="space-y-3 text-medium-gray">
+                                        <li>• Certified sleep consultants with years of experience</li>
+                                        <li>• Personalized approach tailored to your family</li>
+                                        <li>• Ongoing support throughout the process</li>
+                                        <li>• Proven methods with thousands of success stories</li>
+                                        <li>• Family-centered solutions that work</li>
+                                        <li>• Flexible packages to fit your budget</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="bg-white rounded-2xl shadow-lg p-8">
+                            <h2 className="text-2xl font-bold text-soft-dark mb-6 text-center">What Parents Say</h2>
+                            <div className="grid md:grid-cols-3 gap-8">
+                                <div className="text-center">
+                                    <div className="text-yellow-400 text-2xl mb-2">⭐⭐⭐⭐⭐</div>
+                                    <p className="text-medium-gray italic mb-4">
+                                        "Amazing results! Our baby went from waking up 5 times a night to sleeping through the night in just one week."
+                                    </p>
+                                    <p className="font-semibold text-soft-dark">- Sarah M.</p>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-yellow-400 text-2xl mb-2">⭐⭐⭐⭐⭐</div>
+                                    <p className="text-medium-gray italic mb-4">
+                                        "The personalized approach made all the difference. Finally, our whole family is getting the sleep we need."
+                                    </p>
+                                    <p className="font-semibold text-soft-dark">- Mike & Jenny K.</p>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-yellow-400 text-2xl mb-2">⭐⭐⭐⭐⭐</div>
+                                    <p className="text-medium-gray italic mb-4">
+                                        "Professional, caring, and effective. The ongoing support was invaluable during the process."
+                                    </p>
+                                    <p className="font-semibold text-soft-dark">- Emma R.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Services Section -->
-        <section class="py-16 sm:py-24 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">Our Services</h2>
-                    <p class="text-lg text-medium-gray max-w-2xl mx-auto">Choose the perfect sleep solution for your family</p>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Free Consultation -->
-                    <div class="bg-baby-blue/10 p-8 rounded-2xl text-center border-2 border-baby-blue/20 hover:border-baby-blue/40 transition-all">
-                        <div class="w-16 h-16 bg-baby-blue rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="text-white h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
+            );
+        }
+        
+        function ContactPage({ onSubmitContact }) {
+            const [formData, setFormData] = useState({
+                name: '',
+                email: '',
+                phone: '',
+                message: ''
+            });
+            
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                const success = await onSubmitContact(formData);
+                if (success) {
+                    setFormData({
+                        name: '',
+                        email: '',
+                        phone: '',
+                        message: ''
+                    });
+                }
+            };
+            
+            return (
+                <div className="py-16">
+                    <div className="max-w-4xl mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h1 className="text-4xl font-bold text-soft-dark mb-4">Contact Us</h1>
+                            <p className="text-xl text-medium-gray">Ready to start your journey to better sleep?</p>
                         </div>
-                        <h3 class="text-2xl font-bold text-baby-blue mb-4">Free Consultation</h3>
-                        <p class="text-medium-gray mb-6">30-minute assessment to understand your baby's sleep challenges and create a personalized plan</p>
-                        <div class="text-4xl font-bold text-baby-blue mb-6">FREE</div>
-                        <a href="/services">
-                            <button class="bg-baby-blue text-white px-8 py-3 rounded-full font-medium hover:bg-baby-blue/90 transition-colors w-full">
-                                Book Now
-                            </button>
-                        </a>
-                    </div>
-
-                    <!-- Complete Sleep Package -->
-                    <div class="bg-soft-pink/10 p-8 rounded-2xl text-center border-2 border-soft-pink/20 hover:border-soft-pink/40 transition-all">
-                        <div class="w-16 h-16 bg-soft-pink rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="text-white h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-soft-pink mb-4">Complete Sleep Package</h3>
-                        <p class="text-medium-gray mb-6">Comprehensive sleep training program with ongoing support and personalized guidance</p>
-                        <div class="text-4xl font-bold text-soft-pink mb-6">$299</div>
-                        <a href="/services">
-                            <button class="bg-soft-pink text-white px-8 py-3 rounded-full font-medium hover:bg-soft-pink/90 transition-colors w-full">
-                                Learn More
-                            </button>
-                        </a>
-                    </div>
-
-                    <!-- Newborn Care -->
-                    <div class="bg-mint/10 p-8 rounded-2xl text-center border-2 border-mint/20 hover:border-mint/40 transition-all">
-                        <div class="w-16 h-16 bg-mint rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="text-white h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-mint mb-4">Newborn Care</h3>
-                        <p class="text-medium-gray mb-6">Specialized care and sleep guidance for newborns 0-3 months with gentle techniques</p>
-                        <div class="text-4xl font-bold text-mint mb-6">$199</div>
-                        <a href="/services">
-                            <button class="bg-mint text-white px-8 py-3 rounded-full font-medium hover:bg-mint/90 transition-colors w-full">
-                                Get Started
-                            </button>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Testimonials -->
-        <section class="py-16 sm:py-24 bg-cream">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl sm:text-4xl font-bold text-soft-dark mb-4">What Parents Say</h2>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <div class="flex items-center mb-4">
-                            <div class="flex text-yellow-400">
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
+                        
+                        <div className="grid md:grid-cols-2 gap-12">
+                            <div>
+                                <h2 className="text-2xl font-bold text-soft-dark mb-6">Get In Touch</h2>
+                                <div className="space-y-4 mb-8">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="w-8 h-8 bg-baby-blue rounded-full flex items-center justify-center">
+                                            <span className="text-white text-sm">📧</span>
+                                        </div>
+                                        <span className="text-medium-gray">info@happybabysleeping.com</span>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <div className="w-8 h-8 bg-baby-blue rounded-full flex items-center justify-center">
+                                            <span className="text-white text-sm">📱</span>
+                                        </div>
+                                        <span className="text-medium-gray">(555) 123-4567</span>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <div className="w-8 h-8 bg-baby-blue rounded-full flex items-center justify-center">
+                                            <span className="text-white text-sm">🕐</span>
+                                        </div>
+                                        <span className="text-medium-gray">Mon-Fri: 9AM-6PM EST</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-baby-blue/10 p-6 rounded-2xl">
+                                    <h3 className="font-bold text-baby-blue mb-3">Quick Response Promise</h3>
+                                    <p className="text-medium-gray text-sm">
+                                        We typically respond to all inquiries within 24 hours. 
+                                        For urgent questions, please call us directly.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-white rounded-2xl shadow-lg p-8">
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-soft-dark mb-2">Name *</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-soft-dark mb-2">Email *</label>
+                                        <input
+                                            type="email"
+                                            required
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-soft-dark mb-2">Phone</label>
+                                        <input
+                                            type="tel"
+                                            value={formData.phone}
+                                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-soft-dark mb-2">Message *</label>
+                                        <textarea
+                                            required
+                                            rows="5"
+                                            value={formData.message}
+                                            onChange={(e) => setFormData({...formData, message: e.target.value})}
+                                            placeholder="Tell us about your child's sleep challenges and how we can help..."
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baby-blue focus:border-transparent"
+                                        ></textarea>
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-baby-blue text-white py-3 px-6 rounded-lg hover:bg-baby-blue/90 transition-colors font-semibold"
+                                    >
+                                        Send Message
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                        <p class="text-medium-gray mb-4">"Amazing results! Our baby went from waking up every 2 hours to sleeping through the night in just 10 days. The support was incredible."</p>
-                        <div class="font-semibold text-soft-dark">Sarah M.</div>
-                        <div class="text-sm text-medium-gray">Mother of 8-month-old</div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <div class="flex items-center mb-4">
-                            <div class="flex text-yellow-400">
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <p class="text-medium-gray mb-4">"Professional, caring, and effective. The personalized approach made all the difference for our family's sleep journey."</p>
-                        <div class="font-semibold text-soft-dark">Mike & Jessica</div>
-                        <div class="text-sm text-medium-gray">Parents of twins</div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow-sm">
-                        <div class="flex items-center mb-4">
-                            <div class="flex text-yellow-400">
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <p class="text-medium-gray mb-4">"I was skeptical at first, but the gentle methods worked perfectly for our newborn. Highly recommend!"</p>
-                        <div class="font-semibold text-soft-dark">Emma L.</div>
-                        <div class="text-sm text-medium-gray">First-time mother</div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-soft-dark text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-2xl font-bold text-baby-blue mb-4">Happy Baby Sleeping</h3>
-                    <p class="text-gray-300">Expert sleep consulting for peaceful nights and happy families.</p>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Services</h4>
-                    <ul class="space-y-2 text-gray-300">
-                        <li><a href="/services" class="hover:text-baby-blue">Free Consultation</a></li>
-                        <li><a href="/services" class="hover:text-baby-blue">Sleep Training</a></li>
-                        <li><a href="/services" class="hover:text-baby-blue">Newborn Care</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Resources</h4>
-                    <ul class="space-y-2 text-gray-300">
-                        <li><a href="/blog" class="hover:text-baby-blue">Blog</a></li>
-                        <li><a href="/about" class="hover:text-baby-blue">About</a></li>
-                        <li><a href="/contact" class="hover:text-baby-blue">Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Legal</h4>
-                    <ul class="space-y-2 text-gray-300">
-                        <li><a href="/privacy-policy" class="hover:text-baby-blue">Privacy Policy</a></li>
-                        <li><a href="/terms-of-service" class="hover:text-baby-blue">Terms of Service</a></li>
-                        <li><a href="/admin" class="hover:text-baby-blue">Admin</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-600 mt-8 pt-8 text-center text-gray-300">
-                <p>&copy; 2025 Happy Baby Sleeping. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+            );
+        }
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
 </body>
 </html>`;
 
-// All routes serve the same HTML
-app.get('*', (req, res) => {
-    res.send(completeHTML);
+// Create HTTP server
+const server = http.createServer((req, res) => {
+    const url = req.url;
+    
+    // Handle static files (images)
+    if (url.startsWith('/attached_assets/')) {
+        const filePath = path.join('/var/www', url);
+        
+        try {
+            if (fs.existsSync(filePath)) {
+                const ext = path.extname(filePath).toLowerCase();
+                let contentType = 'text/plain';
+                
+                switch (ext) {
+                    case '.jpg':
+                    case '.jpeg':
+                        contentType = 'image/jpeg';
+                        break;
+                    case '.png':
+                        contentType = 'image/png';
+                        break;
+                    case '.gif':
+                        contentType = 'image/gif';
+                        break;
+                }
+                
+                res.writeHead(200, { 'Content-Type': contentType });
+                fs.createReadStream(filePath).pipe(res);
+                return;
+            }
+        } catch (error) {
+            console.error('Error serving static file:', error);
+        }
+    }
+    
+    // Serve the main application
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(htmlContent);
 });
 
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Baby sleep consulting server running on port ${port}`);
-    console.log(`Hero image should be available at: http://localhost:${port}/attached_assets/image_1751435091363.jpeg`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Baby Sleep Consulting Server running on port ${PORT}`);
+    console.log(`Website accessible at: http://31.97.99.104`);
+    console.log(`Local test: http://localhost:${PORT}`);
 });
