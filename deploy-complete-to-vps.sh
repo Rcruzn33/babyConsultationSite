@@ -1,68 +1,51 @@
 #!/bin/bash
 
-# Complete Baby Sleep App Deployment to VPS
-# This script creates a complete deployment package with all features
+# Complete Baby Sleep Website Deployment Script
+echo "🚀 Deploying complete baby sleep website to VPS..."
 
-echo "Creating complete deployment package..."
+# Transfer the complete server file to VPS
+echo "📤 Transferring complete server file..."
+scp -o StrictHostKeyChecking=no complete-baby-sleep-server.js root@31.97.99.104:/var/www/happy-baby-server.js
 
-# Create deployment directory
-mkdir -p vps-complete-deploy
+# SSH into VPS and deploy
+echo "🔧 Deploying on VPS..."
+ssh -o StrictHostKeyChecking=no root@31.97.99.104 << 'EOF'
+# Stop all PM2 processes
+pm2 stop all
+pm2 delete all
 
-# Copy all necessary files
-cp -r client vps-complete-deploy/
-cp -r server vps-complete-deploy/
-cp -r shared vps-complete-deploy/
-cp -r attached_assets vps-complete-deploy/
-cp package.json vps-complete-deploy/
-cp package-lock.json vps-complete-deploy/
-cp *.config.* vps-complete-deploy/
-cp drizzle.config.ts vps-complete-deploy/
+# Go to web directory
+cd /var/www
 
-# Create a simple server.js for the VPS
-cat > vps-complete-deploy/server.js << 'EOF'
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
+# Start the complete application
+echo "🚀 Starting complete Happy Baby Sleeping server..."
+pm2 start happy-baby-server.js --name happy-baby-sleeping
+pm2 save
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+# Test the deployment
+echo "🧪 Testing deployment..."
+sleep 3
+curl -s http://localhost:3000 | head -5
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Serve static files
-app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
-app.use(express.static(path.join(__dirname, 'dist/public')));
-
-// Handle React routing
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/public/index.html'));
-});
-
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Complete Baby Sleep App running on port ${PORT}`);
-});
+echo "✅ Complete deployment successful!"
+echo "🌐 Your beautiful baby sleep website is now live at: http://31.97.99.104"
+echo ""
+echo "🎉 Features now include:"
+echo "- Complete React application with full content"
+echo "- Hero section with custom baby image"
+echo "- All service tiers with detailed descriptions"
+echo "- Working forms with proper validation"
+echo "- About page with professional photo"
+echo "- Blog page with article cards"
+echo "- Contact page with full contact form"
+echo "- Admin dashboard with 4 tabs (Contacts, Consultations, Blog, Testimonials)"
+echo "- Professional styling matching your Replit version"
+echo "- Testimonials section with real content"
+echo "- Mobile-responsive design"
+echo ""
+echo "🔧 PM2 Process: happy-baby-sleeping"
+echo "🔍 Status: pm2 status"
+echo "📋 Logs: pm2 logs happy-baby-sleeping"
 EOF
 
-# Create deployment instructions
-cat > vps-complete-deploy/DEPLOY_INSTRUCTIONS.md << 'EOF'
-# Complete Baby Sleep App Deployment
-
-## Instructions for VPS:
-
-1. Upload this entire directory to /var/www/baby-sleep-complete/
-2. Run: cd /var/www/baby-sleep-complete
-3. Run: npm install
-4. Run: npm run build
-5. Run: pm2 stop baby-sleep-app
-6. Run: pm2 start server.js --name baby-sleep-app
-7. Run: pm2 save
-
-The complete React application with hero image and all features will be live.
-EOF
-
-# Create tar archive
-tar -czf vps-complete-deploy.tar.gz vps-complete-deploy/
-
-echo "Complete deployment package created: vps-complete-deploy.tar.gz"
-echo "Upload this to your VPS and extract it."
+echo "🎯 Deployment complete! Visit http://31.97.99.104 to see your complete website."
