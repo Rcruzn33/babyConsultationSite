@@ -128,9 +128,14 @@ export async function handleLogin(req: Request, res: Response) {
         return res.status(500).json({ error: "Session save failed" });
       }
       
-      // Return user without password
+      // Return user without password in the format the client expects
       const { password, resetToken, resetTokenExpiry, ...userWithoutPassword } = user;
-      res.json({ user: userWithoutPassword });
+      res.json({ 
+        success: true,
+        user: userWithoutPassword,
+        token: 'session-based', // Client expects a token field
+        authenticated: true
+      });
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
