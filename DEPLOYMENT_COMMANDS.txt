@@ -1,0 +1,35 @@
+VPS DEPLOYMENT COMMANDS
+========================
+
+To deploy the exact replica of the original design to your VPS at 31.97.99.104:
+
+1. SSH into your VPS:
+   ssh root@31.97.99.104
+   (Enter password: password123)
+
+2. Stop any existing processes:
+   pkill -f 'node' || true
+   pkill -f 'python' || true
+
+3. Copy the HTML file to your VPS:
+   Copy the contents of simple-deployment.html to /var/www/index.html
+
+4. Start the web server:
+   cd /var/www
+   python3 -m http.server 80 --bind 0.0.0.0 &
+
+5. Access your website:
+   http://31.97.99.104
+
+DESIGN FEATURES INCLUDED:
+- Exact "Happy Baby Sleeping" branding
+- "Peaceful Nights for Your Little One" hero text
+- Two-column layout with hero image on the right
+- Success badge overlay on hero image
+- Professional gradients and styling
+- Complete responsive design
+- Three service tiers
+- Navigation menu with admin link
+- Professional footer
+
+This deployment creates an exact visual replica of the original design with all the sophisticated styling and layout you requested.
