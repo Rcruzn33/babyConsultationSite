@@ -54,8 +54,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/auth/login", credentials);
       return await res.json();
     },
-    onSuccess: (data: { user: User }) => {
-      queryClient.setQueryData(["/api/auth/me"], data);
+    onSuccess: (data: { success: boolean; user: User; token: string; authenticated: boolean }) => {
+      // Store the token for subsequent requests
+      if (data.token) {
+        localStorage.setItem('authToken', data.token);
+      }
+      
+      // Set the user data in the expected format
+      queryClient.setQueryData(["/api/auth/me"], { user: data.user });
+      
       // Invalidate to ensure fresh data
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       toast({
@@ -97,6 +104,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await apiRequest("POST", "/api/auth/logout");
     },
     onSuccess: () => {
+      // Clear the token from localStorage
+      localStorage.removeItem('authToken');
       queryClient.setQueryData(["/api/auth/me"], null);
       toast({
         title: "Logged out",
@@ -104,6 +113,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
     onError: (error: Error) => {
+      // Clear the token even on error
+      localStorage.removeItem('authToken');
+      queryClient.setQueryData(["/api/auth/me"], null);
       toast({
         title: "Logout failed",
         description: error.message,

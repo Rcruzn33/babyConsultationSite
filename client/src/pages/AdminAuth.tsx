@@ -43,9 +43,9 @@ export default function AdminAuth() {
   const { user, loginMutation, registerMutation, forgotPasswordMutation } = useAuth();
   const [, navigate] = useLocation();
 
-  // Redirect if already logged in and approved
+  // Redirect if already logged in
   useEffect(() => {
-    if (user && user.isApproved) {
+    if (user) {
       navigate('/admin');
     }
   }, [user, navigate]);
