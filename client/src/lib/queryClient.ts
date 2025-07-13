@@ -12,15 +12,10 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const token = localStorage.getItem('authToken');
   const headers: Record<string, string> = {};
   
   if (data) {
     headers["Content-Type"] = "application/json";
-  }
-  
-  if (token) {
-    headers["x-auth-token"] = token;
   }
 
   const res = await fetch(url, {
@@ -40,16 +35,8 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const token = localStorage.getItem('authToken');
-    const headers: Record<string, string> = {};
-    
-    if (token) {
-      headers["x-auth-token"] = token;
-    }
-
     const res = await fetch(queryKey[0] as string, {
       credentials: "include",
-      headers,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
