@@ -30,4 +30,8 @@ if (isNeonDatabase) {
   db = drizzlePostgres(client, { schema });
 }
 
+<<<<<<< HEAD
 export { db };
+=======
+export { db };
+>>>>>>> ad29639edf06ed1e1f0122bdd64fcdc129ec33e5

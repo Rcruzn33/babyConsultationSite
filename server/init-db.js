@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { db } from './dist/server/db-production.js';
-=======
 import { db } from './dist/server/db.js';
->>>>>>> ad29639edf06ed1e1f0122bdd64fcdc129ec33e5
 import { users } from './dist/shared/schema.js';
 import { eq } from 'drizzle-orm';
 
@@ -14,11 +10,7 @@ async function initDB() {
     const [existing] = await db.select().from(users).where(eq(users.username, 'admin')).limit(1);
     
     if (!existing) {
-<<<<<<< HEAD
-      // Create admin user with the same hash as your Replit version
-=======
       // Create admin user
->>>>>>> ad29639edf06ed1e1f0122bdd64fcdc129ec33e5
       await db.insert(users).values({
         username: 'admin',
         email: 'admin@babysleep.com',
@@ -42,8 +34,4 @@ async function initDB() {
   }
 }
 
-<<<<<<< HEAD
 initDB();
-=======
-initDB();
->>>>>>> ad29639edf06ed1e1f0122bdd64fcdc129ec33e5
