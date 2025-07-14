@@ -1,4 +1,18 @@
 {
+  "name": "baby-sleep-app",
+  "version": "1.0.0",
+  "main": "simple-server.js",
+  "scripts": {
+    "start": "node simple-server.js",
+    "build": "echo 'No build needed'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "pg": "^8.11.3"
+  }
+}
+{
   "name": "rest-express",
   "version": "1.0.0",
   "type": "module",
