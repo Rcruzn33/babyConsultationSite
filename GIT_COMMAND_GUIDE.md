@@ -1,74 +1,86 @@
-# Git Command Guide - SSL Certificate Fix
+# 🔧 Git Commands to Update Your replit-agent Branch
 
-## Current Issue
-- SSL certificate error persists in production
-- Git conflicts preventing push to GitHub
-- Need to resolve conflicts and deploy SSL fix
+## Method 1: Switch to replit-agent branch locally and update files
 
-## Step-by-Step Git Fix
-
-### Step 1: Navigate to the github-deploy directory
+### Step 1: Switch to your replit-agent branch
 ```bash
-cd github-deploy
+git checkout replit-agent
 ```
 
-### Step 2: Check current status
-```bash
-git status
-```
+### Step 2: Copy the files manually
+Replace these files with the content from `RENDER_DEPLOYMENT_COMPLETE.md`:
 
-### Step 3: Pull latest changes first
-```bash
-git pull origin main --rebase
-```
+1. **package.json** - Replace with the new version
+2. **vite.config.ts** - Replace with simplified version  
+3. **server/db.ts** - Update for PostgreSQL SSL
+4. **init-db.js** - Create this new file
+5. **postcss.config.js** - Simplify to basic config
+6. **tailwind.config.ts** - Update with baby sleep colors
 
-### Step 4: If conflicts occur, resolve them manually
-- Edit any files that show conflicts
-- Look for `<<<<<<<`, `=======`, and `>>>>>>>` markers
-- Choose the correct version and remove the conflict markers
-
-### Step 5: Add and commit changes
+### Step 3: Commit and push changes
 ```bash
 git add .
-git commit -m "Fix SSL certificate validation for production database"
+git commit -m "Fix Render deployment - resolve vite not found error"
+git push origin replit-agent
 ```
 
-### Step 6: Push to GitHub
+## Method 2: Direct file updates (if you want me to create them locally)
+
+Since I can't directly modify your git branches, you can:
+
+1. **Copy files from this Replit** - I'll create all the files here
+2. **Download them** - Use the file browser to download each file
+3. **Upload to GitHub** - Use GitHub's web interface to upload to replit-agent branch
+
+## Method 3: GitHub Web Interface (Easiest)
+
+1. Go to your GitHub repository
+2. Switch to `replit-agent` branch
+3. Click on each file (package.json, vite.config.ts, etc.)
+4. Click "Edit" button
+5. Replace content with versions from `RENDER_DEPLOYMENT_COMPLETE.md`
+6. Commit each change
+
+## SSH Connection to GitHub (if needed)
+
+### Generate SSH Key (if you don't have one):
 ```bash
-git push origin main
+ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
-## Files That Need SSL Fix
-
-The following files need to be updated with SSL configuration:
-
-### server/db.ts
-```typescript
-export const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
-```
-
-### server/index.ts (session store section)
-```typescript
-  store: new PgSession({
-    conString: process.env.DATABASE_URL,
-    createTableIfMissing: true,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  }),
-```
-
-## Alternative: Force Push (if conflicts persist)
-If you're comfortable overwriting remote changes:
+### Add SSH key to GitHub:
+1. Copy your public key:
 ```bash
-git push origin main --force
+cat ~/.ssh/id_ed25519.pub
+```
+2. Go to GitHub → Settings → SSH Keys → Add new key
+3. Paste the public key
+
+### Test SSH connection:
+```bash
+ssh -T git@github.com
 ```
 
-## After Successful Push
-1. GitHub should automatically trigger Render deployment
-2. Check Render logs for successful deployment
-3. SSL certificate error should be resolved
+## Quick Fix Commands (All in one)
 
-## Manual Deployment Alternative
-If git issues persist, you can manually edit files directly in your GitHub repository through the web interface, then trigger a manual deployment in Render.
+```bash
+# Switch to replit-agent branch
+git checkout replit-agent
+
+# Update files (you'll need to edit these manually)
+# Then commit and push
+git add .
+git commit -m "Fix Render deployment - vite build issues resolved"
+git push origin replit-agent
+```
+
+## What needs to be updated:
+
+The main issue is **"vite: not found"** because:
+1. Vite isn't in your dependencies
+2. Build script doesn't install dependencies properly
+3. Missing proper configuration
+
+The files I created fix all these issues. Your Render deployment will work once you update your `replit-agent` branch with these files.
+
+**Easiest approach**: Use GitHub's web interface to edit files directly on the `replit-agent` branch.
