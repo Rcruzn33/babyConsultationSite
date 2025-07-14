@@ -4,6 +4,8 @@ import { eq } from 'drizzle-orm';
 
 async function initDB() {
   try {
+    console.log('🔄 Initializing database...');
+    
     // Check if admin exists
     const [existing] = await db.select().from(users).where(eq(users.username, 'admin')).limit(1);
     
@@ -20,9 +22,15 @@ async function initDB() {
         approvedAt: new Date()
       });
       console.log('✅ Admin user created');
+    } else {
+      console.log('ℹ️ Admin user already exists');
     }
+    
+    console.log('✅ Database initialization complete');
+    process.exit(0);
   } catch (error) {
-    console.error('❌ DB init error:', error);
+    console.error('❌ Database initialization error:', error);
+    process.exit(1);
   }
 }
 
