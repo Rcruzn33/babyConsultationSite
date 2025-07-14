@@ -119,7 +119,12 @@ initializeDatabase();
 
 In your Render service settings, update the Build Command to:
 ```bash
-npm install && npm run build && node initialize-db.js
+npm install && npm run build
+```
+
+And update the Start Command to:
+```bash
+node initialize-db.js && npm start
 ```
 
 ## 3. VERIFY ENVIRONMENT VARIABLES

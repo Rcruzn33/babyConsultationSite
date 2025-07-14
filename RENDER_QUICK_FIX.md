@@ -1,54 +1,101 @@
-# RENDER QUICK FIX - Hostname Resolution Error
+# RENDER DEPLOYMENT QUICK FIX
 
-## Progress Made ✅
-- SSL/TLS error is FIXED! 
-- New error: "getaddrinfo ENOTFOUND host" - hostname resolution issue
+## The Problem
+Your Render build failed because of the vite command and database initialization issues.
 
-## What This Means
-The database connection is trying to connect but can't find the hostname. This suggests:
-1. DATABASE_URL hostname might be incorrect
-2. Network connectivity issue
-3. Database service might be down
+## IMMEDIATE SOLUTION - Try This First
 
-## Quick Debug Steps
+### 1. Update your GitHub repository with these exact changes:
 
-### Step 1: Check Your DATABASE_URL Format
-In Render dashboard, your DATABASE_URL should look like:
+#### A. Update `server/db.ts`:
+```typescript
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import ws from "ws";
+import * as schema from "../shared/schema";
+
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL must be set");
+}
+
+// Detect database type
+const isNeonDatabase = process.env.DATABASE_URL.includes('neon.tech');
+
+let db: any;
+
+if (isNeonDatabase) {
+  neonConfig.webSocketConstructor = ws;
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  db = drizzle({ client: pool, schema });
+} else {
+  const client = postgres(process.env.DATABASE_URL, {
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  });
+  db = drizzlePostgres(client, { schema });
+}
+
+export { db };
 ```
-postgresql://username:password@ep-example-123456.us-east-1.aws.neon.tech:5432/database?sslmode=require
+
+#### B. Update `server/storage.ts` - Replace the first few lines:
+```typescript
+import { eq } from "drizzle-orm";
+import { db } from "./db";
+import { 
+  User, InsertUser, Contact, InsertContact, Consultation, InsertConsultation,
+  BlogPost, InsertBlogPost, Testimonial, InsertTestimonial,
+  users, contacts, consultations, blogPosts, testimonials
+} from "../shared/schema";
 ```
 
-**Check for these common issues:**
-- Make sure there are no extra spaces
-- Verify the hostname is complete (includes .neon.tech or similar)
-- Ensure port 5432 is included
-- Username and password are correct
+#### C. Add to `package.json` dependencies:
+```json
+"postgres": "^3.4.3"
+```
 
-### Step 2: Verify Database Service Status
-1. Check if your database provider (Neon/Supabase/etc.) is online
-2. Test the connection from your local machine if possible
-3. Verify the database hasn't been suspended or deleted
+### 2. Update Render Settings:
 
-### Step 3: Test Connection
-Try copying your DATABASE_URL and testing it locally:
+**Build Command:**
 ```bash
-psql "your-database-url-here"
+npm install && npm run build
 ```
 
-### Step 4: Alternative DATABASE_URL Formats
-If using Neon, try these formats:
-```
-postgresql://username:password@ep-example-123456.us-east-1.aws.neon.tech:5432/database?sslmode=require
-```
-
-If using Supabase:
-```
-postgresql://postgres:password@db.example.supabase.co:5432/postgres?sslmode=require
+**Start Command:**
+```bash
+npm start
 ```
 
-## Next Steps
-1. Double-check your DATABASE_URL format in Render
-2. Verify your database service is active
-3. Try redeploying after confirming the URL is correct
+### 3. Add Environment Variables in Render:
+- `DATABASE_URL`: postgresql://baby_sleep_db_user:ufSDjNMYRlKwv9EEUOs6BplJfR5ge2NX@dpg-d1liomje5dus73foiq80-a/baby_sleep_db
+- `SESSION_SECRET`: any-random-string-here
+- `NODE_ENV`: production
 
-The SSL issue is resolved - now we just need to fix the hostname resolution!
+### 4. Create Admin User Manually (If Needed):
+
+If login still fails after deployment, connect to your Render database and run:
+
+```sql
+INSERT INTO users (username, email, password, "firstName", "lastName", "isApproved", "approvedBy", "approvedAt")
+VALUES (
+  'admin',
+  'admin@babysleep.com',
+  '2d7e3474f48f35c765ff57ec4afd6fa3c8f77362e97051f0b1d95694760cc000ee10d3031384fe9a83b21df6e70e0811f0f1f450515e2aef701032ec3fcf87d3.b87302cfeb9918193bef00c80b05345f',
+  'Admin',
+  'User',
+  true,
+  1,
+  NOW()
+);
+```
+
+This creates the admin user with password: `password123`
+
+### 5. Test:
+- Deploy from GitHub
+- Go to your Render URL
+- Navigate to `/admin`
+- Login with `admin` / `password123`
+
+This simpler approach should work without the complex initialization script that was causing the build to fail.
