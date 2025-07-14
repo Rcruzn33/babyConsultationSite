@@ -1,18 +1,10 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 import { eq } from "drizzle-orm";
+import { db } from "./db";
 import { 
   User, InsertUser, Contact, InsertContact, Consultation, InsertConsultation,
   BlogPost, InsertBlogPost, Testimonial, InsertTestimonial,
   users, contacts, consultations, blogPosts, testimonials
 } from "@shared/schema";
-
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is required");
-}
-
-const client = postgres(process.env.DATABASE_URL);
-const db = drizzle(client);
 
 export interface IStorage {
   // User management
