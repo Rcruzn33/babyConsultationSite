@@ -1,35 +1,147 @@
-VPS DEPLOYMENT COMMANDS
-========================
+## RENDER DEPLOYMENT FIX - COMPLETE SOLUTION
 
-To deploy the exact replica of the original design to your VPS at 31.97.99.104:
+### PROBLEM:
+1. GitHub code doesn't have the database connection fixes
+2. Render pulls from GitHub, so local changes don't apply
+3. Admin user doesn't exist in Render's PostgreSQL database
 
-1. SSH into your VPS:
-   ssh root@31.97.99.104
-   (Enter password: password123)
+### SOLUTION STEPS:
 
-2. Stop any existing processes:
-   pkill -f 'node' || true
-   pkill -f 'python' || true
+## 1. UPDATE YOUR GITHUB REPOSITORY
 
-3. Copy the HTML file to your VPS:
-   Copy the contents of simple-deployment.html to /var/www/index.html
+Replace the following files in your GitHub repository:
 
-4. Start the web server:
-   cd /var/www
-   python3 -m http.server 80 --bind 0.0.0.0 &
+### A. Update server/db.ts with this content:
+```javascript
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import ws from "ws";
+import * as schema from "@shared/schema";
 
-5. Access your website:
-   http://31.97.99.104
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    "DATABASE_URL must be set. Did you forget to provision a database?",
+  );
+}
 
-DESIGN FEATURES INCLUDED:
-- Exact "Happy Baby Sleeping" branding
-- "Peaceful Nights for Your Little One" hero text
-- Two-column layout with hero image on the right
-- Success badge overlay on hero image
-- Professional gradients and styling
-- Complete responsive design
-- Three service tiers
-- Navigation menu with admin link
-- Professional footer
+// Check if we're using Neon or regular PostgreSQL
+const isNeonDatabase = process.env.DATABASE_URL.includes('neon.tech') || process.env.DATABASE_URL.includes('amazonaws.com');
 
-This deployment creates an exact visual replica of the original design with all the sophisticated styling and layout you requested.
+let db;
+
+if (isNeonDatabase) {
+  // Use Neon serverless for Neon databases
+  neonConfig.webSocketConstructor = ws;
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  db = drizzle({ client: pool, schema });
+} else {
+  // Use regular postgres for Render and other standard PostgreSQL
+  const client = postgres(process.env.DATABASE_URL, {
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 10,
+    idle_timeout: 20,
+    connect_timeout: 10,
+  });
+  db = drizzlePostgres(client, { schema });
+}
+
+export { db };
+```
+
+### B. Update server/storage.ts - Replace the import section:
+```javascript
+import { eq } from "drizzle-orm";
+import { db } from "./db";
+import { 
+  User, InsertUser, Contact, InsertContact, Consultation, InsertConsultation,
+  BlogPost, InsertBlogPost, Testimonial, InsertTestimonial,
+  users, contacts, consultations, blogPosts, testimonials
+} from "@shared/schema";
+```
+
+### C. Update package.json - Add postgres dependency:
+```json
+{
+  "dependencies": {
+    "postgres": "^3.4.3",
+    // ... your other dependencies
+  }
+}
+```
+
+### D. Create initialize-db.js in root directory:
+```javascript
+const { db } = require('./dist/server/db.js');
+const { users } = require('./dist/shared/schema.js');
+const { hashPassword } = require('./dist/server/auth.js');
+const { eq } = require('drizzle-orm');
+
+async function initializeDatabase() {
+  console.log('Initializing database with admin user...');
+  
+  try {
+    // Check if admin user exists
+    const existingAdmin = await db.select().from(users).where(eq(users.username, 'admin')).limit(1);
+    
+    if (existingAdmin.length === 0) {
+      // Create admin user
+      const hashedPassword = await hashPassword('password123');
+      
+      await db.insert(users).values({
+        username: 'admin',
+        email: 'admin@babysleep.com',
+        password: hashedPassword,
+        firstName: 'Admin',
+        lastName: 'User',
+        isApproved: true,
+        approvedBy: 1,
+        approvedAt: new Date()
+      });
+      
+      console.log('✅ Admin user created successfully!');
+    } else {
+      console.log('ℹ️  Admin user already exists');
+    }
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error initializing database:', error);
+    process.exit(1);
+  }
+}
+
+initializeDatabase();
+```
+
+## 2. UPDATE RENDER BUILD COMMAND
+
+In your Render service settings, update the Build Command to:
+```bash
+npm install && npm run build && node initialize-db.js
+```
+
+## 3. VERIFY ENVIRONMENT VARIABLES
+
+Ensure these are set in Render:
+- DATABASE_URL: postgresql://baby_sleep_db_user:ufSDjNMYRlKwv9EEUOs6BplJfR5ge2NX@dpg-d1liomje5dus73foiq80-a/baby_sleep_db
+- SESSION_SECRET: any-random-string-here
+- NODE_ENV: production
+
+## 4. DEPLOYMENT PROCESS
+
+1. Commit and push these changes to your GitHub repository
+2. Render will automatically deploy from the updated GitHub code
+3. The build process will create the admin user in your PostgreSQL database
+4. Login with: username "admin", password "password123"
+
+## 5. VERIFICATION
+
+After deployment, test:
+- Navigate to your Render URL
+- Go to /admin 
+- Login with admin/password123
+- Should work correctly now
+
+This solution addresses both the database connection issue and ensures the admin user exists in your Render database.
