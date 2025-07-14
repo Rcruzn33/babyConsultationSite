@@ -10,7 +10,7 @@ async function initDB() {
     const [existing] = await db.select().from(users).where(eq(users.username, 'admin')).limit(1);
     
     if (!existing) {
-      // Create admin user with the same hash as your Replit version
+      // Create admin user
       await db.insert(users).values({
         username: 'admin',
         email: 'admin@babysleep.com',
