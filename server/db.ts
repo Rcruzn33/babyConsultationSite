@@ -1,4 +1,3 @@
-
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js';
@@ -10,18 +9,23 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL must be set");
 }
 
-// Detect database type
+// Check if using Neon or regular PostgreSQL
 const isNeonDatabase = process.env.DATABASE_URL.includes('neon.tech');
 
 let db: any;
 
 if (isNeonDatabase) {
+  // Neon serverless setup
   neonConfig.webSocketConstructor = ws;
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
   db = drizzle({ client: pool, schema });
 } else {
+  // Regular PostgreSQL setup for Render
   const client = postgres(process.env.DATABASE_URL, {
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 10,
+    idle_timeout: 20,
+    connect_timeout: 10,
   });
   db = drizzlePostgres(client, { schema });
 }
