@@ -1,6 +1,5 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 import { eq } from "drizzle-orm";
+import { db } from "./db";
 import { 
   User, InsertUser, Contact, InsertContact, Consultation, InsertConsultation,
   BlogPost, InsertBlogPost, Testimonial, InsertTestimonial,
