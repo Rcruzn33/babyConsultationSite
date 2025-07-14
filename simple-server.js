@@ -17,19 +17,17 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from dist if it exists, otherwise serve a simple HTML page
-app.use(express.static(path.join(__dirname, 'dist', 'public')));
+// Serve static files if they exist
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Simple password hash verification (matches your current system)
+// Simple password verification
 function verifyPassword(inputPassword, storedHash) {
-  // For now, let's use a simple comparison
-  // In production, you'd use proper bcrypt comparison
   return inputPassword === 'password123' && storedHash.includes('2d7e3474f48f35c765ff57ec4afd6fa3c8f77362e97051f0b1d95694760cc000ee');
 }
 
@@ -38,7 +36,6 @@ app.post('/api/auth/login', async (req, res) => {
   const { username, password } = req.body;
   
   try {
-    // Check if user exists
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     
     if (result.rows.length === 0) {
@@ -47,12 +44,10 @@ app.post('/api/auth/login', async (req, res) => {
     
     const user = result.rows[0];
     
-    // Verify password
     if (!verifyPassword(password, user.password)) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     
-    // Set session
     req.session.userId = user.id;
     req.session.username = user.username;
     
@@ -111,10 +106,9 @@ app.post('/api/auth/logout', (req, res) => {
   });
 });
 
-// Initialize database and create admin user
+// Initialize database
 async function initializeDatabase() {
   try {
-    // Create admin user if it doesn't exist
     const adminCheck = await pool.query('SELECT * FROM users WHERE username = $1', ['admin']);
     
     if (adminCheck.rows.length === 0) {
@@ -140,9 +134,64 @@ async function initializeDatabase() {
   }
 }
 
-// Catch-all handler for React Router
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'public', 'index.html'));
+// Basic HTML page for testing
+app.get('/', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Baby Sleep Consultation</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .login-form { background: #f5f5f5; padding: 20px; border-radius: 8px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; }
+        button { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #005a8a; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Baby Sleep Consultation Admin</h1>
+        <div class="login-form">
+          <h2>Admin Login</h2>
+          <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+          </form>
+          <div id="message"></div>
+        </div>
+      </div>
+      
+      <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const username = document.getElementById('username').value;
+          const password = document.getElementById('password').value;
+          
+          try {
+            const response = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username, password })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              document.getElementById('message').innerHTML = '<p style="color: green;">Login successful!</p>';
+            } else {
+              document.getElementById('message').innerHTML = '<p style="color: red;">Login failed: ' + data.error + '</p>';
+            }
+          } catch (error) {
+            document.getElementById('message').innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+          }
+        });
+      </script>
+    </body>
+    </html>
+  `);
 });
 
 // Start server
