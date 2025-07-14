@@ -4,7 +4,7 @@ import {
   User, InsertUser, Contact, InsertContact, Consultation, InsertConsultation,
   BlogPost, InsertBlogPost, Testimonial, InsertTestimonial,
   users, contacts, consultations, blogPosts, testimonials
-} from "@shared/schema";
+} from "../shared/schema";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required");
