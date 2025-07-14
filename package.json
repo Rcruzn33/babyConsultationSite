@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build --config vite.config.production.ts --outDir=dist/public",
+    "build:client": "vite build --config vite.config.production.ts",
     "build:server": "esbuild server/index.ts --bundle --platform=node --outfile=dist/index.js --external:@neondatabase/serverless --external:ws --external:postgres",
     "start": "NODE_ENV=production node dist/index.js",
     "db:push": "drizzle-kit push"
