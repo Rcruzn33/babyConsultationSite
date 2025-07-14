@@ -1,4 +1,4 @@
-import { db } from './dist/server/db.js';
+import { db } from './dist/server/db-production.js';
 import { users } from './dist/shared/schema.js';
 import { eq } from 'drizzle-orm';
 
