@@ -62,6 +62,27 @@ app.get("/admin-access", (req, res) => {
   res.sendFile(path.join(process.cwd(), "admin-direct.html"));
 });
 
+// Handle client-side routing for SPA routes
+app.get(['/admin', '/admin/*', '/about', '/services', '/blog', '/blog/*', '/contact', '/privacy-policy', '/terms-of-service'], (req, res, next) => {
+  // Skip API routes
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
+  
+  // In development, let Vite handle it
+  if (app.get("env") === "development") {
+    return next();
+  }
+  
+  // In production, serve index.html for client-side routing
+  const distPath = path.resolve(process.cwd(), "dist", "public");
+  if (require('fs').existsSync(path.join(distPath, "index.html"))) {
+    return res.sendFile(path.join(distPath, "index.html"));
+  }
+  
+  next();
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;

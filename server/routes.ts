@@ -365,6 +365,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add support for client-side routing - serve React app for non-API routes
+  app.get(['/admin', '/admin/*', '/about', '/services', '/blog', '/blog/*', '/contact', '/privacy-policy', '/terms-of-service'], (req, res, next) => {
+    // Let the catch-all handler in vite.ts handle this
+    next();
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
