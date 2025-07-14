@@ -1,54 +1,53 @@
-# Final SSL Fix - Environment Variable Approach
+# RENDER NODE VERSION FIX
 
-## Current Status
-- Build: ✅ Successful
-- Port: ✅ Working (5000)
-- SSL: ❌ Still failing
+## The New Error
+The build is now failing with "Invalid node version specification 'null'" - this means Render doesn't know what Node.js version to use.
 
-Port 5432 is correct for PostgreSQL - that's not the issue.
+## QUICK FIX - Add These Files to Your GitHub Repository:
 
-## Direct Render Dashboard Fix
-
-Instead of code changes, modify the environment variable directly in Render:
-
-### Step 1: Go to Render Dashboard
-1. Find your baby sleep website service
-2. Go to "Environment" tab
-3. Find the DATABASE_URL variable
-
-### Step 2: Update DATABASE_URL
-Add SSL parameters to your existing DATABASE_URL:
-
-**If your current DATABASE_URL is:**
+### 1. Create `.nvmrc` file (Node Version Manager file):
 ```
-postgresql://username:password@host:5432/database
+20
 ```
 
-**Change it to:**
+### 2. Create `.node-version` file:
 ```
-postgresql://username:password@host:5432/database?sslmode=require&sslcert=&sslkey=&sslrootcert=
-```
-
-**Or try this simpler version:**
-```
-postgresql://username:password@host:5432/database?ssl=true
+20.0.0
 ```
 
-### Step 3: Also Check These Environment Variables
-Ensure these are set:
-- `NODE_ENV` = `production`
-- `SESSION_SECRET` = any random string
-- `PORT` = (should be automatic)
+### 3. Update your `package.json` to specify Node version:
+```json
+{
+  "name": "baby-sleep-app",
+  "version": "1.0.0",
+  "main": "simple-server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node simple-server.js",
+    "build": "echo 'No build needed'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "pg": "^8.11.3"
+  }
+}
+```
 
-### Step 4: Redeploy
-After changing DATABASE_URL, click "Manual Deploy"
+### 4. Alternative - Set Node Version in Render Environment Variables:
+Go to your Render service settings and add:
+- Variable Name: `NODE_VERSION`
+- Value: `20`
 
-## Alternative: Use Different Connection Method
-If the above doesn't work, we might need to switch from `pg-pool` to a different PostgreSQL client that handles SSL better with your specific database provider.
+## Why This Happens
+Render needs to know which Node.js version to use for your application. The error suggests your repository doesn't have this information specified.
 
-## Why This Should Work
-- Modifying the connection string at the environment level bypasses any code-level SSL configuration issues
-- This is the most direct way to ensure SSL parameters are properly passed to PostgreSQL
-- Many cloud databases require specific SSL parameters in the connection string
+## After the Fix
+1. Commit these changes to GitHub
+2. Render will use Node.js 20 to build and run your app
+3. The simple server should deploy successfully
+4. You can then test login with `admin`/`password123`
 
-Try the environment variable approach first - this often resolves SSL issues that code-level fixes can't address.
+The Node version specification should resolve the current build error and allow the deployment to proceed.
