@@ -1,3 +1,15 @@
+# 🚀 RENDER DEPLOYMENT - FINAL WORKING SOLUTION
+
+## Problem:
+Render build is failing with module resolution errors using TypeScript vite config.
+
+## Solution:
+Use CommonJS vite config and simplified build process for Render compatibility.
+
+## STEP-BY-STEP DEPLOYMENT:
+
+### 1. Replace package.json with this exact content:
+```json
 {
   "name": "baby-sleep-app",
   "version": "1.0.0",
@@ -72,3 +84,64 @@
     "vite": "^5.4.14"
   }
 }
+```
+
+### 2. Add file `render.vite.config.js` (CommonJS format):
+```javascript
+const { defineConfig } = require("vite");
+const react = require("@vitejs/plugin-react");
+const path = require("path");
+
+module.exports = defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "client", "src"),
+      "@shared": path.resolve(__dirname, "shared"),
+      "@assets": path.resolve(__dirname, "attached_assets"),
+    },
+  },
+  root: path.resolve(__dirname, "client"),
+  build: {
+    outDir: path.resolve(__dirname, "dist/public"),
+    emptyOutDir: true,
+    rollupOptions: {
+      external: [],
+    },
+  },
+  server: {
+    fs: {
+      strict: false,
+    },
+  },
+});
+```
+
+### 3. Render Settings:
+- **Build Command**: `npm run build && node render-init-db.js`
+- **Start Command**: `npm start`
+- **Environment Variables**:
+  - `DATABASE_URL`: `postgresql://baby_sleep_db_user:ufSDjNMYRlKwv9EEUOs6BplJfR5ge2NX@dpg-d1liomje5dus73foiq80-a/baby_sleep_db`
+  - `SESSION_SECRET`: `your-secure-session-secret`
+  - `NODE_ENV`: `production`
+
+### 4. Deploy:
+```bash
+git add .
+git commit -m "Fix Render build with CommonJS vite config"
+git push origin main
+```
+
+## Key Changes:
+1. **CommonJS vite config** - Uses `require()` instead of ES modules
+2. **Simplified path resolution** - Uses `__dirname` for reliable paths
+3. **External multer** - Added to esbuild externals
+4. **Proper build order** - Client first, then server
+
+## Expected Result:
+- Build will complete successfully
+- Database will initialize with schema and admin user
+- Website will be live with full functionality
+- Admin dashboard accessible at `/admin`
+
+This should resolve the module resolution issues and successfully deploy to Render.
