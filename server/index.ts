@@ -129,7 +129,30 @@ app.use((req, res, next) => {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
-    await setupVite(app, server);
+    // Alternative development server setup without Vite
+    // Serve the client files directly
+    const fs = require('fs');
+    const clientIndexPath = path.join(process.cwd(), "client", "index.html");
+    
+    app.use("*", async (req, res, next) => {
+      // Skip API routes
+      if (req.originalUrl.startsWith('/api/')) {
+        return next();
+      }
+      
+      try {
+        if (fs.existsSync(clientIndexPath)) {
+          let template = await fs.promises.readFile(clientIndexPath, "utf-8");
+          res.status(200).set({ "Content-Type": "text/html" }).end(template);
+        } else {
+          res.status(404).send("Client index.html not found");
+        }
+      } catch (e) {
+        next(e);
+      }
+    });
+    
+    log("Development server setup complete (without Vite)");
   } else {
     serveStatic(app);
   }
