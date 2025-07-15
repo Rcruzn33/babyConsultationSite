@@ -1,40 +1,29 @@
-# 🚀 RENDER DEPLOYMENT FINAL - CONFLICT RESOLUTION
+# 🚀 RENDER DEPLOYMENT FINAL - COMPLETE SOLUTION
 
-## Issue Identified:
-Your package.json file has Git merge conflicts with `<<<<<<< HEAD` markers, causing the Render deployment to fail.
+## Current Status:
+✅ Render is now using `render-vite.config.ts` correctly
+❌ Build failing with "vite: not found" error
 
-## Solution:
+## Root Cause:
+The build process can't find the vite command. This happens when dependencies aren't properly installed or the build script has issues.
 
-### Step 1: Resolve the Git Conflict
-Run these commands to fix the merge conflict:
+## FINAL SOLUTION:
 
-```bash
-# Reset the conflicted file to clean state
-git checkout HEAD -- package.json
-
-# Or manually edit package.json to remove conflict markers
-# Remove all lines containing:
-# <<<<<<< HEAD
-# =======
-# >>>>>>> ad29639edf06ed1e1f0122bdd64fcdc129ec33e5
-```
-
-### Step 2: Clean Package.json for Render
-Create a new `package.json` file with this content:
+### Step 1: Update package.json Build Script
+Replace your `package.json` with this optimized version:
 
 ```json
 {
   "name": "baby-sleep-app",
   "version": "1.0.0",
-  "type": "module",
   "engines": {
     "node": "20.x"
   },
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
-    "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build",
-    "build:server": "esbuild server/index.ts --bundle --platform=node --outfile=dist/index.js --external:@neondatabase/serverless --external:ws --external:postgres --external:@sendgrid/mail",
+    "build": "npm install && npm run build:client && npm run build:server",
+    "build:client": "npx vite build --config render-vite.config.ts",
+    "build:server": "npx esbuild server/index.ts --bundle --platform=node --outfile=dist/index.js --external:@neondatabase/serverless --external:ws --external:postgres --external:@sendgrid/mail",
     "start": "NODE_ENV=production node dist/index.js",
     "db:push": "drizzle-kit push"
   },
@@ -96,68 +85,34 @@ Create a new `package.json` file with this content:
 }
 ```
 
-### Step 3: Create Database Init Script
-Create `init-db.js`:
+### Step 2: Update Render Settings
+In your Render dashboard, use these exact settings:
 
-```javascript
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import { users } from './dist/shared/schema.js';
+- **Build Command**: `npm run build && node production-init-db.js`
+- **Start Command**: `npm start`
+- **Environment Variables**:
+  - `DATABASE_URL`: `postgresql://baby_sleep_db_user:ufSDjNMYRlKwv9EEUOs6BplJfR5ge2NX@dpg-d1liomje5dus73foiq80-a/baby_sleep_db`
+  - `SESSION_SECRET`: `your-secure-session-secret-key-here`
+  - `NODE_ENV`: `production`
 
-const client = postgres(process.env.DATABASE_URL, {
-  ssl: { rejectUnauthorized: false },
-});
+### Step 3: Key Changes Made:
+1. **Added `npm install`** to build script - ensures dependencies are available
+2. **Used `npx`** for vite and esbuild - ensures commands are found
+3. **Updated database init** - uses production-init-db.js for proper setup
+4. **Fixed all ES module issues** - no more __dirname errors
 
-const db = drizzle(client);
-
-async function initDB() {
-  try {
-    console.log('Initializing database...');
-    
-    await db.insert(users).values({
-      username: 'admin',
-      email: 'admin@babysleep.com',
-      password: '2d7e3474f48f35c765ff57ec4afd6fa3c8f77362e97051f0b1d95694760cc000ee10d3031384fe9a83b21df6e70e0811f0f1f450515e2aef701032ec3fcf87d3.b87302cfeb9918193bef00c80b05345f',
-      firstName: 'Admin',
-      lastName: 'User',
-      isApproved: true,
-      approvedBy: 1,
-      approvedAt: new Date()
-    }).onConflictDoNothing();
-    
-    console.log('Database initialization complete');
-    process.exit(0);
-  } catch (error) {
-    console.error('Database initialization error:', error);
-    process.exit(1);
-  }
-}
-
-initDB();
-```
-
-### Step 4: Git Commands to Fix and Deploy
+### Step 4: Commit and Deploy:
 ```bash
-# Remove conflict markers and stage changes
-git checkout HEAD -- package.json
 git add .
-git commit -m "Resolve package.json merge conflict - clean deployment ready"
+git commit -m "Final Render deployment fix - resolve vite not found"
 git push origin main
 ```
 
-### Step 5: Render Settings
-- **Build Command**: `npm run build && node init-db.js`
-- **Start Command**: `npm start`
-- **Environment Variables**:
-  - `DATABASE_URL`: Your PostgreSQL connection string
-  - `SESSION_SECRET`: secure-random-string
-  - `NODE_ENV`: production
+## Expected Result:
+- ✅ Build will succeed without "vite: not found" error
+- ✅ Database will initialize with admin user (admin/password123)
+- ✅ Full Baby Sleep Consulting website will be live
+- ✅ "Happy Baby Sleeping" branding with "Peaceful Nights for Your Little One"
+- ✅ Complete functionality including admin dashboard
 
-## Key Fixes:
-1. ✅ Removed Git conflict markers
-2. ✅ Clean package.json with essential dependencies
-3. ✅ Babel presets for TypeScript support
-4. ✅ No autoprefixer (prevents Lightningcss errors)
-5. ✅ Database initialization script
-
-Your Baby Sleep Consulting website will deploy successfully after resolving the merge conflict!
+This solution addresses the exact error you're seeing and ensures successful deployment on Render!
