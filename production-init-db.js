@@ -26,9 +26,39 @@ async function initDB() {
         password_hash VARCHAR(255) NOT NULL,
         role VARCHAR(20) DEFAULT 'admin',
         approved BOOLEAN DEFAULT false,
+        can_manage_blog BOOLEAN DEFAULT true,
+        can_manage_testimonials BOOLEAN DEFAULT true,
+        can_manage_contacts BOOLEAN DEFAULT true,
+        can_manage_consultations BOOLEAN DEFAULT true,
+        can_manage_users BOOLEAN DEFAULT true,
+        reset_token VARCHAR(255),
+        reset_token_expiry TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Add missing columns if they don't exist
+    const columnsToAdd = [
+      'approved BOOLEAN DEFAULT false',
+      'can_manage_blog BOOLEAN DEFAULT true',
+      'can_manage_testimonials BOOLEAN DEFAULT true',
+      'can_manage_contacts BOOLEAN DEFAULT true',
+      'can_manage_consultations BOOLEAN DEFAULT true',
+      'can_manage_users BOOLEAN DEFAULT true',
+      'reset_token VARCHAR(255)',
+      'reset_token_expiry TIMESTAMP'
+    ];
+
+    for (const column of columnsToAdd) {
+      try {
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS ${column};`);
+      } catch (error) {
+        // Ignore if column already exists
+        if (error.code !== '42701') {
+          console.log(`Warning: Could not add column ${column}:`, error.message);
+        }
+      }
+    }
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS contacts (
@@ -71,13 +101,32 @@ async function initDB() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS testimonials (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        content TEXT NOT NULL,
+        parent_name VARCHAR(100) NOT NULL,
+        child_age VARCHAR(50),
+        testimonial TEXT NOT NULL,
         rating INTEGER DEFAULT 5,
         approved BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Add missing columns to testimonials table
+    const testimonialColumns = [
+      'parent_name VARCHAR(100)',
+      'child_age VARCHAR(50)',
+      'testimonial TEXT',
+      'approved BOOLEAN DEFAULT false'
+    ];
+
+    for (const column of testimonialColumns) {
+      try {
+        await pool.query(`ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS ${column};`);
+      } catch (error) {
+        if (error.code !== '42701') {
+          console.log(`Warning: Could not add testimonial column ${column}:`, error.message);
+        }
+      }
+    }
 
     // Create session table for express-session
     await pool.query(`
@@ -145,16 +194,19 @@ async function initDB() {
     const testimonialExists = await pool.query('SELECT id FROM testimonials LIMIT 1');
     if (testimonialExists.rows.length === 0) {
       await pool.query(`
-        INSERT INTO testimonials (name, content, rating, approved) VALUES 
-        ($1, $2, 5, true),
-        ($3, $4, 5, true),
-        ($5, $6, 5, true)
+        INSERT INTO testimonials (parent_name, child_age, testimonial, rating, approved) VALUES 
+        ($1, $2, $3, 5, true),
+        ($4, $5, $6, 5, true),
+        ($7, $8, $9, 5, true)
       `, [
         'Sarah Johnson',
+        '8 months',
         'Working with the Baby Sleep Whisperer was a game-changer for our family. Within just two weeks, our 8-month-old went from waking up 5 times a night to sleeping through the night. The personalized approach and ongoing support made all the difference.',
         'Michael Chen',
+        '6 months',
         'I was skeptical about sleep training, but the gentle methods recommended were perfect for our baby. The consultant was patient, knowledgeable, and provided practical solutions that actually worked. Our whole family is now getting better sleep.',
         'Emily Rodriguez',
+        '10 months',
         'The comprehensive sleep package was worth every penny. Not only did our baby learn to sleep better, but we also learned valuable techniques for maintaining healthy sleep habits. Highly recommend to any exhausted parent!'
       ]);
       console.log('Created sample testimonials');

@@ -31,7 +31,25 @@ try {
   });
 
   console.log('✅ Server build completed successfully!');
-  process.exit(0);
+  
+  // Run database initialization for production
+  console.log('🔧 Initializing production database...');
+  const { spawn } = require('child_process');
+  const dbInit = spawn('node', ['render-complete-init-db.js'], { stdio: 'inherit' });
+  
+  dbInit.on('close', (code) => {
+    if (code !== 0) {
+      console.error('❌ Database initialization failed');
+      process.exit(1);
+    }
+    console.log('✅ Production build complete!');
+    process.exit(0);
+  });
+  
+  dbInit.on('error', (error) => {
+    console.error('❌ Database initialization error:', error);
+    process.exit(1);
+  });
 } catch (error) {
   console.error('❌ Server build failed:', error.message);
   process.exit(1);
