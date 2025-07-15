@@ -31,8 +31,4 @@ async function initDB() {
   }
 }
 
-<<<<<<< HEAD
 initDB();
-=======
-initDB();
->>>>>>> d55d68fb70a970d15b6ac052256c7bbf613332f9
