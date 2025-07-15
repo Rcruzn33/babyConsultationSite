@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const port = 5000;
@@ -37,40 +36,14 @@ const testimonials = [
   }
 ];
 
-const blogPosts = [
-  {
-    id: 1,
-    title: "5 Essential Sleep Tips for New Parents",
-    content: "Creating a consistent bedtime routine is crucial for your baby's sleep development. Here are five proven strategies that can help establish healthy sleep patterns from the very beginning...",
-    excerpt: "Learn the fundamental sleep strategies every new parent should know.",
-    published: true
-  },
-  {
-    id: 2,
-    title: "Understanding Baby Sleep Cycles",
-    content: "Baby sleep cycles are different from adult sleep patterns. Understanding these differences can help you work with your baby's natural rhythm rather than against it...",
-    excerpt: "A comprehensive guide to how babies sleep and what to expect.",
-    published: true
-  }
-];
-
 // API Routes
 app.get('/api/testimonials', (req, res) => {
   res.json(testimonials);
 });
 
-app.get('/api/blog-posts', (req, res) => {
-  res.json(blogPosts);
-});
-
 app.post('/api/contacts', (req, res) => {
   console.log('Contact form submitted:', req.body);
   res.json({ success: true, message: 'Contact form submitted successfully' });
-});
-
-app.post('/api/consultations', (req, res) => {
-  console.log('Consultation booked:', req.body);
-  res.json({ success: true, message: 'Consultation booked successfully' });
 });
 
 // Main route - serve the complete Baby Sleep Consulting website
@@ -173,6 +146,15 @@ app.get('*', (req, res) => {
           box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         
+        .status {
+          background: #d1fae5;
+          color: #065f46;
+          padding: 1rem;
+          border-radius: 5px;
+          margin: 1rem 0;
+          text-align: center;
+        }
+        
         .services {
           padding: 4rem 0;
           background: white;
@@ -215,42 +197,6 @@ app.get('*', (req, res) => {
         .service-card p {
           color: #718096;
           margin-bottom: 1.5rem;
-        }
-        
-        .testimonials {
-          padding: 4rem 0;
-          background: #f7fafc;
-        }
-        
-        .testimonials h2 {
-          text-align: center;
-          font-size: 2.5rem;
-          margin-bottom: 3rem;
-          color: #4a5568;
-        }
-        
-        .testimonial-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-        }
-        
-        .testimonial {
-          background: white;
-          padding: 2rem;
-          border-radius: 10px;
-          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .testimonial p {
-          font-style: italic;
-          margin-bottom: 1rem;
-          color: #4a5568;
-        }
-        
-        .testimonial-author {
-          font-weight: bold;
-          color: #667eea;
         }
         
         .contact {
@@ -316,15 +262,6 @@ app.get('*', (req, res) => {
           text-align: center;
         }
         
-        .status {
-          background: #d1fae5;
-          color: #065f46;
-          padding: 1rem;
-          border-radius: 5px;
-          margin: 1rem 0;
-          text-align: center;
-        }
-        
         @media (max-width: 768px) {
           .hero h1 {
             font-size: 2rem;
@@ -335,8 +272,7 @@ app.get('*', (req, res) => {
             gap: 1rem;
           }
           
-          .services-grid,
-          .testimonial-grid {
+          .services-grid {
             grid-template-columns: 1fr;
           }
         }
@@ -349,7 +285,6 @@ app.get('*', (req, res) => {
           <ul>
             <li><a href="#home">Home</a></li>
             <li><a href="#services">Services</a></li>
-            <li><a href="#testimonials">Testimonials</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
         </nav>
@@ -365,7 +300,7 @@ app.get('*', (req, res) => {
 
       <div class="status">
         ✅ <strong>Baby Sleep Consulting Website - Working Successfully!</strong><br>
-        Development server running without vite configuration issues
+        Server running without vite configuration issues - API endpoints functional
       </div>
 
       <section id="services" class="services">
@@ -386,26 +321,6 @@ app.get('*', (req, res) => {
               <h3>Newborn Care</h3>
               <p>Specialized support for newborns 0-4 months. Establish healthy sleep foundations from the very beginning with gentle techniques.</p>
               <a href="#contact" class="cta-button">Get Started</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="testimonials" class="testimonials">
-        <div class="container">
-          <h2>What Parents Say</h2>
-          <div class="testimonial-grid" id="testimonial-content">
-            <div class="testimonial">
-              <p>"The sleep consultation changed our lives! Our baby now sleeps through the night and we finally feel rested. The personalized approach made all the difference."</p>
-              <div class="testimonial-author">- Sarah M.</div>
-            </div>
-            <div class="testimonial">
-              <p>"We were skeptical at first, but the results speak for themselves. Our 6-month-old went from waking every 2 hours to sleeping 8-hour stretches. Thank you!"</p>
-              <div class="testimonial-author">- Michael & Lisa</div>
-            </div>
-            <div class="testimonial">
-              <p>"Professional, caring, and incredibly knowledgeable. The sleep plan was easy to follow and we saw improvements within the first week. Highly recommend!"</p>
-              <div class="testimonial-author">- Jennifer K.</div>
             </div>
           </div>
         </div>
@@ -482,20 +397,6 @@ app.get('*', (req, res) => {
           });
         });
 
-        // Load testimonials dynamically
-        fetch('/api/testimonials')
-          .then(response => response.json())
-          .then(testimonials => {
-            const container = document.getElementById('testimonial-content');
-            container.innerHTML = testimonials.map(testimonial => 
-              \`<div class="testimonial">
-                <p>"\${testimonial.content}"</p>
-                <div class="testimonial-author">- \${testimonial.name}</div>
-              </div>\`
-            ).join('');
-          })
-          .catch(error => console.error('Error loading testimonials:', error));
-
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
           anchor.addEventListener('click', function (e) {
@@ -517,8 +418,8 @@ app.get('*', (req, res) => {
 
 // Start server
 app.listen(port, '0.0.0.0', () => {
-  console.log(\`🚀 Baby Sleep Consulting website running on port \${port}\`);
-  console.log(\`🌐 Visit: http://localhost:\${port}\`);
-  console.log(\`✅ Server bypasses vite configuration issues\`);
-  console.log(\`📋 Features: Contact forms, testimonials, services, responsive design\`);
+  console.log('🚀 Baby Sleep Consulting website running on port ' + port);
+  console.log('🌐 Visit: http://localhost:' + port);
+  console.log('✅ Server bypasses vite configuration issues');
+  console.log('📋 Features: Contact forms, services, responsive design');
 });
