@@ -99,6 +99,75 @@ const upload = multer({
 });
 
 // API Routes
+// Authentication routes (match the frontend expected routes)
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const hashedPassword = hashPassword(password);
+    const result = await pool.query(
+      'INSERT INTO users (username, email, password_hash, approved) VALUES ($1, $2, $3, false) RETURNING id, username, email, approved',
+      [username, email, hashedPassword]
+    );
+
+    res.json({ success: true, user: result.rows[0] });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    const result = await pool.query(
+      'SELECT * FROM users WHERE username = $1 AND approved = true',
+      [username]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid credentials or account not approved' });
+    }
+
+    const user = result.rows[0];
+    if (!verifyPassword(password, user.password_hash)) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role
+    };
+
+    res.json({ success: true, user: req.session.user });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.json({ success: true });
+  });
+});
+
+app.get('/api/auth/me', (req, res) => {
+  if (req.session.user) {
+    res.json(req.session.user);
+  } else {
+    res.status(401).json({ error: 'Not authenticated' });
+  }
+});
+
+// Keep backward compatibility with old routes (duplicate handlers)
 app.post('/api/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;

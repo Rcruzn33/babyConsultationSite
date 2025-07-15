@@ -1,52 +1,36 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
-import { users, contacts, consultations, blogPosts, testimonials, sessions } from './shared/schema.js';
-import { eq } from 'drizzle-orm';
+const { Pool } = require('pg');
 
-const sql = neon(process.env.DATABASE_URL);
-const db = drizzle(sql);
-
-async function hashPassword(password) {
-  const crypto = await import('crypto');
+// Password hashing function
+function hashPassword(password) {
+  const crypto = require('crypto');
   const salt = crypto.randomBytes(16).toString('hex');
   const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
   return `${salt}:${hash}`;
 }
 
 async function initDB() {
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  });
+
+  console.log('Initializing production database...');
+  
   try {
-    console.log('🔄 Initializing database for production...');
-    
-    // Create sessions table
-    await db.execute(`
-      CREATE TABLE IF NOT EXISTS sessions (
-        sid VARCHAR NOT NULL COLLATE "default",
-        sess JSON NOT NULL,
-        expire TIMESTAMP(6) NOT NULL
-      )
-      WITH (OIDS=FALSE);
-    `);
-    
-    await db.execute(`
-      CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON sessions ("expire");
-    `);
-    
-    // Create users table
-    await db.execute(`
+    // Create tables if they don't exist
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
         email VARCHAR(100) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
-        role VARCHAR(20) DEFAULT 'user',
+        role VARCHAR(20) DEFAULT 'admin',
         approved BOOLEAN DEFAULT false,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    
-    // Create contacts table
-    await db.execute(`
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS contacts (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
@@ -56,40 +40,35 @@ async function initDB() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    
-    // Create consultations table
-    await db.execute(`
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS consultations (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(100) NOT NULL,
         phone VARCHAR(20),
-        service_type VARCHAR(50) NOT NULL,
+        service_type VARCHAR(100),
         child_age VARCHAR(50),
         current_challenges TEXT,
         preferred_date DATE,
-        preferred_time VARCHAR(20),
+        preferred_time VARCHAR(50),
         status VARCHAR(20) DEFAULT 'pending',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    
-    // Create blog_posts table
-    await db.execute(`
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS blog_posts (
         id SERIAL PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
+        title VARCHAR(200) NOT NULL,
         content TEXT NOT NULL,
-        excerpt TEXT,
-        author VARCHAR(100) DEFAULT 'Admin',
         published BOOLEAN DEFAULT false,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        author_id INTEGER REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    
-    // Create testimonials table
-    await db.execute(`
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS testimonials (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
@@ -99,59 +78,95 @@ async function initDB() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    
-    // Check if admin user exists
-    const adminExists = await db.execute(`
-      SELECT COUNT(*) as count FROM users WHERE username = 'admin'
+
+    // Create session table for express-session
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS session (
+        sid VARCHAR NOT NULL COLLATE "default",
+        sess JSON NOT NULL,
+        expire TIMESTAMP(6) NOT NULL
+      ) WITH (OIDS=FALSE);
     `);
-    
-    if (adminExists.rows[0].count === '0') {
-      const hashedPassword = await hashPassword('password123');
-      await db.execute(`
-        INSERT INTO users (username, email, password_hash, role, approved)
-        VALUES ('admin', 'admin@happybabysleeping.com', $1, 'admin', true)
-      `, [hashedPassword]);
-      console.log('✅ Admin user created (admin/password123)');
-    }
-    
-    // Add sample blog posts
-    const blogCount = await db.execute(`SELECT COUNT(*) as count FROM blog_posts`);
-    if (blogCount.rows[0].count === '0') {
-      await db.execute(`
-        INSERT INTO blog_posts (title, content, excerpt, published) VALUES
-        ('5 Essential Sleep Tips for New Parents', 'Creating a consistent bedtime routine is crucial for your baby''s sleep development. Here are five proven strategies that can help establish healthy sleep patterns from the very beginning...', 'Learn the fundamental sleep strategies every new parent should know.', true),
-        ('Understanding Baby Sleep Cycles', 'Baby sleep cycles are different from adult sleep patterns. Understanding these differences can help you work with your baby''s natural rhythm rather than against it...', 'A comprehensive guide to how babies sleep and what to expect.', true),
-        ('Common Sleep Challenges and Solutions', 'Every parent faces sleep challenges with their little one. From sleep regressions to night wakings, here are practical solutions to the most common issues...', 'Practical advice for overcoming typical baby sleep problems.', true)
+
+    // Add primary key constraint if it doesn't exist
+    try {
+      await pool.query(`
+        ALTER TABLE session ADD CONSTRAINT session_pkey PRIMARY KEY (sid) NOT DEFERRABLE INITIALLY IMMEDIATE;
       `);
-      console.log('✅ Sample blog posts added');
+    } catch (error) {
+      // Ignore if constraint already exists
+      if (error.code !== '42P16') {
+        throw error;
+      }
     }
-    
-    // Add sample testimonials
-    const testimonialCount = await db.execute(`SELECT COUNT(*) as count FROM testimonials`);
-    if (testimonialCount.rows[0].count === '0') {
-      await db.execute(`
-        INSERT INTO testimonials (name, content, rating, approved) VALUES
-        ('Sarah M.', 'The sleep consultation changed our lives! Our baby now sleeps through the night and we finally feel rested. The personalized approach made all the difference.', 5, true),
-        ('Michael & Lisa', 'We were skeptical at first, but the results speak for themselves. Our 6-month-old went from waking every 2 hours to sleeping 8-hour stretches. Thank you!', 5, true),
-        ('Jennifer K.', 'Professional, caring, and incredibly knowledgeable. The sleep plan was easy to follow and we saw improvements within the first week. Highly recommend!', 5, true)
-      `);
-      console.log('✅ Sample testimonials added');
+
+    // Create indexes
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_session_expire ON session(expire);
+    `);
+
+    // Create default admin user if not exists
+    const adminExists = await pool.query('SELECT id FROM users WHERE username = $1', ['admin']);
+    if (adminExists.rows.length === 0) {
+      const hashedPassword = hashPassword('password123');
+      await pool.query(
+        'INSERT INTO users (username, email, password_hash, approved) VALUES ($1, $2, $3, true)',
+        ['admin', 'admin@babysleep.com', hashedPassword]
+      );
+      console.log('Created default admin user (admin/password123)');
     }
-    
-    console.log('🎉 Database initialization completed successfully!');
-    console.log('🔐 Admin login: admin/password123');
-    
+
+    // Insert sample blog posts if none exist
+    const blogExists = await pool.query('SELECT id FROM blog_posts LIMIT 1');
+    if (blogExists.rows.length === 0) {
+      const adminUser = await pool.query('SELECT id FROM users WHERE username = $1', ['admin']);
+      const adminId = adminUser.rows[0].id;
+
+      await pool.query(`
+        INSERT INTO blog_posts (title, content, published, author_id) VALUES 
+        ($1, $2, true, $3),
+        ($4, $5, true, $3),
+        ($6, $7, true, $3)
+      `, [
+        '5 Essential Tips for Better Baby Sleep',
+        'Establishing a consistent bedtime routine is crucial for your baby\'s sleep development. Here are five proven strategies that can help your little one sleep better: 1) Create a calming bedtime environment, 2) Maintain consistent sleep schedules, 3) Use white noise for comfort, 4) Ensure proper room temperature, and 5) Practice patience and consistency. Remember, every baby is unique, and what works for one may not work for another.',
+        adminId,
+        'Understanding Your Baby\'s Sleep Cycles',
+        'Baby sleep cycles are different from adult sleep patterns. Newborns spend about 50% of their time in REM sleep, compared to 20% for adults. Understanding these cycles can help you better support your baby\'s natural sleep rhythm. Babies typically have shorter sleep cycles of 45-60 minutes, which is why they wake more frequently than adults.',
+        adminId,
+        'Creating the Perfect Sleep Environment',
+        'The right sleep environment can make a significant difference in your baby\'s sleep quality. Keep the room cool (around 68-70°F), dark, and quiet. Use blackout curtains or shades to block out light, and consider a white noise machine to mask household sounds. Ensure the crib is safe and comfortable with a firm mattress and fitted sheet.',
+        adminId
+      ]);
+      console.log('Created sample blog posts');
+    }
+
+    // Insert sample testimonials if none exist
+    const testimonialExists = await pool.query('SELECT id FROM testimonials LIMIT 1');
+    if (testimonialExists.rows.length === 0) {
+      await pool.query(`
+        INSERT INTO testimonials (name, content, rating, approved) VALUES 
+        ($1, $2, 5, true),
+        ($3, $4, 5, true),
+        ($5, $6, 5, true)
+      `, [
+        'Sarah Johnson',
+        'Working with the Baby Sleep Whisperer was a game-changer for our family. Within just two weeks, our 8-month-old went from waking up 5 times a night to sleeping through the night. The personalized approach and ongoing support made all the difference.',
+        'Michael Chen',
+        'I was skeptical about sleep training, but the gentle methods recommended were perfect for our baby. The consultant was patient, knowledgeable, and provided practical solutions that actually worked. Our whole family is now getting better sleep.',
+        'Emily Rodriguez',
+        'The comprehensive sleep package was worth every penny. Not only did our baby learn to sleep better, but we also learned valuable techniques for maintaining healthy sleep habits. Highly recommend to any exhausted parent!'
+      ]);
+      console.log('Created sample testimonials');
+    }
+
+    console.log('Production database initialization complete');
   } catch (error) {
-    console.error('❌ Database initialization failed:', error);
+    console.error('Database initialization error:', error);
     process.exit(1);
+  } finally {
+    await pool.end();
   }
 }
 
-// Run initialization
-initDB().then(() => {
-  console.log('✅ Production database ready');
-  process.exit(0);
-}).catch(error => {
-  console.error('❌ Initialization error:', error);
-  process.exit(1);
-});
+initDB();
