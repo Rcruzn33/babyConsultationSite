@@ -1,6 +1,6 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import { users } from './dist/shared/schema.js';
+const { drizzle } = require('drizzle-orm/postgres-js');
+const postgres = require('postgres');
+const { users } = require('./dist/shared/schema.js');
 
 const client = postgres(process.env.DATABASE_URL, {
   ssl: { rejectUnauthorized: false },
