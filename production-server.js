@@ -186,7 +186,8 @@ app.post('/api/auth/login', async (req, res) => {
       id: user.id,
       username: user.username,
       email: user.email,
-      role: user.role
+      role: user.role,
+      isApproved: user.approved
     };
 
     res.json({ success: true, user: req.session.user });
@@ -254,7 +255,8 @@ app.post('/api/login', async (req, res) => {
       id: user.id,
       username: user.username,
       email: user.email,
-      role: user.role
+      role: user.role,
+      isApproved: user.approved
     };
 
     res.json({ success: true, user: req.session.user });

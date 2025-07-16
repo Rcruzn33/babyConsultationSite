@@ -1,0 +1,113 @@
+==> Cloning from https://github.com/Rcruzn33/babyConsultationSite
+==> Checking out commit 6e93df8b4d96bae6a496d407258af61c8b262c1e in branch main
+==> Downloading cache...
+==> Transferred 122MB in 7s. Extraction took 3s.
+==> Requesting Node.js version 20
+==> Using Node.js version 20.19.4 via environment variable NODE_VERSION
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Using Bun version 1.1.0 (default)
+==> Docs on specifying a Bun version: https://render.com/docs/bun-version
+==> Running build command 'npm install && npm run build && node init-db.js'...
+up to date, audited 369 packages in 1s
+61 packages are looking for funding
+  run `npm fund` for details
+3 vulnerabilities (1 low, 2 moderate)
+To address all issues, run:
+  npm audit fix
+Run `npm audit` for details.
+> baby-sleep-app@1.0.0 build
+> npm run build:client && npm run build:server
+> baby-sleep-app@1.0.0 build:client
+> npx vite build --config render.vite.config.js
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+vite v5.4.14 building for production...
+transforming...
+client/src/components/ui/tooltip.tsx (1:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+client/src/components/ui/tooltip.tsx (1:0): Module level directives cause errors when bundled, "use client" in "client/src/components/ui/tooltip.tsx" was ignored.
+node_modules/@tanstack/react-query/build/modern/useQueries.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useQueries.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/useQuery.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useQuery.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/useSuspenseQuery.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useSuspenseQuery.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/useSuspenseInfiniteQuery.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useSuspenseInfiniteQuery.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/useSuspenseQueries.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useSuspenseQueries.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/HydrationBoundary.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/HydrationBoundary.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/QueryErrorResetBoundary.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/QueryErrorResetBoundary.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/useIsFetching.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useIsFetching.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/useMutationState.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useMutationState.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/useMutation.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useMutation.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/useInfiniteQuery.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useInfiniteQuery.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/isRestoring.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/isRestoring.js" was ignored.
+node_modules/@radix-ui/react-tooltip/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-tooltip/dist/index.mjs" was ignored.
+node_modules/@tanstack/react-query/build/modern/errorBoundaryUtils.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/errorBoundaryUtils.js" was ignored.
+node_modules/@tanstack/react-query/build/modern/useBaseQuery.js (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@tanstack/react-query/build/modern/useBaseQuery.js" was ignored.
+client/src/components/ui/form.tsx (1:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+client/src/components/ui/form.tsx (1:0): Module level directives cause errors when bundled, "use client" in "client/src/components/ui/form.tsx" was ignored.
+client/src/components/ui/select.tsx (1:0): Error when using sourcemap for reporting an error: Can't resolve original location of error.
+client/src/components/ui/select.tsx (1:0): Module level directives cause errors when bundled, "use client" in "client/src/components/ui/select.tsx" was ignored.
+node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-portal/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-portal/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-popper/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-popper/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-presence/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-presence/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-toast/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-toast/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-tabs/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-tabs/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-label/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-label/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-select/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-select/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-collection/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-collection/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-roving-focus/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-roving-focus/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-focus-guards/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-focus-guards/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-focus-scope/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-focus-scope/dist/index.mjs" was ignored.
+node_modules/@radix-ui/react-checkbox/dist/index.mjs (1:0): Module level directives cause errors when bundled, "use client" in "node_modules/@radix-ui/react-checkbox/dist/index.mjs" was ignored.
+✓ 2044 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                                                 1.53 kB │ gzip:   0.68 kB
+../dist/public/assets/friend website pic_1751661228509-BVLD7Kz0.jpeg  1,468.51 kB
+../dist/public/assets/index-CUL_isK3.css                                 57.36 kB │ gzip:  10.32 kB
+../dist/public/assets/index-DXFCnSnT.js                                 540.32 kB │ gzip: 159.61 kB
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.00s
+Building shared schema...
+  dist/shared/schema.js  198.4kb
+⚡ Done in 26ms
+✅ Shared schema built successfully
+> baby-sleep-app@1.0.0 build:server
+> echo 'Using production-server.js directly'
+Using production-server.js directly
+🔄 Redirecting to complete database initialization...
+Initializing Render production database...
+Dropping existing tables for schema fix...
+Creating users table...
+Creating contacts table...
+Creating consultations table...
+Creating blog_posts table...
+Creating testimonials table...
+Creating session table...
+Creating indexes...
+Creating admin user...
+Created default admin user (admin/password123)
+Creating sample blog posts...
+Created sample blog posts
+Creating sample testimonials...
+Created sample testimonials
+✅ Render production database initialization complete!
+✅ Database initialization completed successfully!
+==> Uploading build...
+==> Uploaded in 8.9s. Compression took 2.6s
+==> Build successful 🎉
+==> Deploying...
+==> Running 'npm start'
+> baby-sleep-app@1.0.0 start
+> NODE_ENV=production node production-server.js
+🚀 Server running on port 5000
+📝 Admin login: admin/password123
+🌐 Environment: production
+==> Your service is live 🎉
+==> 
+==> ///////////////////////////////////////////////////////////
+==> 
+==> Available at your primary URL https://babyconsultationsite.onrender.com
+==> 
+==> ///////////////////////////////////////////////////////////
