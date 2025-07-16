@@ -73,6 +73,7 @@ async function initDB() {
         service_type VARCHAR(100),
         child_age VARCHAR(50),
         current_challenges TEXT,
+        sleep_challenges TEXT,
         preferred_date DATE,
         preferred_time VARCHAR(50),
         status VARCHAR(20) DEFAULT 'pending',
@@ -129,8 +130,12 @@ async function initDB() {
     // Create default admin user
     console.log('Creating admin user...');
     const hashedPassword = hashPassword('password123');
+    
+    // Delete existing admin user if exists
+    await pool.query('DELETE FROM users WHERE username = $1', ['admin']);
+    
     await pool.query(
-      'INSERT INTO users (username, email, password_hash, approved) VALUES ($1, $2, $3, true)',
+      'INSERT INTO users (username, email, password_hash, approved, can_manage_blog, can_manage_testimonials, can_manage_contacts, can_manage_consultations, can_manage_users) VALUES ($1, $2, $3, true, true, true, true, true, true)',
       ['admin', 'admin@babysleep.com', hashedPassword]
     );
     console.log('Created default admin user (admin/password123)');
