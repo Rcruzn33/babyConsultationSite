@@ -36,24 +36,41 @@ export default function Admin() {
         const contactsData = await contactsRes.json();
         console.log("Contacts data:", contactsData);
         setContacts(contactsData);
+      } else {
+        console.error("Contacts failed:", await contactsRes.text());
+        setContacts([]); // Set empty array on failure
       }
       if (consultationsRes.ok) {
         const consultationsData = await consultationsRes.json();
         console.log("Consultations data:", consultationsData);
         setConsultations(consultationsData);
+      } else {
+        console.error("Consultations failed:", await consultationsRes.text());
+        setConsultations([]); // Set empty array on failure
       }
       if (blogRes.ok) {
         const blogData = await blogRes.json();
         console.log("Blog data:", blogData);
         setBlogPosts(blogData);
+      } else {
+        console.error("Blog failed:", await blogRes.text());
+        setBlogPosts([]); // Set empty array on failure
       }
       if (testimonialsRes.ok) {
         const testimonialsData = await testimonialsRes.json();
         console.log("Testimonials data:", testimonialsData);
         setTestimonials(testimonialsData);
+      } else {
+        console.error("Testimonials failed:", await testimonialsRes.text());
+        setTestimonials([]); // Set empty array on failure
       }
     } catch (error) {
       console.error("Failed to load data:", error);
+      // Set empty arrays on error to prevent loading state from persisting
+      setContacts([]);
+      setConsultations([]);
+      setBlogPosts([]);
+      setTestimonials([]);
     } finally {
       setLoading(false);
     }
@@ -120,12 +137,20 @@ export default function Admin() {
     loading
   });
 
+  // Force render tabs even if data is empty
+  console.log("Rendering tabs with loading:", loading);
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
           <p className="text-gray-600">Manage your baby sleep consulting business</p>
+          <div className="mt-4 text-sm text-gray-500">
+            Welcome, admin 
+            <a href="/" className="ml-4 text-blue-600 hover:text-blue-800">← Main Site</a>
+            <button className="ml-4 text-red-600 hover:text-red-800">Logout</button>
+          </div>
         </div>
 
         <Tabs defaultValue="contacts" className="space-y-6">

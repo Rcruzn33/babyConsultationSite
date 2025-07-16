@@ -17,7 +17,7 @@ import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
-import Admin from "@/pages/AdminSimple";
+import Admin from "@/pages/Admin";
 import AdminAuth from "@/pages/AdminAuth";
 import PasswordReset from "@/pages/PasswordReset";
 import NotFound from "@/pages/not-found";
