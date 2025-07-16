@@ -66,6 +66,40 @@ function verifyPassword(password, storedHash) {
   return hash === testHash;
 }
 
+// Database field mapping helper
+function mapDatabaseFields(obj) {
+  if (!obj) return obj;
+  
+  const mapped = {};
+  for (const [key, value] of Object.entries(obj)) {
+    // Convert snake_case to camelCase for specific fields
+    if (key === 'created_at') {
+      mapped.createdAt = value;
+    } else if (key === 'updated_at') {
+      mapped.updatedAt = value;
+    } else if (key === 'image_url') {
+      mapped.imageUrl = value;
+    } else if (key === 'author_id') {
+      mapped.authorId = value;
+    } else if (key === 'service_type') {
+      mapped.serviceType = value;
+    } else if (key === 'child_age') {
+      mapped.childAge = value;
+    } else if (key === 'current_challenges') {
+      mapped.currentChallenges = value;
+    } else if (key === 'preferred_date') {
+      mapped.preferredDate = value;
+    } else if (key === 'preferred_time') {
+      mapped.preferredTime = value;
+    } else if (key === 'password_hash') {
+      mapped.passwordHash = value;
+    } else {
+      mapped[key] = value;
+    }
+  }
+  return mapped;
+}
+
 // Authentication middleware
 function requireAuth(req, res, next) {
   if (!req.session.user) {
@@ -161,7 +195,7 @@ app.post('/api/auth/logout', (req, res) => {
 
 app.get('/api/auth/me', (req, res) => {
   if (req.session.user) {
-    res.json(req.session.user);
+    res.json({ user: req.session.user });
   } else {
     res.status(401).json({ error: 'Not authenticated' });
   }
@@ -277,12 +311,12 @@ app.get('/api/blog', async (req, res) => {
       const result = await pool.query(
         'SELECT * FROM blog_posts WHERE published = true ORDER BY created_at DESC'
       );
-      res.json(result.rows);
+      res.json(result.rows.map(mapDatabaseFields));
     } else {
       const result = await pool.query(
         'SELECT * FROM blog_posts ORDER BY created_at DESC'
       );
-      res.json(result.rows);
+      res.json(result.rows.map(mapDatabaseFields));
     }
   } catch (error) {
     console.error('Blog posts error:', error);
@@ -302,7 +336,7 @@ app.get('/api/blog/:slug', async (req, res) => {
       return res.status(404).json({ error: 'Blog post not found' });
     }
     
-    res.json(result.rows[0]);
+    res.json(mapDatabaseFields(result.rows[0]));
   } catch (error) {
     console.error('Blog post error:', error);
     res.status(500).json({ error: 'Failed to fetch blog post' });
@@ -380,7 +414,7 @@ app.get('/api/testimonials', async (req, res) => {
       const result = await pool.query(
         'SELECT * FROM testimonials WHERE approved = true ORDER BY created_at DESC'
       );
-      res.json(result.rows);
+      res.json(result.rows.map(mapDatabaseFields));
     } else {
       // Admin testimonials (auth required)
       if (!req.session.user) {
@@ -390,7 +424,7 @@ app.get('/api/testimonials', async (req, res) => {
       const result = await pool.query(
         'SELECT * FROM testimonials ORDER BY created_at DESC'
       );
-      res.json(result.rows);
+      res.json(result.rows.map(mapDatabaseFields));
     }
   } catch (error) {
     console.error('Testimonials error:', error);
@@ -402,7 +436,7 @@ app.get('/api/testimonials', async (req, res) => {
 app.get('/api/contacts', requireAuth, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM contacts ORDER BY created_at DESC');
-    res.json(result.rows);
+    res.json(result.rows.map(mapDatabaseFields));
   } catch (error) {
     console.error('Contacts error:', error);
     res.status(500).json({ error: 'Failed to fetch contacts' });
@@ -412,7 +446,7 @@ app.get('/api/contacts', requireAuth, async (req, res) => {
 app.get('/api/consultations', requireAuth, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM consultations ORDER BY created_at DESC');
-    res.json(result.rows);
+    res.json(result.rows.map(mapDatabaseFields));
   } catch (error) {
     console.error('Consultations error:', error);
     res.status(500).json({ error: 'Failed to fetch consultations' });
