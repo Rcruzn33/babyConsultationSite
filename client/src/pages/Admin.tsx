@@ -17,17 +17,41 @@ export default function Admin() {
 
   const loadData = async () => {
     try {
+      console.log("Loading admin data...");
       const [contactsRes, consultationsRes, blogRes, testimonialsRes] = await Promise.all([
-        fetch("/api/contacts"),
-        fetch("/api/consultations"),
-        fetch("/api/blog"),
-        fetch("/api/testimonials"),
+        fetch("/api/contacts", { credentials: 'include' }),
+        fetch("/api/consultations", { credentials: 'include' }),
+        fetch("/api/blog", { credentials: 'include' }),
+        fetch("/api/testimonials", { credentials: 'include' }),
       ]);
 
-      if (contactsRes.ok) setContacts(await contactsRes.json());
-      if (consultationsRes.ok) setConsultations(await consultationsRes.json());
-      if (blogRes.ok) setBlogPosts(await blogRes.json());
-      if (testimonialsRes.ok) setTestimonials(await testimonialsRes.json());
+      console.log("Response status:", { 
+        contacts: contactsRes.status, 
+        consultations: consultationsRes.status, 
+        blog: blogRes.status, 
+        testimonials: testimonialsRes.status 
+      });
+
+      if (contactsRes.ok) {
+        const contactsData = await contactsRes.json();
+        console.log("Contacts data:", contactsData);
+        setContacts(contactsData);
+      }
+      if (consultationsRes.ok) {
+        const consultationsData = await consultationsRes.json();
+        console.log("Consultations data:", consultationsData);
+        setConsultations(consultationsData);
+      }
+      if (blogRes.ok) {
+        const blogData = await blogRes.json();
+        console.log("Blog data:", blogData);
+        setBlogPosts(blogData);
+      }
+      if (testimonialsRes.ok) {
+        const testimonialsData = await testimonialsRes.json();
+        console.log("Testimonials data:", testimonialsData);
+        setTestimonials(testimonialsData);
+      }
     } catch (error) {
       console.error("Failed to load data:", error);
     } finally {
