@@ -35,6 +35,8 @@ async function initDB() {
         password_hash VARCHAR(255) NOT NULL,
         role VARCHAR(20) DEFAULT 'admin',
         approved BOOLEAN DEFAULT false,
+        approved_by INTEGER,
+        approved_at TIMESTAMP,
         can_manage_blog BOOLEAN DEFAULT true,
         can_manage_testimonials BOOLEAN DEFAULT true,
         can_manage_contacts BOOLEAN DEFAULT true,
@@ -65,6 +67,7 @@ async function initDB() {
       CREATE TABLE consultations (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
+        parent_name VARCHAR(100),
         email VARCHAR(100) NOT NULL,
         phone VARCHAR(20),
         service_type VARCHAR(100),
@@ -101,6 +104,7 @@ async function initDB() {
         child_age VARCHAR(50),
         testimonial TEXT NOT NULL,
         rating INTEGER DEFAULT 5,
+        photo_url TEXT,
         approved BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
