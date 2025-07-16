@@ -3,13 +3,40 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { Trash2, Edit, Plus, Mail, Phone, Calendar, Star, User, BookOpen, MessageSquare } from "lucide-react";
 
 export default function Admin() {
   const [contacts, setContacts] = useState<any[]>([]);
   const [consultations, setConsultations] = useState<any[]>([]);
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreateBlog, setShowCreateBlog] = useState(false);
+  const [showCreateTestimonial, setShowCreateTestimonial] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<any>(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    excerpt: '',
+    slug: '',
+    published: false,
+    imageUrl: ''
+  });
+  const [testimonialForm, setTestimonialForm] = useState({
+    parentName: '',
+    testimonial: '',
+    childAge: '',
+    rating: 5,
+    photoUrl: ''
+  });
+  const { toast } = useToast();
 
   useEffect(() => {
     loadData();
@@ -18,18 +45,20 @@ export default function Admin() {
   const loadData = async () => {
     try {
       console.log("Loading admin data...");
-      const [contactsRes, consultationsRes, blogRes, testimonialsRes] = await Promise.all([
+      const [contactsRes, consultationsRes, blogRes, testimonialsRes, usersRes] = await Promise.all([
         fetch("/api/contacts", { credentials: 'include' }),
         fetch("/api/consultations", { credentials: 'include' }),
         fetch("/api/blog", { credentials: 'include' }),
         fetch("/api/testimonials", { credentials: 'include' }),
+        fetch("/api/admin/users", { credentials: 'include' }),
       ]);
 
       console.log("Response status:", { 
         contacts: contactsRes.status, 
         consultations: consultationsRes.status, 
         blog: blogRes.status, 
-        testimonials: testimonialsRes.status 
+        testimonials: testimonialsRes.status,
+        users: usersRes.status 
       });
 
       if (contactsRes.ok) {
@@ -64,6 +93,14 @@ export default function Admin() {
         console.error("Testimonials failed:", await testimonialsRes.text());
         setTestimonials([]); // Set empty array on failure
       }
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        console.log("Users data:", usersData);
+        setUsers(usersData);
+      } else {
+        console.error("Users failed:", await usersRes.text());
+        setUsers([]); // Set empty array on failure
+      }
     } catch (error) {
       console.error("Failed to load data:", error);
       // Set empty arrays on error to prevent loading state from persisting
@@ -71,9 +108,141 @@ export default function Admin() {
       setConsultations([]);
       setBlogPosts([]);
       setTestimonials([]);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const createBlogPost = async () => {
+    try {
+      const response = await fetch("/api/blog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const newPost = await response.json();
+        setBlogPosts(prev => [...prev, newPost]);
+        setFormData({ title: '', content: '', excerpt: '', slug: '', published: false, imageUrl: '' });
+        setShowCreateBlog(false);
+        toast({ title: "Success", description: "Blog post created successfully!" });
+      } else {
+        toast({ title: "Error", description: "Failed to create blog post", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to create blog post", variant: "destructive" });
+    }
+  };
+
+  const updateBlogPost = async (id: number, updates: any) => {
+    try {
+      const response = await fetch(`/api/blog/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+        credentials: 'include'
+      });
+      if (response.ok) {
+        setBlogPosts(prev => prev.map(post => post.id === id ? { ...post, ...updates } : post));
+        toast({ title: "Success", description: "Blog post updated successfully!" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to update blog post", variant: "destructive" });
+    }
+  };
+
+  const deleteBlogPost = async (id: number) => {
+    try {
+      const response = await fetch(`/api/blog/${id}`, {
+        method: "DELETE",
+        credentials: 'include'
+      });
+      if (response.ok) {
+        setBlogPosts(prev => prev.filter(post => post.id !== id));
+        toast({ title: "Success", description: "Blog post deleted successfully!" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to delete blog post", variant: "destructive" });
+    }
+  };
+
+  const createTestimonial = async () => {
+    try {
+      const response = await fetch("/api/testimonials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(testimonialForm),
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const newTestimonial = await response.json();
+        setTestimonials(prev => [...prev, newTestimonial]);
+        setTestimonialForm({ parentName: '', testimonial: '', childAge: '', rating: 5, photoUrl: '' });
+        setShowCreateTestimonial(false);
+        toast({ title: "Success", description: "Testimonial created successfully!" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to create testimonial", variant: "destructive" });
+    }
+  };
+
+  const deleteContact = async (id: number) => {
+    try {
+      const response = await fetch(`/api/contacts/${id}`, {
+        method: "DELETE",
+        credentials: 'include'
+      });
+      if (response.ok) {
+        setContacts(prev => prev.filter(contact => contact.id !== id));
+        toast({ title: "Success", description: "Contact deleted successfully!" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to delete contact", variant: "destructive" });
+    }
+  };
+
+  const deleteConsultation = async (id: number) => {
+    try {
+      const response = await fetch(`/api/consultations/${id}`, {
+        method: "DELETE",
+        credentials: 'include'
+      });
+      if (response.ok) {
+        setConsultations(prev => prev.filter(consultation => consultation.id !== id));
+        toast({ title: "Success", description: "Consultation deleted successfully!" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to delete consultation", variant: "destructive" });
+    }
+  };
+
+  const deleteTestimonial = async (id: number) => {
+    try {
+      const response = await fetch(`/api/testimonials/${id}`, {
+        method: "DELETE",
+        credentials: 'include'
+      });
+      if (response.ok) {
+        setTestimonials(prev => prev.filter(testimonial => testimonial.id !== id));
+        toast({ title: "Success", description: "Testimonial deleted successfully!" });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to delete testimonial", variant: "destructive" });
+    }
+  };
+
+  const generateSlug = (title: string) => {
+    return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  };
+
+  const handleFormChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value,
+      ...(field === 'title' && { slug: generateSlug(value) })
+    }));
   };
 
   const updateContactStatus = async (id: number, responded: boolean) => {
@@ -154,16 +323,26 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="contacts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="contacts">
+              <MessageSquare className="w-4 h-4 mr-2" />
               Contacts ({contacts.filter(c => !c.responded).length})
             </TabsTrigger>
             <TabsTrigger value="consultations">
+              <Calendar className="w-4 h-4 mr-2" />
               Consultations ({consultations.filter(c => c.status === 'pending').length})
             </TabsTrigger>
-            <TabsTrigger value="blog">Blog Posts ({blogPosts.length})</TabsTrigger>
+            <TabsTrigger value="blog">
+              <BookOpen className="w-4 h-4 mr-2" />
+              Blog Posts ({blogPosts.length})
+            </TabsTrigger>
             <TabsTrigger value="testimonials">
+              <Star className="w-4 h-4 mr-2" />
               Testimonials ({testimonials.filter(t => !t.approved).length} pending)
+            </TabsTrigger>
+            <TabsTrigger value="users">
+              <User className="w-4 h-4 mr-2" />
+              Users ({users.length})
             </TabsTrigger>
           </TabsList>
 
@@ -199,6 +378,21 @@ export default function Admin() {
                             }
                           >
                             Mark as {contact.responded ? "Unread" : "Read"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(`mailto:${contact.email}`)}
+                          >
+                            <Mail className="w-4 h-4 mr-1" />
+                            Reply
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => deleteContact(contact.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
@@ -266,6 +460,31 @@ export default function Admin() {
                             <option value="completed">Completed</option>
                             <option value="cancelled">Cancelled</option>
                           </select>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => window.open(`mailto:${consultation.email}`)}
+                          >
+                            <Mail className="w-4 h-4 mr-1" />
+                            Email
+                          </Button>
+                          {consultation.phone && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => window.open(`tel:${consultation.phone}`)}
+                            >
+                              <Phone className="w-4 h-4 mr-1" />
+                              Call
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => deleteConsultation(consultation.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4 mb-2 text-sm">
@@ -308,8 +527,98 @@ export default function Admin() {
           <TabsContent value="blog" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Blog Posts</CardTitle>
-                <CardDescription>Manage your blog content</CardDescription>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Blog Posts</CardTitle>
+                    <CardDescription>Manage your blog content</CardDescription>
+                  </div>
+                  <Dialog open={showCreateBlog} onOpenChange={setShowCreateBlog}>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create Post
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Create New Blog Post</DialogTitle>
+                        <DialogDescription>
+                          Fill in the details to create a new blog post
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="title">Title</Label>
+                            <Input
+                              id="title"
+                              value={formData.title}
+                              onChange={(e) => handleFormChange('title', e.target.value)}
+                              placeholder="Enter blog post title"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="slug">Slug</Label>
+                            <Input
+                              id="slug"
+                              value={formData.slug}
+                              onChange={(e) => handleFormChange('slug', e.target.value)}
+                              placeholder="url-friendly-slug"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label htmlFor="excerpt">Excerpt</Label>
+                          <Textarea
+                            id="excerpt"
+                            value={formData.excerpt}
+                            onChange={(e) => handleFormChange('excerpt', e.target.value)}
+                            placeholder="Brief description of the post"
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="content">Content</Label>
+                          <Textarea
+                            id="content"
+                            value={formData.content}
+                            onChange={(e) => handleFormChange('content', e.target.value)}
+                            placeholder="Write your blog post content here..."
+                            rows={8}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="imageUrl">Image URL</Label>
+                            <Input
+                              id="imageUrl"
+                              value={formData.imageUrl}
+                              onChange={(e) => handleFormChange('imageUrl', e.target.value)}
+                              placeholder="https://example.com/image.jpg"
+                            />
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id="published"
+                              checked={formData.published}
+                              onChange={(e) => handleFormChange('published', e.target.checked)}
+                            />
+                            <Label htmlFor="published">Publish immediately</Label>
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline" onClick={() => setShowCreateBlog(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={createBlogPost}>
+                            Create Post
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -320,9 +629,32 @@ export default function Admin() {
                           <h3 className="font-semibold">{post.title}</h3>
                           <p className="text-sm text-gray-600">Slug: {post.slug}</p>
                         </div>
-                        <Badge variant={post.published ? "default" : "secondary"}>
-                          {post.published ? "Published" : "Draft"}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={post.published ? "default" : "secondary"}>
+                            {post.published ? "Published" : "Draft"}
+                          </Badge>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateBlogPost(post.id, { published: !post.published })}
+                          >
+                            {post.published ? "Unpublish" : "Publish"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditingBlog(post)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => deleteBlogPost(post.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                       <p className="text-sm mb-2">{post.excerpt}</p>
                       <div className="text-xs text-gray-500">
@@ -344,8 +676,92 @@ export default function Admin() {
           <TabsContent value="testimonials" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Testimonials</CardTitle>
-                <CardDescription>Review and approve customer testimonials</CardDescription>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Testimonials</CardTitle>
+                    <CardDescription>Review and approve customer testimonials</CardDescription>
+                  </div>
+                  <Dialog open={showCreateTestimonial} onOpenChange={setShowCreateTestimonial}>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Testimonial
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add New Testimonial</DialogTitle>
+                        <DialogDescription>
+                          Manually add a testimonial from a satisfied customer
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="parentName">Parent Name</Label>
+                          <Input
+                            id="parentName"
+                            value={testimonialForm.parentName}
+                            onChange={(e) => setTestimonialForm(prev => ({ ...prev, parentName: e.target.value }))}
+                            placeholder="Enter parent's name"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="childAge">Child Age</Label>
+                          <Input
+                            id="childAge"
+                            value={testimonialForm.childAge}
+                            onChange={(e) => setTestimonialForm(prev => ({ ...prev, childAge: e.target.value }))}
+                            placeholder="e.g., 8 months"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="testimonial">Testimonial</Label>
+                          <Textarea
+                            id="testimonial"
+                            value={testimonialForm.testimonial}
+                            onChange={(e) => setTestimonialForm(prev => ({ ...prev, testimonial: e.target.value }))}
+                            placeholder="Enter the testimonial text"
+                            rows={4}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="rating">Rating</Label>
+                            <Select value={testimonialForm.rating.toString()} onValueChange={(value) => setTestimonialForm(prev => ({ ...prev, rating: parseInt(value) }))}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select rating" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="1">1 Star</SelectItem>
+                                <SelectItem value="2">2 Stars</SelectItem>
+                                <SelectItem value="3">3 Stars</SelectItem>
+                                <SelectItem value="4">4 Stars</SelectItem>
+                                <SelectItem value="5">5 Stars</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="photoUrl">Photo URL (optional)</Label>
+                            <Input
+                              id="photoUrl"
+                              value={testimonialForm.photoUrl}
+                              onChange={(e) => setTestimonialForm(prev => ({ ...prev, photoUrl: e.target.value }))}
+                              placeholder="https://example.com/photo.jpg"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline" onClick={() => setShowCreateTestimonial(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={createTestimonial}>
+                            Add Testimonial
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -375,6 +791,13 @@ export default function Admin() {
                               Approve
                             </Button>
                           )}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => deleteTestimonial(testimonial.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                       <p className="text-sm mb-2">{testimonial.testimonial}</p>
@@ -385,6 +808,58 @@ export default function Admin() {
                   ))}
                   {testimonials.length === 0 && (
                     <p className="text-gray-500 text-center py-8">No testimonials yet</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="users" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>Manage admin users and their permissions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {users.map((user) => (
+                    <Card key={user.id} className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="font-semibold">{user.email}</h3>
+                          <p className="text-sm text-gray-600">Role: {user.role || 'Admin'}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={user.approved ? "default" : "secondary"}>
+                            {user.approved ? "Approved" : "Pending"}
+                          </Badge>
+                          <Badge variant="outline">
+                            {user.canManageUsers ? "All Permissions" : "Limited"}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <strong>Permissions:</strong>
+                          <ul className="text-xs text-gray-600">
+                            {user.canManageUsers && <li>• Manage Users</li>}
+                            {user.canManageContacts && <li>• Manage Contacts</li>}
+                            {user.canManageConsultations && <li>• Manage Consultations</li>}
+                            {user.canManageBlog && <li>• Manage Blog</li>}
+                            {user.canManageTestimonials && <li>• Manage Testimonials</li>}
+                          </ul>
+                        </div>
+                        <div>
+                          <strong>Account:</strong>
+                          <p className="text-xs text-gray-600">
+                            Created: {new Date(user.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                  {users.length === 0 && (
+                    <p className="text-gray-500 text-center py-8">No users found</p>
                   )}
                 </div>
               </CardContent>
