@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Baby Sleep Whisperer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2563eb;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .header .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: white;
+            color: #666;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab:hover {
+            background: #f8f9fa;
+        }
+        
+        .tab.active {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .data-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .data-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .data-card h3 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #1d4ed8;
+        }
+        
+        .btn-logout {
+            background: #dc3545;
+        }
+        
+        .btn-logout:hover {
+            background: #c82333;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <div class="user-info">
+                <span>Welcome, <span id="username">admin</span></span>
+                <button class="btn btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('contacts')">Contacts (<span id="contacts-count">0</span>)</button>
+            <button class="tab" onclick="showTab('consultations')">Consultations (<span id="consultations-count">0</span>)</button>
+            <button class="tab" onclick="showTab('blog')">Blog Posts (<span id="blog-count">0</span>)</button>
+            <button class="tab" onclick="showTab('testimonials')">Testimonials (<span id="testimonials-count">0</span>)</button>
+        </div>
+        
+        <div id="error-message" class="error" style="display: none;"></div>
+        
+        <div id="contacts-tab" class="tab-content active">
+            <h2>Contact Form Submissions</h2>
+            <div id="contacts-loading" class="loading">Loading contacts...</div>
+            <div id="contacts-data" class="data-grid" style="display: none;"></div>
+        </div>
+        
+        <div id="consultations-tab" class="tab-content">
+            <h2>Consultation Requests</h2>
+            <div id="consultations-loading" class="loading">Loading consultations...</div>
+            <div id="consultations-data" class="data-grid" style="display: none;"></div>
+        </div>
+        
+        <div id="blog-tab" class="tab-content">
+            <h2>Blog Posts</h2>
+            <div id="blog-loading" class="loading">Loading blog posts...</div>
+            <div id="blog-data" class="data-grid" style="display: none;"></div>
+        </div>
+        
+        <div id="testimonials-tab" class="tab-content">
+            <h2>Customer Testimonials</h2>
+            <div id="testimonials-loading" class="loading">Loading testimonials...</div>
+            <div id="testimonials-data" class="data-grid" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentTab = 'contacts';
+        let data = {
+            contacts: [],
+            consultations: [],
+            blog: [],
+            testimonials: []
+        };
+        
+        // Tab switching
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            currentTab = tabName;
+            
+            // Load data if not already loaded
+            if (data[tabName].length === 0) {
+                loadData(tabName);
+            }
+        }
+        
+        // Load data from API
+        async function loadData(type) {
+            try {
+                const response = await fetch(`/api/${type}`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${type}: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                data[type] = result;
+                
+                updateUI(type);
+            } catch (error) {
+                console.error(`Error loading ${type}:`, error);
+                showError(`Failed to load ${type}: ${error.message}`);
+                
+                // Hide loading, show empty state
+                document.getElementById(`${type}-loading`).style.display = 'none';
+                document.getElementById(`${type}-data`).style.display = 'block';
+                document.getElementById(`${type}-data`).innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error Loading Data</h3>
+                        <p>${error.message}</p>
+                        <button class="btn" onclick="loadData('${type}')">Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Update UI with data
+        function updateUI(type) {
+            const loadingEl = document.getElementById(`${type}-loading`);
+            const dataEl = document.getElementById(`${type}-data`);
+            const countEl = document.getElementById(`${type}-count`);
+            
+            loadingEl.style.display = 'none';
+            dataEl.style.display = 'block';
+            
+            const items = data[type];
+            countEl.textContent = items.length;
+            
+            if (items.length === 0) {
+                dataEl.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No ${type} found</h3>
+                        <p>There are no ${type} to display at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Render items based on type
+            let html = '';
+            items.forEach(item => {
+                html += renderItem(type, item);
+            });
+            
+            dataEl.innerHTML = html;
+        }
+        
+        // Render individual item
+        function renderItem(type, item) {
+            switch (type) {
+                case 'contacts':
+                    return `
+                        <div class="data-card">
+                            <h3>${item.name}</h3>
+                            <p><strong>Email:</strong> ${item.email}</p>
+                            <p><strong>Phone:</strong> ${item.phone || 'Not provided'}</p>
+                            <p><strong>Subject:</strong> ${item.subject}</p>
+                            <p><strong>Message:</strong> ${item.message}</p>
+                            <p><strong>Date:</strong> ${new Date(item.created_at).toLocaleDateString()}</p>
+                        </div>
+                    `;
+                    
+                case 'consultations':
+                    return `
+                        <div class="data-card">
+                            <h3>${item.parent_name}</h3>
+                            <p><strong>Email:</strong> ${item.email}</p>
+                            <p><strong>Phone:</strong> ${item.phone}</p>
+                            <p><strong>Child Age:</strong> ${item.child_age}</p>
+                            <p><strong>Service:</strong> ${item.service_type}</p>
+                            <p><strong>Sleep Issues:</strong> ${item.sleep_issues}</p>
+                            <p><strong>Date:</strong> ${new Date(item.created_at).toLocaleDateString()}</p>
+                            <span class="status-badge ${item.status === 'completed' ? 'status-approved' : 'status-pending'}">${item.status}</span>
+                        </div>
+                    `;
+                    
+                case 'blog':
+                    return `
+                        <div class="data-card">
+                            <h3>${item.title}</h3>
+                            <p><strong>Excerpt:</strong> ${item.excerpt}</p>
+                            <p><strong>Published:</strong> ${item.published ? 'Yes' : 'No'}</p>
+                            <p><strong>Date:</strong> ${new Date(item.createdAt).toLocaleDateString()}</p>
+                        </div>
+                    `;
+                    
+                case 'testimonials':
+                    return `
+                        <div class="data-card">
+                            <h3>${item.parentName}</h3>
+                            <p><strong>Child Age:</strong> ${item.childAge}</p>
+                            <p><strong>Rating:</strong> ${item.rating}/5</p>
+                            <p><strong>Testimonial:</strong> ${item.testimonial}</p>
+                            <p><strong>Date:</strong> ${new Date(item.createdAt).toLocaleDateString()}</p>
+                            <span class="status-badge ${item.approved ? 'status-approved' : 'status-pending'}">${item.approved ? 'Approved' : 'Pending'}</span>
+                        </div>
+                    `;
+                    
+                default:
+                    return '';
+            }
+        }
+        
+        // Show error message
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Logout function
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.href = '/admin-auth';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData('contacts');
+            loadData('consultations');
+            loadData('blog');
+            loadData('testimonials');
+        });
+    </script>
+</body>
+</html>

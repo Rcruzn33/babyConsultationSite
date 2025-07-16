@@ -184,14 +184,6 @@ app.get('/api/testimonials', async (req, res) => {
   }
 });
 
-// Admin dashboard route
-app.get('/admin', (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/admin-auth');
-  }
-  res.sendFile(path.join(__dirname, 'admin-dashboard-fix.html'));
-});
-
 // Catch-all handler for React app
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/public/index.html'));
