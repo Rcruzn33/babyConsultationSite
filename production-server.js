@@ -187,23 +187,36 @@ app.get('/api/testimonials', async (req, res) => {
   }
 });
 
-// Admin authentication route
-app.get('/admin-auth', (req, res) => {
+// Admin authentication route (React app expects /admin/auth)
+app.get('/admin/auth', (req, res) => {
   if (req.session.user) {
     return res.redirect('/admin');
   }
   res.sendFile(path.join(__dirname, 'dist/public/index.html'));
 });
 
+// Legacy admin-auth route for backward compatibility
+app.get('/admin-auth', (req, res) => {
+  res.redirect('/admin/auth');
+});
+
 // Admin dashboard route
 app.get('/admin', (req, res) => {
   if (!req.session.user) {
-    return res.redirect('/admin-auth');
+    return res.redirect('/admin/auth');
   }
-  res.sendFile(path.join(__dirname, 'admin-dashboard-fix.html'));
+  res.sendFile(path.join(__dirname, 'dist/public/index.html'));
 });
 
+// Blog post detail routes
+app.get('/blog/:slug', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist/public/index.html'));
+});
 
+// All other admin routes
+app.get('/admin/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist/public/index.html'));
+});
 
 // Catch-all handler for React app
 app.get('*', (req, res) => {
