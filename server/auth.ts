@@ -22,10 +22,27 @@ export async function hashPassword(password: string): Promise<string> {
 }
 
 export async function comparePasswords(supplied: string, stored: string): Promise<boolean> {
-  const [hashed, salt] = stored.split(".");
-  const hashedBuf = Buffer.from(hashed, "hex");
-  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-  return timingSafeEqual(hashedBuf, suppliedBuf);
+  try {
+    // Handle both scrypt (hash.salt) and pbkdf2 (salt:hash) formats
+    if (stored.includes('.')) {
+      // Scrypt format: hash.salt
+      const [hashed, salt] = stored.split(".");
+      const hashedBuf = Buffer.from(hashed, "hex");
+      const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+      return timingSafeEqual(hashedBuf, suppliedBuf);
+    } else if (stored.includes(':')) {
+      // PBKDF2 format: salt:hash - need to check against pbkdf2 hash
+      const [salt, hash] = stored.split(':');
+      const crypto = require('crypto');
+      const testHash = crypto.pbkdf2Sync(supplied, salt, 1000, 64, 'sha512').toString('hex');
+      return hash === testHash;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('Password comparison error:', error);
+    return false;
+  }
 }
 
 // Generate secure random token
