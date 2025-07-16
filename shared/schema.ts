@@ -59,8 +59,8 @@ export const blogPosts = pgTable("blog_posts", {
   content: text("content").notNull(),
   imageUrl: text("image_url"),
   published: boolean("published").default(false).notNull(),
+  authorId: integer("author_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Testimonials

@@ -83,7 +83,10 @@ async function initDB() {
       CREATE TABLE blog_posts (
         id SERIAL PRIMARY KEY,
         title VARCHAR(200) NOT NULL,
+        slug VARCHAR(200) NOT NULL UNIQUE,
+        excerpt TEXT NOT NULL,
         content TEXT NOT NULL,
+        image_url TEXT,
         published BOOLEAN DEFAULT false,
         author_id INTEGER REFERENCES users(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -134,18 +137,24 @@ async function initDB() {
     const adminId = adminUser.rows[0].id;
 
     await pool.query(`
-      INSERT INTO blog_posts (title, content, published, author_id) VALUES 
-      ($1, $2, true, $3),
-      ($4, $5, true, $6),
-      ($7, $8, true, $9)
+      INSERT INTO blog_posts (title, slug, excerpt, content, published, author_id) VALUES 
+      ($1, $2, $3, $4, true, $5),
+      ($6, $7, $8, $9, true, $10),
+      ($11, $12, $13, $14, true, $15)
     `, [
       '5 Essential Tips for Better Baby Sleep',
+      '5-essential-tips-for-better-baby-sleep',
+      'Discover five proven strategies that can help your little one sleep better through consistent routines and proper environment.',
       'Establishing a consistent bedtime routine is crucial for your baby\'s sleep development. Here are five proven strategies that can help your little one sleep better: 1) Create a calming bedtime environment, 2) Maintain consistent sleep schedules, 3) Use white noise for comfort, 4) Ensure proper room temperature, and 5) Practice patience and consistency. Remember, every baby is unique, and what works for one may not work for another.',
       adminId,
       'Understanding Your Baby\'s Sleep Cycles',
+      'understanding-your-babys-sleep-cycles',
+      'Learn about baby sleep patterns and how they differ from adult sleep to better support your baby\'s natural rhythm.',
       'Baby sleep cycles are different from adult sleep patterns. Newborns spend about 50% of their time in REM sleep, compared to 20% for adults. Understanding these cycles can help you better support your baby\'s natural sleep rhythm. Babies typically have shorter sleep cycles of 45-60 minutes, which is why they wake more frequently than adults.',
       adminId,
       'Creating the Perfect Sleep Environment',
+      'creating-the-perfect-sleep-environment',
+      'Tips for setting up the ideal sleep environment with proper temperature, lighting, and noise control for better baby sleep.',
       'The right sleep environment can make a significant difference in your baby\'s sleep quality. Keep the room cool (around 68-70°F), dark, and quiet. Use blackout curtains or shades to block out light, and consider a white noise machine to mask household sounds. Ensure the crib is safe and comfortable with a firm mattress and fitted sheet.',
       adminId
     ]);
