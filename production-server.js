@@ -44,7 +44,7 @@ app.use(session({
   saveUninitialized: false,
   name: 'connect.sid',
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: false, // Set to false for now to fix session issues
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
     sameSite: "lax",
@@ -72,6 +72,7 @@ function verifyPassword(password, storedHash) {
 
 // Authentication middleware
 function requireAuth(req, res, next) {
+  console.log('Session check:', req.session?.user ? 'authenticated' : 'not authenticated');
   if (!req.session.user) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
