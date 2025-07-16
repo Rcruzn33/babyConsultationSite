@@ -3,6 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Admin() {
@@ -12,6 +17,23 @@ export default function Admin() {
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreateBlog, setShowCreateBlog] = useState(false);
+  const [showCreateTestimonial, setShowCreateTestimonial] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    excerpt: '',
+    slug: '',
+    published: false,
+    imageUrl: ''
+  });
+  const [testimonialForm, setTestimonialForm] = useState({
+    parentName: '',
+    testimonial: '',
+    childAge: '',
+    rating: 5,
+    photoUrl: ''
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -117,6 +139,68 @@ export default function Admin() {
       }
     } catch (error) {
       toast({ title: "Error updating consultation", variant: "destructive" });
+    }
+  };
+
+  const handleFormChange = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const createBlogPost = async () => {
+    try {
+      const response = await fetch('/api/blog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: "Blog post created successfully" });
+        setShowCreateBlog(false);
+        setFormData({
+          title: '',
+          content: '',
+          excerpt: '',
+          slug: '',
+          published: false,
+          imageUrl: ''
+        });
+        loadData();
+      } else {
+        toast({ title: "Failed to create blog post", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error creating blog post", variant: "destructive" });
+    }
+  };
+
+  const createTestimonial = async () => {
+    try {
+      const response = await fetch('/api/testimonials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...testimonialForm,
+          approved: true
+        }),
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: "Testimonial created successfully" });
+        setShowCreateTestimonial(false);
+        setTestimonialForm({
+          parentName: '',
+          testimonial: '',
+          childAge: '',
+          rating: 5,
+          photoUrl: ''
+        });
+        loadData();
+      } else {
+        toast({ title: "Failed to create testimonial", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error creating testimonial", variant: "destructive" });
     }
   };
 
@@ -265,7 +349,89 @@ export default function Admin() {
                     <CardTitle>Blog Posts</CardTitle>
                     <CardDescription>Manage your blog content</CardDescription>
                   </div>
-                  <Button>+ Create Post</Button>
+                  <Dialog open={showCreateBlog} onOpenChange={setShowCreateBlog}>
+                    <DialogTrigger asChild>
+                      <Button>+ Create Post</Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Create New Blog Post</DialogTitle>
+                        <DialogDescription>
+                          Fill in the details to create a new blog post
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="title">Title</Label>
+                            <Input
+                              id="title"
+                              value={formData.title}
+                              onChange={(e) => handleFormChange('title', e.target.value)}
+                              placeholder="Enter blog post title"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="slug">Slug</Label>
+                            <Input
+                              id="slug"
+                              value={formData.slug}
+                              onChange={(e) => handleFormChange('slug', e.target.value)}
+                              placeholder="url-friendly-slug"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label htmlFor="excerpt">Excerpt</Label>
+                          <Textarea
+                            id="excerpt"
+                            value={formData.excerpt}
+                            onChange={(e) => handleFormChange('excerpt', e.target.value)}
+                            placeholder="Brief description of the post"
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="content">Content</Label>
+                          <Textarea
+                            id="content"
+                            value={formData.content}
+                            onChange={(e) => handleFormChange('content', e.target.value)}
+                            placeholder="Write your blog post content here..."
+                            rows={8}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="imageUrl">Image URL</Label>
+                            <Input
+                              id="imageUrl"
+                              value={formData.imageUrl}
+                              onChange={(e) => handleFormChange('imageUrl', e.target.value)}
+                              placeholder="https://example.com/image.jpg"
+                            />
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id="published"
+                              checked={formData.published}
+                              onChange={(e) => handleFormChange('published', e.target.checked)}
+                            />
+                            <Label htmlFor="published">Publish immediately</Label>
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline" onClick={() => setShowCreateBlog(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={createBlogPost}>
+                            Create Post
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardHeader>
               <CardContent>
@@ -298,8 +464,89 @@ export default function Admin() {
           <TabsContent value="testimonials" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Testimonials</CardTitle>
-                <CardDescription>Review and approve customer testimonials</CardDescription>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Testimonials</CardTitle>
+                    <CardDescription>Review and approve customer testimonials</CardDescription>
+                  </div>
+                  <Dialog open={showCreateTestimonial} onOpenChange={setShowCreateTestimonial}>
+                    <DialogTrigger asChild>
+                      <Button>+ Add Testimonial</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add New Testimonial</DialogTitle>
+                        <DialogDescription>
+                          Manually add a testimonial from a satisfied customer
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="parentName">Parent Name</Label>
+                          <Input
+                            id="parentName"
+                            value={testimonialForm.parentName}
+                            onChange={(e) => setTestimonialForm(prev => ({ ...prev, parentName: e.target.value }))}
+                            placeholder="Enter parent's name"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="childAge">Child Age</Label>
+                          <Input
+                            id="childAge"
+                            value={testimonialForm.childAge}
+                            onChange={(e) => setTestimonialForm(prev => ({ ...prev, childAge: e.target.value }))}
+                            placeholder="e.g., 8 months"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="testimonial">Testimonial</Label>
+                          <Textarea
+                            id="testimonial"
+                            value={testimonialForm.testimonial}
+                            onChange={(e) => setTestimonialForm(prev => ({ ...prev, testimonial: e.target.value }))}
+                            placeholder="Enter the testimonial text"
+                            rows={4}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="rating">Rating</Label>
+                            <Select value={testimonialForm.rating.toString()} onValueChange={(value) => setTestimonialForm(prev => ({ ...prev, rating: parseInt(value) }))}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select rating" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="1">1 Star</SelectItem>
+                                <SelectItem value="2">2 Stars</SelectItem>
+                                <SelectItem value="3">3 Stars</SelectItem>
+                                <SelectItem value="4">4 Stars</SelectItem>
+                                <SelectItem value="5">5 Stars</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="photoUrl">Photo URL (optional)</Label>
+                            <Input
+                              id="photoUrl"
+                              value={testimonialForm.photoUrl}
+                              onChange={(e) => setTestimonialForm(prev => ({ ...prev, photoUrl: e.target.value }))}
+                              placeholder="https://example.com/photo.jpg"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline" onClick={() => setShowCreateTestimonial(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={createTestimonial}>
+                            Add Testimonial
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -358,14 +605,41 @@ export default function Admin() {
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <h3 className="font-semibold">{user.email}</h3>
+                          <p className="text-sm text-gray-600">Username: {user.username || 'N/A'}</p>
                           <p className="text-sm text-gray-600">Role: {user.role || 'Admin'}</p>
                         </div>
-                        <Badge variant={user.approved ? "default" : "secondary"}>
-                          {user.approved ? "Approved" : "Pending"}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={user.approved ? "default" : "secondary"}>
+                            {user.approved ? "Approved" : "Pending"}
+                          </Badge>
+                          <Badge variant="outline">
+                            {user.canManageUsers ? "Full Access" : "Limited"}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-500">
-                        Created: {new Date(user.createdAt).toLocaleString()}
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <strong>Permissions:</strong>
+                          <ul className="text-xs text-gray-600">
+                            {user.canManageUsers && <li>• Manage Users</li>}
+                            {user.canManageContacts && <li>• Manage Contacts</li>}
+                            {user.canManageConsultations && <li>• Manage Consultations</li>}
+                            {user.canManageBlog && <li>• Manage Blog Posts</li>}
+                            {user.canManageTestimonials && <li>• Manage Testimonials</li>}
+                            {!user.canManageUsers && !user.canManageContacts && !user.canManageConsultations && !user.canManageBlog && !user.canManageTestimonials && <li>• Basic Access</li>}
+                          </ul>
+                        </div>
+                        <div>
+                          <strong>Account Details:</strong>
+                          <p className="text-xs text-gray-600">
+                            Created: {new Date(user.createdAt).toLocaleString()}
+                          </p>
+                          {user.approvedAt && (
+                            <p className="text-xs text-gray-600">
+                              Approved: {new Date(user.approvedAt).toLocaleString()}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </Card>
                   ))}
