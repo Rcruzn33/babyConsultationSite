@@ -61,9 +61,18 @@ function hashPassword(password) {
 }
 
 function verifyPassword(password, storedHash) {
-  const [salt, hash] = storedHash.split(':');
-  const testHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return hash === testHash;
+  try {
+    const [salt, hash] = storedHash.split(':');
+    if (!salt || !hash) {
+      console.error('Invalid password format:', storedHash);
+      return false;
+    }
+    const testHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+    return hash === testHash;
+  } catch (error) {
+    console.error('Password verification error:', error);
+    return false;
+  }
 }
 
 // Database field mapping helper
