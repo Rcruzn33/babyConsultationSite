@@ -22,6 +22,9 @@ app.set('trust proxy', 1);
 // Serve static files from dist/public
 app.use(express.static(path.join(__dirname, 'dist/public')));
 
+// Serve assets from attached_assets directory
+app.use('/attached_assets', express.static(path.join(__dirname, 'attached_assets')));
+
 // Database connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -184,6 +187,14 @@ app.get('/api/testimonials', async (req, res) => {
   }
 });
 
+// Admin authentication route
+app.get('/admin-auth', (req, res) => {
+  if (req.session.user) {
+    return res.redirect('/admin');
+  }
+  res.sendFile(path.join(__dirname, 'dist/public/index.html'));
+});
+
 // Admin dashboard route
 app.get('/admin', (req, res) => {
   if (!req.session.user) {
@@ -191,6 +202,8 @@ app.get('/admin', (req, res) => {
   }
   res.sendFile(path.join(__dirname, 'admin-dashboard-fix.html'));
 });
+
+
 
 // Catch-all handler for React app
 app.get('*', (req, res) => {
