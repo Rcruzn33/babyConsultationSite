@@ -81,13 +81,49 @@ npm install && npm run build && node init-db.js
 - **Password**: password123
 - **Login URL**: https://babyconsultationsite.onrender.com/admin
 
-## Why This Fix Works
-The key issue was that the production database was missing the `approved` column in the users table, which caused the login query to fail. The new initialization script:
+## API Route Fixes Applied
 
-1. **Drops existing tables** to clear any schema issues
-2. **Creates tables with complete schema** including all required columns
+### Problem: Frontend/Backend API Route Mismatch
+- **Development server**: Uses `/api/blog` endpoint  
+- **Production server**: Was using `/api/blog-posts` endpoint
+- **Frontend**: Calls `/api/blog` endpoints
+
+### Solution: Updated Production Server Routes
+1. **Blog Posts API**: Changed from `/api/blog-posts` to `/api/blog`
+2. **Blog Management**: Added `/api/blog/:slug`, `/api/blog` (POST), `/api/blog/:id` (PATCH/DELETE)
+3. **Admin Routes**: Added `/api/contacts`, `/api/consultations`, `/api/testimonials`
+4. **Testimonials**: Added support for `?approved=true` query parameter
+
+### Updated Route Structure
+```javascript
+// Public routes
+GET /api/blog?published=true          // Blog posts for website
+GET /api/blog/:slug                   // Individual blog post
+GET /api/testimonials?approved=true   // Public testimonials
+
+// Admin routes (require authentication)
+GET /api/contacts                     // Admin contacts
+GET /api/consultations                // Admin consultations  
+GET /api/testimonials                 // Admin testimonials
+GET /api/blog                         // All blog posts
+POST /api/blog                        // Create blog post
+PATCH /api/blog/:id                   // Update blog post
+DELETE /api/blog/:id                  // Delete blog post
+```
+
+## Why This Fix Works
+The key issues were:
+1. **Database schema**: Missing `approved` column in users table
+2. **API route mismatch**: Production server using different endpoints than frontend
+3. **Authentication flow**: Login/logout route inconsistencies
+4. **Async execution**: Database initialization timing issues
+
+The comprehensive fix:
+1. **Drops existing tables** to clear schema issues
+2. **Creates complete schema** with all required columns
 3. **Inserts admin user** with approved=true
 4. **Adds sample content** for blog posts and testimonials
-5. **Handles async execution** properly to avoid timing issues
+5. **Updates API routes** to match frontend expectations
+6. **Handles async execution** properly to avoid timing issues
 
 Your baby sleep consulting website should now deploy successfully on Render with full functionality!

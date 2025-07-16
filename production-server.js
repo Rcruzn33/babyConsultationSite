@@ -270,28 +270,152 @@ app.post('/api/consultations', async (req, res) => {
 });
 
 // Blog posts
-app.get('/api/blog-posts', async (req, res) => {
+app.get('/api/blog', async (req, res) => {
   try {
-    const result = await pool.query(
-      'SELECT * FROM blog_posts WHERE published = true ORDER BY created_at DESC'
-    );
-    res.json(result.rows);
+    const publishedOnly = req.query.published === 'true';
+    if (publishedOnly) {
+      const result = await pool.query(
+        'SELECT * FROM blog_posts WHERE published = true ORDER BY created_at DESC'
+      );
+      res.json(result.rows);
+    } else {
+      const result = await pool.query(
+        'SELECT * FROM blog_posts ORDER BY created_at DESC'
+      );
+      res.json(result.rows);
+    }
   } catch (error) {
     console.error('Blog posts error:', error);
     res.status(500).json({ error: 'Failed to fetch blog posts' });
   }
 });
 
+// Individual blog post by slug
+app.get('/api/blog/:slug', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM blog_posts WHERE slug = $1 AND published = true',
+      [req.params.slug]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Blog post not found' });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Blog post error:', error);
+    res.status(500).json({ error: 'Failed to fetch blog post' });
+  }
+});
+
+// Admin blog post management
+app.post('/api/blog', requireAuth, async (req, res) => {
+  try {
+    const { title, content, summary, published, slug } = req.body;
+    
+    const result = await pool.query(
+      'INSERT INTO blog_posts (title, content, summary, published, slug) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [title, content, summary, published, slug]
+    );
+    
+    res.json({ success: true, post: result.rows[0] });
+  } catch (error) {
+    console.error('Create blog post error:', error);
+    res.status(500).json({ error: 'Failed to create blog post' });
+  }
+});
+
+app.patch('/api/blog/:id', requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const updates = req.body;
+    
+    const updateFields = [];
+    const values = [];
+    let paramIndex = 1;
+    
+    for (const [key, value] of Object.entries(updates)) {
+      if (value !== undefined) {
+        updateFields.push(`${key} = $${paramIndex}`);
+        values.push(value);
+        paramIndex++;
+      }
+    }
+    
+    if (updateFields.length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+    
+    values.push(id);
+    const query = `UPDATE blog_posts SET ${updateFields.join(', ')} WHERE id = $${paramIndex}`;
+    
+    await pool.query(query, values);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Update blog post error:', error);
+    res.status(500).json({ error: 'Failed to update blog post' });
+  }
+});
+
+app.delete('/api/blog/:id', requireAuth, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    
+    await pool.query('DELETE FROM blog_posts WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete blog post error:', error);
+    res.status(500).json({ error: 'Failed to delete blog post' });
+  }
+});
+
 // Testimonials
 app.get('/api/testimonials', async (req, res) => {
   try {
-    const result = await pool.query(
-      'SELECT * FROM testimonials WHERE approved = true ORDER BY created_at DESC'
-    );
-    res.json(result.rows);
+    const approvedOnly = req.query.approved === 'true';
+    
+    if (approvedOnly) {
+      // Public testimonials (no auth required)
+      const result = await pool.query(
+        'SELECT * FROM testimonials WHERE approved = true ORDER BY created_at DESC'
+      );
+      res.json(result.rows);
+    } else {
+      // Admin testimonials (auth required)
+      if (!req.session.user) {
+        return res.status(401).json({ error: 'Authentication required' });
+      }
+      
+      const result = await pool.query(
+        'SELECT * FROM testimonials ORDER BY created_at DESC'
+      );
+      res.json(result.rows);
+    }
   } catch (error) {
     console.error('Testimonials error:', error);
     res.status(500).json({ error: 'Failed to fetch testimonials' });
+  }
+});
+
+// Admin-only contacts and consultations routes
+app.get('/api/contacts', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM contacts ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Contacts error:', error);
+    res.status(500).json({ error: 'Failed to fetch contacts' });
+  }
+});
+
+app.get('/api/consultations', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM consultations ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Consultations error:', error);
+    res.status(500).json({ error: 'Failed to fetch consultations' });
   }
 });
 
