@@ -134,7 +134,17 @@ app.get('/api/consultations', requireAuth, async (req, res) => {
 
 app.get('/api/blog', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM blog_posts WHERE published = true ORDER BY created_at DESC');
+    // For admin dashboard, show all posts; for public, only published
+    const isAdmin = req.session && req.session.user;
+    let query = 'SELECT * FROM blog_posts';
+    
+    if (!isAdmin) {
+      query += ' WHERE published = true';
+    }
+    
+    query += ' ORDER BY created_at DESC';
+    
+    const result = await pool.query(query);
     const posts = result.rows.map(post => ({
       ...post,
       imageUrl: post.image_url,
@@ -198,6 +208,80 @@ app.get('/api/testimonials', async (req, res) => {
   } catch (error) {
     console.error('Get testimonials error:', error);
     res.status(500).json({ error: 'Failed to fetch testimonials' });
+  }
+});
+
+// Create new blog post
+app.post('/api/blog', requireAuth, async (req, res) => {
+  try {
+    const { title, content, excerpt, slug, published, imageUrl } = req.body;
+    const authorId = req.session.user.id;
+    
+    const result = await pool.query(
+      'INSERT INTO blog_posts (title, content, excerpt, slug, published, image_url, author_id, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) RETURNING *',
+      [title, content, excerpt, slug, published, imageUrl, authorId]
+    );
+    
+    const post = result.rows[0];
+    const blogPost = {
+      ...post,
+      imageUrl: post.image_url,
+      authorId: post.author_id,
+      createdAt: post.created_at
+    };
+    
+    res.json(blogPost);
+  } catch (error) {
+    console.error('Create blog post error:', error);
+    res.status(500).json({ error: 'Failed to create blog post' });
+  }
+});
+
+// Create new testimonial
+app.post('/api/testimonials', requireAuth, async (req, res) => {
+  try {
+    const { parentName, testimonial, childAge, rating, photoUrl, approved } = req.body;
+    
+    const result = await pool.query(
+      'INSERT INTO testimonials (parent_name, testimonial, child_age, rating, photo_url, approved, created_at) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *',
+      [parentName, testimonial, childAge, rating, photoUrl, approved]
+    );
+    
+    const newTestimonial = result.rows[0];
+    const testimonialData = {
+      ...newTestimonial,
+      parentName: newTestimonial.parent_name,
+      childAge: newTestimonial.child_age,
+      photoUrl: newTestimonial.photo_url,
+      createdAt: newTestimonial.created_at
+    };
+    
+    res.json(testimonialData);
+  } catch (error) {
+    console.error('Create testimonial error:', error);
+    res.status(500).json({ error: 'Failed to create testimonial' });
+  }
+});
+
+// Get users for admin dashboard
+app.get('/api/admin/users', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, username, email, approved, created_at, approved_at FROM users ORDER BY created_at DESC');
+    const users = result.rows.map(user => ({
+      ...user,
+      createdAt: user.created_at,
+      approvedAt: user.approved_at,
+      role: 'Admin',
+      canManageUsers: true,
+      canManageContacts: true,
+      canManageConsultations: true,
+      canManageBlog: true,
+      canManageTestimonials: true
+    }));
+    res.json(users);
+  } catch (error) {
+    console.error('Get users error:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
   }
 });
 

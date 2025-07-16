@@ -351,7 +351,9 @@ export default function Admin() {
                   </div>
                   <Dialog open={showCreateBlog} onOpenChange={setShowCreateBlog}>
                     <DialogTrigger asChild>
-                      <Button>+ Create Post</Button>
+                      <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2">
+                        + Create Post
+                      </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-2xl">
                       <DialogHeader>
@@ -425,7 +427,7 @@ export default function Admin() {
                           <Button variant="outline" onClick={() => setShowCreateBlog(false)}>
                             Cancel
                           </Button>
-                          <Button onClick={createBlogPost}>
+                          <Button onClick={createBlogPost} className="bg-blue-600 hover:bg-blue-700 text-white">
                             Create Post
                           </Button>
                         </div>
@@ -471,7 +473,9 @@ export default function Admin() {
                   </div>
                   <Dialog open={showCreateTestimonial} onOpenChange={setShowCreateTestimonial}>
                     <DialogTrigger asChild>
-                      <Button>+ Add Testimonial</Button>
+                      <Button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2">
+                        + Add Testimonial
+                      </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
@@ -539,7 +543,7 @@ export default function Admin() {
                           <Button variant="outline" onClick={() => setShowCreateTestimonial(false)}>
                             Cancel
                           </Button>
-                          <Button onClick={createTestimonial}>
+                          <Button onClick={createTestimonial} className="bg-green-600 hover:bg-green-700 text-white">
                             Add Testimonial
                           </Button>
                         </div>
