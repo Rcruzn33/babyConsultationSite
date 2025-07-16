@@ -180,4 +180,13 @@ async function initDB() {
   }
 }
 
-initDB();
+// Export the function for use by other scripts
+module.exports = initDB;
+
+// Run if called directly
+if (require.main === module) {
+  initDB().catch(error => {
+    console.error('Fatal initialization error:', error);
+    process.exit(1);
+  });
+}

@@ -1,34 +1,19 @@
-const { drizzle } = require('drizzle-orm/postgres-js');
-const postgres = require('postgres');
-const { users } = require('./dist/shared/schema.js');
+// This script redirects to the complete database initialization
+// Used by Render deployment build process
 
-const client = postgres(process.env.DATABASE_URL, {
-  ssl: { rejectUnauthorized: false },
-});
+console.log('🔄 Redirecting to complete database initialization...');
 
-const db = drizzle(client);
+// Run the complete database initialization
+const initDB = require('./render-complete-init-db.js');
 
-async function initDB() {
+// Handle async execution properly
+(async () => {
   try {
-    console.log('Initializing database...');
-    
-    await db.insert(users).values({
-      username: 'admin',
-      email: 'admin@babysleep.com',
-      password: '2d7e3474f48f35c765ff57ec4afd6fa3c8f77362e97051f0b1d95694760cc000ee10d3031384fe9a83b21df6e70e0811f0f1f450515e2aef701032ec3fcf87d3.b87302cfeb9918193bef00c80b05345f',
-      firstName: 'Admin',
-      lastName: 'User',
-      isApproved: true,
-      approvedBy: 1,
-      approvedAt: new Date()
-    }).onConflictDoNothing();
-    
-    console.log('Database initialization complete');
+    await initDB();
+    console.log('✅ Database initialization completed successfully!');
     process.exit(0);
   } catch (error) {
-    console.error('Database initialization error:', error);
+    console.error('❌ Database initialization failed:', error);
     process.exit(1);
   }
-}
-
-initDB();
+})();
