@@ -159,6 +159,31 @@ app.get('/api/blog', async (req, res) => {
   }
 });
 
+// Get individual blog post by slug
+app.get('/api/blog/:slug', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const result = await pool.query('SELECT * FROM blog_posts WHERE slug = $1 AND published = true', [slug]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Blog post not found' });
+    }
+    
+    const post = result.rows[0];
+    const blogPost = {
+      ...post,
+      imageUrl: post.image_url,
+      authorId: post.author_id,
+      createdAt: post.created_at
+    };
+    
+    res.json(blogPost);
+  } catch (error) {
+    console.error('Get blog post error:', error);
+    res.status(500).json({ error: 'Failed to fetch blog post' });
+  }
+});
+
 app.get('/api/testimonials', async (req, res) => {
   try {
     const { approved } = req.query;
