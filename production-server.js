@@ -504,6 +504,37 @@ app.post('/api/admin/users/:id/approve', requireAuth, async (req, res) => {
   }
 });
 
+// User registration route
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    
+    // Check if user already exists
+    const existingUser = await pool.query('SELECT * FROM users WHERE username = $1 OR email = $2', [username, email]);
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ error: 'Username or email already exists' });
+    }
+    
+    // Hash password
+    const hashedPassword = hashPassword(password);
+    
+    // Create new user (pending approval)
+    const result = await pool.query(
+      'INSERT INTO users (username, email, password_hash, approved, can_manage_users, can_manage_contacts, can_manage_consultations, can_manage_blog, can_manage_testimonials) VALUES ($1, $2, $3, false, false, true, true, false, false) RETURNING id',
+      [username, email, hashedPassword]
+    );
+    
+    res.json({ 
+      success: true, 
+      message: 'Account created successfully. Please wait for admin approval.',
+      userId: result.rows[0].id 
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
 // Admin login page
 app.get('/admin/auth', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/public/index.html'));

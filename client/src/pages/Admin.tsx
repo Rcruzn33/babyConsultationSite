@@ -407,6 +407,14 @@ export default function Admin() {
     window.open(`mailto:${consultation.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
   };
 
+  const getGridCols = () => {
+    let cols = 2; // contacts and consultations are always visible
+    if (currentUser?.canManageBlog) cols++;
+    if (currentUser?.canManageTestimonials) cols++;
+    if (currentUser?.canManageUsers) cols++;
+    return `grid-cols-${cols}`;
+  };
+
   const logout = async () => {
     try {
       await fetch("/api/auth/logout", { 
@@ -443,11 +451,15 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="contacts" className="space-y-6">
-          <TabsList className={`grid w-full ${currentUser?.canManageUsers ? 'grid-cols-5' : 'grid-cols-4'}`}>
+          <TabsList className={`grid w-full ${getGridCols()}`}>
             <TabsTrigger value="contacts">📧 Contacts ({contacts.length})</TabsTrigger>
             <TabsTrigger value="consultations">📅 Consultations ({consultations.length})</TabsTrigger>
-            <TabsTrigger value="blog">📝 Blog Posts ({blogPosts.length})</TabsTrigger>
-            <TabsTrigger value="testimonials">⭐ Testimonials ({testimonials.filter(t => !t.approved).length} pending)</TabsTrigger>
+            {currentUser?.canManageBlog && (
+              <TabsTrigger value="blog">📝 Blog Posts ({blogPosts.length})</TabsTrigger>
+            )}
+            {currentUser?.canManageTestimonials && (
+              <TabsTrigger value="testimonials">⭐ Testimonials ({testimonials.filter(t => !t.approved).length} pending)</TabsTrigger>
+            )}
             {currentUser?.canManageUsers && (
               <TabsTrigger value="users">👤 Users ({users.length})</TabsTrigger>
             )}
@@ -604,7 +616,8 @@ export default function Admin() {
           </TabsContent>
 
 
-          <TabsContent value="blog" className="space-y-4">
+          {currentUser?.canManageBlog && (
+            <TabsContent value="blog" className="space-y-4">
             <Card>
               <CardHeader>
                 <div className="flex justify-between items-center">
@@ -774,8 +787,10 @@ export default function Admin() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
-          <TabsContent value="testimonials" className="space-y-4">
+          {currentUser?.canManageTestimonials && (
+            <TabsContent value="testimonials" className="space-y-4">
             <Card>
               <CardHeader>
                 <div className="flex justify-between items-center">
@@ -942,6 +957,7 @@ export default function Admin() {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {currentUser?.canManageUsers && (
             <TabsContent value="users" className="space-y-4">
