@@ -221,10 +221,20 @@ export default function Admin() {
 
   const toggleBlogPostPublished = async (id: number, published: boolean) => {
     try {
+      // Get the current blog post data first
+      const currentPost = blogPosts.find(post => post.id === id);
+      if (!currentPost) {
+        toast({ title: "Blog post not found", variant: "destructive" });
+        return;
+      }
+      
       const response = await fetch(`/api/blog/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ published: !published }),
+        body: JSON.stringify({ 
+          ...currentPost,
+          published: !published 
+        }),
         credentials: 'include'
       });
       if (response.ok) {
@@ -257,10 +267,8 @@ export default function Admin() {
 
   const toggleTestimonialApproval = async (id: number, approved: boolean) => {
     try {
-      const response = await fetch(`/api/testimonials/${id}`, {
+      const response = await fetch(`/api/testimonials/${id}/approve`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ approved: !approved }),
         credentials: 'include'
       });
       if (response.ok) {

@@ -263,6 +263,81 @@ app.post('/api/testimonials', requireAuth, async (req, res) => {
   }
 });
 
+// Update testimonial approval status
+app.patch('/api/testimonials/:id/approve', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      'UPDATE testimonials SET approved = NOT approved WHERE id = $1 RETURNING *',
+      [id]
+    );
+    
+    const testimonial = result.rows[0];
+    const testimonialData = {
+      ...testimonial,
+      parentName: testimonial.parent_name,
+      childAge: testimonial.child_age,
+      photoUrl: testimonial.photo_url,
+      createdAt: testimonial.created_at
+    };
+    
+    res.json(testimonialData);
+  } catch (error) {
+    console.error('Update testimonial approval error:', error);
+    res.status(500).json({ error: 'Failed to update testimonial approval' });
+  }
+});
+
+// Delete testimonial
+app.delete('/api/testimonials/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM testimonials WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete testimonial error:', error);
+    res.status(500).json({ error: 'Failed to delete testimonial' });
+  }
+});
+
+// Update blog post
+app.patch('/api/blog/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content, excerpt, slug, published, imageUrl } = req.body;
+    
+    const result = await pool.query(
+      'UPDATE blog_posts SET title = $1, content = $2, excerpt = $3, slug = $4, published = $5, image_url = $6 WHERE id = $7 RETURNING *',
+      [title, content, excerpt, slug, published, imageUrl, id]
+    );
+    
+    const post = result.rows[0];
+    const blogPost = {
+      ...post,
+      imageUrl: post.image_url,
+      authorId: post.author_id,
+      createdAt: post.created_at
+    };
+    
+    res.json(blogPost);
+  } catch (error) {
+    console.error('Update blog post error:', error);
+    res.status(500).json({ error: 'Failed to update blog post' });
+  }
+});
+
+// Delete blog post
+app.delete('/api/blog/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM blog_posts WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete blog post error:', error);
+    res.status(500).json({ error: 'Failed to delete blog post' });
+  }
+});
+
 // Contact management API
 app.post('/api/contacts', async (req, res) => {
   try {
@@ -375,22 +450,52 @@ app.delete('/api/consultations/:id', requireAuth, async (req, res) => {
 // Get users for admin dashboard
 app.get('/api/admin/users', requireAuth, async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, username, email, approved, created_at, approved_at FROM users ORDER BY created_at DESC');
+    const result = await pool.query('SELECT id, username, email, approved, created_at, approved_at, can_manage_users, can_manage_contacts, can_manage_consultations, can_manage_blog, can_manage_testimonials FROM users ORDER BY created_at DESC');
     const users = result.rows.map(user => ({
       ...user,
       createdAt: user.created_at,
       approvedAt: user.approved_at,
       role: 'Admin',
-      canManageUsers: true,
-      canManageContacts: true,
-      canManageConsultations: true,
-      canManageBlog: true,
-      canManageTestimonials: true
+      canManageUsers: user.can_manage_users || false,
+      canManageContacts: user.can_manage_contacts || false,
+      canManageConsultations: user.can_manage_consultations || false,
+      canManageBlog: user.can_manage_blog || false,
+      canManageTestimonials: user.can_manage_testimonials || false
     }));
     res.json(users);
   } catch (error) {
     console.error('Get users error:', error);
     res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+// Update user permissions
+app.patch('/api/admin/users/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { canManageUsers, canManageContacts, canManageConsultations, canManageBlog, canManageTestimonials } = req.body;
+    
+    await pool.query(
+      'UPDATE users SET can_manage_users = $1, can_manage_contacts = $2, can_manage_consultations = $3, can_manage_blog = $4, can_manage_testimonials = $5 WHERE id = $6',
+      [canManageUsers, canManageContacts, canManageConsultations, canManageBlog, canManageTestimonials, id]
+    );
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Update user permissions error:', error);
+    res.status(500).json({ error: 'Failed to update user permissions' });
+  }
+});
+
+// Approve user
+app.post('/api/admin/users/:id/approve', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('UPDATE users SET approved = true, approved_at = NOW() WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Approve user error:', error);
+    res.status(500).json({ error: 'Failed to approve user' });
   }
 });
 
