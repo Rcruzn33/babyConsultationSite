@@ -16,6 +16,7 @@ export default function Admin() {
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showCreateBlog, setShowCreateBlog] = useState(false);
   const [showCreateTestimonial, setShowCreateTestimonial] = useState(false);
@@ -38,8 +39,21 @@ export default function Admin() {
   const { toast } = useToast();
 
   useEffect(() => {
+    loadCurrentUser();
     loadData();
   }, []);
+
+  const loadCurrentUser = async () => {
+    try {
+      const response = await fetch("/api/auth/me", { credentials: 'include' });
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentUser(data.user);
+      }
+    } catch (error) {
+      console.error("Error loading current user:", error);
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -423,12 +437,14 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="contacts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className={`grid w-full ${currentUser?.can_manage_users ? 'grid-cols-5' : 'grid-cols-4'}`}>
             <TabsTrigger value="contacts">📧 Contacts ({contacts.length})</TabsTrigger>
             <TabsTrigger value="consultations">📅 Consultations ({consultations.length})</TabsTrigger>
             <TabsTrigger value="blog">📝 Blog Posts ({blogPosts.length})</TabsTrigger>
             <TabsTrigger value="testimonials">⭐ Testimonials ({testimonials.filter(t => !t.approved).length} pending)</TabsTrigger>
-            <TabsTrigger value="users">👤 Users ({users.length})</TabsTrigger>
+            {currentUser?.can_manage_users && (
+              <TabsTrigger value="users">👤 Users ({users.length})</TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="contacts" className="space-y-4">
@@ -451,7 +467,7 @@ export default function Admin() {
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge variant={contact.responded ? "default" : "destructive"} className={contact.responded ? "" : "bg-red-500 text-white"}>
-                            {contact.responded ? "Responded" : "New"}
+                            {contact.responded ? "Responded" : "Unread"}
                           </Badge>
                           <Button
                             size="sm"
@@ -465,6 +481,7 @@ export default function Admin() {
                             size="sm"
                             variant="outline"
                             onClick={() => updateContactStatus(contact.id, !contact.responded)}
+                            className={contact.responded ? "" : "bg-red-500 text-white hover:bg-red-600"}
                           >
                             Mark as {contact.responded ? "Unread" : "Read"}
                           </Button>
@@ -872,8 +889,9 @@ export default function Admin() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="users" className="space-y-4">
-            <Card>
+          {currentUser?.can_manage_users && (
+            <TabsContent value="users" className="space-y-4">
+              <Card>
               <CardHeader>
                 <CardTitle>User Management</CardTitle>
                 <CardDescription>Manage admin users and their permissions</CardDescription>
@@ -1042,7 +1060,8 @@ export default function Admin() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>

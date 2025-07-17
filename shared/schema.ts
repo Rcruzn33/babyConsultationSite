@@ -38,6 +38,7 @@ export const contacts = pgTable("contacts", {
 // Consultation bookings
 export const consultations = pgTable("consultations", {
   id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
   parentName: varchar("parent_name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 50 }),

@@ -1,4 +1,7 @@
+// Fix for Render deployment - create clean database initialization
+const fs = require('fs');
 
+const fixedInitDb = `
 const { Pool } = require('pg');
 
 async function initDB() {
@@ -20,7 +23,7 @@ async function initDB() {
 
     // Create users table
     console.log('Creating users table...');
-    await pool.query(`
+    await pool.query(\`
       CREATE TABLE users (
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
@@ -39,11 +42,11 @@ async function initDB() {
         reset_token_expiry TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-    `);
+    \`);
 
     // Create contacts table
     console.log('Creating contacts table...');
-    await pool.query(`
+    await pool.query(\`
       CREATE TABLE contacts (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
@@ -54,11 +57,11 @@ async function initDB() {
         responded BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-    `);
+    \`);
 
     // Create consultations table - FIXED VERSION
     console.log('Creating consultations table...');
-    await pool.query(`
+    await pool.query(\`
       CREATE TABLE consultations (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
@@ -74,11 +77,11 @@ async function initDB() {
         notes TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-    `);
+    \`);
 
     // Create blog_posts table
     console.log('Creating blog_posts table...');
-    await pool.query(`
+    await pool.query(\`
       CREATE TABLE blog_posts (
         id SERIAL PRIMARY KEY,
         title VARCHAR(200) NOT NULL,
@@ -90,11 +93,11 @@ async function initDB() {
         author_id INTEGER REFERENCES users(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-    `);
+    \`);
 
     // Create testimonials table
     console.log('Creating testimonials table...');
-    await pool.query(`
+    await pool.query(\`
       CREATE TABLE testimonials (
         id SERIAL PRIMARY KEY,
         parent_name VARCHAR(100) NOT NULL,
@@ -105,7 +108,7 @@ async function initDB() {
         approved BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-    `);
+    \`);
 
     // Create admin user
     console.log('Creating admin user...');
@@ -115,14 +118,14 @@ async function initDB() {
     const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
     const hashedPassword = salt + ':' + hash;
     
-    await pool.query(`
+    await pool.query(\`
       INSERT INTO users (username, email, password_hash, approved, can_manage_users, can_manage_contacts, can_manage_consultations, can_manage_blog, can_manage_testimonials)
       VALUES ('admin', 'admin@babysleep.com', $1, true, true, true, true, true, true)
-    `, [hashedPassword]);
+    \`, [hashedPassword]);
 
     // Add sample blog posts
     console.log('Adding sample blog posts...');
-    await pool.query(`
+    await pool.query(\`
       INSERT INTO blog_posts (title, slug, excerpt, content, published, author_id)
       VALUES 
         ('Understanding Your Baby''s Sleep Patterns', 'understanding-baby-sleep-patterns', 
@@ -133,17 +136,17 @@ async function initDB() {
          'Tips for creating an optimal sleep environment that promotes better rest for your baby.', 
          'The sleep environment plays a crucial role in your baby''s ability to fall asleep and stay asleep. Key factors include room temperature (68-70°F), darkness, white noise, and a comfortable mattress. A consistent sleep environment helps signal to your baby that it''s time to sleep.', 
          true, 1)
-    `);
+    \`);
 
     // Add sample testimonials
     console.log('Adding sample testimonials...');
-    await pool.query(`
+    await pool.query(\`
       INSERT INTO testimonials (parent_name, child_age, testimonial, rating, approved)
       VALUES 
         ('Sarah Johnson', '8 months', 'The sleep consultation was life-changing! My baby now sleeps through the night consistently. The personalized approach made all the difference.', 5, true),
         ('Michael Chen', '6 months', 'I was skeptical at first, but the results speak for themselves. Our little one went from waking up 5 times a night to sleeping 10 hours straight!', 5, true),
         ('Emily Rodriguez', '10 months', 'Professional, knowledgeable, and so patient with all our questions. The follow-up support was exceptional. Highly recommend!', 5, true)
-    `);
+    \`);
 
     console.log('✅ Database initialized successfully!');
     
@@ -160,3 +163,9 @@ if (require.main === module) {
 }
 
 module.exports = initDB;
+`;
+
+// Write the fixed initialization script
+fs.writeFileSync('render-complete-init-db.js', fixedInitDb);
+console.log('✅ Fixed render-complete-init-db.js - removed duplicate sleep_challenges column');
+console.log('✅ Ready for Render deployment - database schema issue resolved');
