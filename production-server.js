@@ -311,20 +311,39 @@ app.patch('/api/blog/:id', requireAuth, async (req, res) => {
     const { id } = req.params;
     const { title, content, excerpt, slug, published, imageUrl } = req.body;
     
-    const result = await pool.query(
-      'UPDATE blog_posts SET title = $1, content = $2, excerpt = $3, slug = $4, published = $5, image_url = $6 WHERE id = $7 RETURNING *',
-      [title, content, excerpt, slug, published, imageUrl, id]
-    );
-    
-    const post = result.rows[0];
-    const blogPost = {
-      ...post,
-      imageUrl: post.image_url,
-      authorId: post.author_id,
-      createdAt: post.created_at
-    };
-    
-    res.json(blogPost);
+    // If only published field is being updated (for publish/unpublish toggle)
+    if (published !== undefined && !title && !content && !excerpt && !slug && !imageUrl) {
+      const result = await pool.query(
+        'UPDATE blog_posts SET published = $1 WHERE id = $2 RETURNING *',
+        [published, id]
+      );
+      
+      const post = result.rows[0];
+      const blogPost = {
+        ...post,
+        imageUrl: post.image_url,
+        authorId: post.author_id,
+        createdAt: post.created_at
+      };
+      
+      res.json(blogPost);
+    } else {
+      // Full update with all fields
+      const result = await pool.query(
+        'UPDATE blog_posts SET title = $1, content = $2, excerpt = $3, slug = $4, published = $5, image_url = $6 WHERE id = $7 RETURNING *',
+        [title, content, excerpt, slug, published, imageUrl, id]
+      );
+      
+      const post = result.rows[0];
+      const blogPost = {
+        ...post,
+        imageUrl: post.image_url,
+        authorId: post.author_id,
+        createdAt: post.created_at
+      };
+      
+      res.json(blogPost);
+    }
   } catch (error) {
     console.error('Update blog post error:', error);
     res.status(500).json({ error: 'Failed to update blog post' });
