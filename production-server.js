@@ -85,7 +85,12 @@ app.post('/api/auth/login', async (req, res) => {
       email: user.email,
       role: user.role,
       approved: user.approved,
-      isApproved: user.approved || false
+      isApproved: user.approved || false,
+      canManageUsers: user.can_manage_users,
+      canManageContacts: user.can_manage_contacts,
+      canManageConsultations: user.can_manage_consultations,
+      canManageBlog: user.can_manage_blog,
+      canManageTestimonials: user.can_manage_testimonials
     };
     
     res.json({ 
