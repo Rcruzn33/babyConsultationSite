@@ -81,6 +81,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to update user" });
     }
   });
+
+  app.post("/api/admin/users/:id/approve", requireApprovedAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.approveUser(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Approve user error:", error);
+      res.status(500).json({ error: "Failed to approve user" });
+    }
+  });
   app.delete("/api/admin/users/:id", requireApprovedAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -363,6 +374,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error(`Unpublish testimonial error: ${error}`);
       res.status(500).json({ error: "Failed to unpublish testimonial" });
+    }
+  });
+
+  app.patch("/api/testimonials/:id", requireApprovedAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      await storage.updateTestimonial(id, updates);
+      res.json({ success: true });
+    } catch (error) {
+      console.error(`Update testimonial error: ${error}`);
+      res.status(500).json({ error: "Failed to update testimonial" });
     }
   });
 

@@ -19,6 +19,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [showCreateBlog, setShowCreateBlog] = useState(false);
   const [showCreateTestimonial, setShowCreateTestimonial] = useState(false);
+  const [editingUser, setEditingUser] = useState<any>(null);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -204,6 +205,115 @@ export default function Admin() {
     }
   };
 
+  const deleteBlogPost = async (id: number) => {
+    try {
+      const response = await fetch(`/api/blog/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: "Blog post deleted successfully" });
+        loadData();
+      } else {
+        toast({ title: "Failed to delete blog post", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error deleting blog post", variant: "destructive" });
+    }
+  };
+
+  const toggleBlogPostPublished = async (id: number, published: boolean) => {
+    try {
+      const response = await fetch(`/api/blog/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: !published }),
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: `Blog post ${!published ? 'published' : 'unpublished'} successfully` });
+        loadData();
+      } else {
+        toast({ title: "Failed to update blog post", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error updating blog post", variant: "destructive" });
+    }
+  };
+
+  const deleteTestimonial = async (id: number) => {
+    try {
+      const response = await fetch(`/api/testimonials/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: "Testimonial deleted successfully" });
+        loadData();
+      } else {
+        toast({ title: "Failed to delete testimonial", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error deleting testimonial", variant: "destructive" });
+    }
+  };
+
+  const toggleTestimonialApproval = async (id: number, approved: boolean) => {
+    try {
+      const response = await fetch(`/api/testimonials/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ approved: !approved }),
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: `Testimonial ${!approved ? 'approved' : 'unapproved'} successfully` });
+        loadData();
+      } else {
+        toast({ title: "Failed to update testimonial", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error updating testimonial", variant: "destructive" });
+    }
+  };
+
+  const updateUserPermissions = async (userId: number, permissions: any) => {
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(permissions),
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: "User permissions updated successfully" });
+        setEditingUser(null);
+        loadData();
+      } else {
+        toast({ title: "Failed to update user permissions", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error updating user permissions", variant: "destructive" });
+    }
+  };
+
+  const approveUser = async (userId: number) => {
+    try {
+      const response = await fetch(`/api/admin/users/${userId}/approve`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: "User approved successfully" });
+        loadData();
+      } else {
+        toast({ title: "Failed to approve user", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error approving user", variant: "destructive" });
+    }
+  };
+
   const logout = async () => {
     try {
       await fetch("/api/auth/logout", { 
@@ -355,72 +465,78 @@ export default function Admin() {
                         + Create Post
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
+                    <DialogContent className="max-w-2xl bg-white border-2 border-gray-200 shadow-lg">
                       <DialogHeader>
-                        <DialogTitle>Create New Blog Post</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-xl font-bold text-gray-800">Create New Blog Post</DialogTitle>
+                        <DialogDescription className="text-gray-600">
                           Fill in the details to create a new blog post
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="space-y-4">
+                      <div className="space-y-4 bg-white p-4 rounded-lg">
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label htmlFor="title">Title</Label>
+                            <Label htmlFor="title" className="text-sm font-medium text-gray-700">Title</Label>
                             <Input
                               id="title"
                               value={formData.title}
                               onChange={(e) => handleFormChange('title', e.target.value)}
                               placeholder="Enter blog post title"
+                              className="mt-1 bg-white border-gray-300 text-gray-900"
                             />
                           </div>
                           <div>
-                            <Label htmlFor="slug">Slug</Label>
+                            <Label htmlFor="slug" className="text-sm font-medium text-gray-700">Slug</Label>
                             <Input
                               id="slug"
                               value={formData.slug}
                               onChange={(e) => handleFormChange('slug', e.target.value)}
                               placeholder="url-friendly-slug"
+                              className="mt-1 bg-white border-gray-300 text-gray-900"
                             />
                           </div>
                         </div>
                         <div>
-                          <Label htmlFor="excerpt">Excerpt</Label>
+                          <Label htmlFor="excerpt" className="text-sm font-medium text-gray-700">Excerpt</Label>
                           <Textarea
                             id="excerpt"
                             value={formData.excerpt}
                             onChange={(e) => handleFormChange('excerpt', e.target.value)}
                             placeholder="Brief description of the post"
                             rows={3}
+                            className="mt-1 bg-white border-gray-300 text-gray-900"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="content">Content</Label>
+                          <Label htmlFor="content" className="text-sm font-medium text-gray-700">Content</Label>
                           <Textarea
                             id="content"
                             value={formData.content}
                             onChange={(e) => handleFormChange('content', e.target.value)}
                             placeholder="Write your blog post content here..."
                             rows={8}
+                            className="mt-1 bg-white border-gray-300 text-gray-900"
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label htmlFor="imageUrl">Image URL</Label>
+                            <Label htmlFor="imageUrl" className="text-sm font-medium text-gray-700">Image URL</Label>
                             <Input
                               id="imageUrl"
                               value={formData.imageUrl}
                               onChange={(e) => handleFormChange('imageUrl', e.target.value)}
                               placeholder="https://example.com/image.jpg"
+                              className="mt-1 bg-white border-gray-300 text-gray-900"
                             />
                           </div>
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2 mt-6">
                             <input
                               type="checkbox"
                               id="published"
                               checked={formData.published}
                               onChange={(e) => handleFormChange('published', e.target.checked)}
+                              className="rounded border-gray-300"
                             />
-                            <Label htmlFor="published">Publish immediately</Label>
+                            <Label htmlFor="published" className="text-sm font-medium text-gray-700">Publish immediately</Label>
                           </div>
                         </div>
                         <div className="flex justify-end space-x-2">
@@ -445,9 +561,27 @@ export default function Admin() {
                           <h3 className="font-semibold">{post.title}</h3>
                           <p className="text-sm text-gray-600">Slug: {post.slug}</p>
                         </div>
-                        <Badge variant={post.published ? "default" : "secondary"}>
-                          {post.published ? "Published" : "Draft"}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={post.published ? "default" : "secondary"}>
+                            {post.published ? "Published" : "Draft"}
+                          </Badge>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => toggleBlogPostPublished(post.id, post.published)}
+                            className="text-xs"
+                          >
+                            {post.published ? "Unpublish" : "Publish"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteBlogPost(post.id)}
+                            className="text-xs"
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </div>
                       <p className="text-sm mb-2">{post.excerpt}</p>
                       <div className="text-xs text-gray-500">
@@ -477,50 +611,53 @@ export default function Admin() {
                         + Add Testimonial
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="bg-white border-2 border-gray-200 shadow-lg">
                       <DialogHeader>
-                        <DialogTitle>Add New Testimonial</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-xl font-bold text-gray-800">Add New Testimonial</DialogTitle>
+                        <DialogDescription className="text-gray-600">
                           Manually add a testimonial from a satisfied customer
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="space-y-4">
+                      <div className="space-y-4 bg-white p-4 rounded-lg">
                         <div>
-                          <Label htmlFor="parentName">Parent Name</Label>
+                          <Label htmlFor="parentName" className="text-sm font-medium text-gray-700">Parent Name</Label>
                           <Input
                             id="parentName"
                             value={testimonialForm.parentName}
                             onChange={(e) => setTestimonialForm(prev => ({ ...prev, parentName: e.target.value }))}
                             placeholder="Enter parent's name"
+                            className="mt-1 bg-white border-gray-300 text-gray-900"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="childAge">Child Age</Label>
+                          <Label htmlFor="childAge" className="text-sm font-medium text-gray-700">Child Age</Label>
                           <Input
                             id="childAge"
                             value={testimonialForm.childAge}
                             onChange={(e) => setTestimonialForm(prev => ({ ...prev, childAge: e.target.value }))}
                             placeholder="e.g., 8 months"
+                            className="mt-1 bg-white border-gray-300 text-gray-900"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="testimonial">Testimonial</Label>
+                          <Label htmlFor="testimonial" className="text-sm font-medium text-gray-700">Testimonial</Label>
                           <Textarea
                             id="testimonial"
                             value={testimonialForm.testimonial}
                             onChange={(e) => setTestimonialForm(prev => ({ ...prev, testimonial: e.target.value }))}
                             placeholder="Enter the testimonial text"
                             rows={4}
+                            className="mt-1 bg-white border-gray-300 text-gray-900"
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label htmlFor="rating">Rating</Label>
+                            <Label htmlFor="rating" className="text-sm font-medium text-gray-700">Rating</Label>
                             <Select value={testimonialForm.rating.toString()} onValueChange={(value) => setTestimonialForm(prev => ({ ...prev, rating: parseInt(value) }))}>
-                              <SelectTrigger>
+                              <SelectTrigger className="mt-1 bg-white border-gray-300 text-gray-900">
                                 <SelectValue placeholder="Select rating" />
                               </SelectTrigger>
-                              <SelectContent>
+                              <SelectContent className="bg-white border-gray-300">
                                 <SelectItem value="1">1 Star</SelectItem>
                                 <SelectItem value="2">2 Stars</SelectItem>
                                 <SelectItem value="3">3 Stars</SelectItem>
@@ -530,12 +667,13 @@ export default function Admin() {
                             </Select>
                           </div>
                           <div>
-                            <Label htmlFor="photoUrl">Photo URL (optional)</Label>
+                            <Label htmlFor="photoUrl" className="text-sm font-medium text-gray-700">Photo URL (optional)</Label>
                             <Input
                               id="photoUrl"
                               value={testimonialForm.photoUrl}
                               onChange={(e) => setTestimonialForm(prev => ({ ...prev, photoUrl: e.target.value }))}
                               placeholder="https://example.com/photo.jpg"
+                              className="mt-1 bg-white border-gray-300 text-gray-900"
                             />
                           </div>
                         </div>
@@ -572,14 +710,22 @@ export default function Admin() {
                           <Badge variant={testimonial.approved ? "default" : "secondary"}>
                             {testimonial.approved ? "Approved" : "Pending"}
                           </Badge>
-                          {!testimonial.approved && (
-                            <Button
-                              size="sm"
-                              onClick={() => approveTestimonial(testimonial.id)}
-                            >
-                              Approve
-                            </Button>
-                          )}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => toggleTestimonialApproval(testimonial.id, testimonial.approved)}
+                            className="text-xs"
+                          >
+                            {testimonial.approved ? "Unapprove" : "Approve"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteTestimonial(testimonial.id)}
+                            className="text-xs"
+                          >
+                            Delete
+                          </Button>
                         </div>
                       </div>
                       <p className="text-sm mb-2">{testimonial.testimonial}</p>
@@ -619,32 +765,145 @@ export default function Admin() {
                           <Badge variant="outline">
                             {user.canManageUsers ? "Full Access" : "Limited"}
                           </Badge>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <strong>Permissions:</strong>
-                          <ul className="text-xs text-gray-600">
-                            {user.canManageUsers && <li>• Manage Users</li>}
-                            {user.canManageContacts && <li>• Manage Contacts</li>}
-                            {user.canManageConsultations && <li>• Manage Consultations</li>}
-                            {user.canManageBlog && <li>• Manage Blog Posts</li>}
-                            {user.canManageTestimonials && <li>• Manage Testimonials</li>}
-                            {!user.canManageUsers && !user.canManageContacts && !user.canManageConsultations && !user.canManageBlog && !user.canManageTestimonials && <li>• Basic Access</li>}
-                          </ul>
-                        </div>
-                        <div>
-                          <strong>Account Details:</strong>
-                          <p className="text-xs text-gray-600">
-                            Created: {new Date(user.createdAt).toLocaleString()}
-                          </p>
-                          {user.approvedAt && (
-                            <p className="text-xs text-gray-600">
-                              Approved: {new Date(user.approvedAt).toLocaleString()}
-                            </p>
+                          {!user.approved && (
+                            <Button
+                              size="sm"
+                              onClick={() => approveUser(user.id)}
+                              className="text-xs"
+                            >
+                              Approve
+                            </Button>
                           )}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditingUser(user)}
+                            className="text-xs"
+                          >
+                            Edit Permissions
+                          </Button>
                         </div>
                       </div>
+                      
+                      {editingUser && editingUser.id === user.id ? (
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                          <h4 className="font-semibold mb-3">Edit User Permissions</h4>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  checked={editingUser.canManageUsers || false}
+                                  onChange={(e) => setEditingUser({
+                                    ...editingUser,
+                                    canManageUsers: e.target.checked
+                                  })}
+                                  className="rounded border-gray-300"
+                                />
+                                <span className="text-sm">Manage Users</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  checked={editingUser.canManageContacts || false}
+                                  onChange={(e) => setEditingUser({
+                                    ...editingUser,
+                                    canManageContacts: e.target.checked
+                                  })}
+                                  className="rounded border-gray-300"
+                                />
+                                <span className="text-sm">Manage Contacts</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  checked={editingUser.canManageConsultations || false}
+                                  onChange={(e) => setEditingUser({
+                                    ...editingUser,
+                                    canManageConsultations: e.target.checked
+                                  })}
+                                  className="rounded border-gray-300"
+                                />
+                                <span className="text-sm">Manage Consultations</span>
+                              </label>
+                            </div>
+                            <div>
+                              <label className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  checked={editingUser.canManageBlog || false}
+                                  onChange={(e) => setEditingUser({
+                                    ...editingUser,
+                                    canManageBlog: e.target.checked
+                                  })}
+                                  className="rounded border-gray-300"
+                                />
+                                <span className="text-sm">Manage Blog Posts</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  checked={editingUser.canManageTestimonials || false}
+                                  onChange={(e) => setEditingUser({
+                                    ...editingUser,
+                                    canManageTestimonials: e.target.checked
+                                  })}
+                                  className="rounded border-gray-300"
+                                />
+                                <span className="text-sm">Manage Testimonials</span>
+                              </label>
+                            </div>
+                          </div>
+                          <div className="flex justify-end space-x-2 mt-4">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setEditingUser(null)}
+                              className="text-xs"
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => updateUserPermissions(editingUser.id, {
+                                canManageUsers: editingUser.canManageUsers,
+                                canManageContacts: editingUser.canManageContacts,
+                                canManageConsultations: editingUser.canManageConsultations,
+                                canManageBlog: editingUser.canManageBlog,
+                                canManageTestimonials: editingUser.canManageTestimonials
+                              })}
+                              className="text-xs bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                              Save Changes
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <strong>Permissions:</strong>
+                            <ul className="text-xs text-gray-600">
+                              {user.canManageUsers && <li>• Manage Users</li>}
+                              {user.canManageContacts && <li>• Manage Contacts</li>}
+                              {user.canManageConsultations && <li>• Manage Consultations</li>}
+                              {user.canManageBlog && <li>• Manage Blog Posts</li>}
+                              {user.canManageTestimonials && <li>• Manage Testimonials</li>}
+                              {!user.canManageUsers && !user.canManageContacts && !user.canManageConsultations && !user.canManageBlog && !user.canManageTestimonials && <li>• Basic Access</li>}
+                            </ul>
+                          </div>
+                          <div>
+                            <strong>Account Details:</strong>
+                            <p className="text-xs text-gray-600">
+                              Created: {new Date(user.createdAt).toLocaleString()}
+                            </p>
+                            {user.approvedAt && (
+                              <p className="text-xs text-gray-600">
+                                Approved: {new Date(user.approvedAt).toLocaleString()}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </Card>
                   ))}
                   {users.length === 0 && (

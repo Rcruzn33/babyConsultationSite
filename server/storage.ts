@@ -13,7 +13,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<User>): Promise<void>;
-  approveUser(userId: number, approvedById: number): Promise<void>;
+  approveUser(userId: number, approvedById?: number): Promise<void>;
   getPendingUsers(): Promise<User[]>;
   getAllUsers(): Promise<User[]>;
   deleteUser(id: number): Promise<void>;
@@ -46,6 +46,7 @@ export interface IStorage {
   getAllTestimonials(): Promise<Testimonial[]>;
   approveTestimonial(id: number): Promise<void>;
   unpublishTestimonial(id: number): Promise<void>;
+  updateTestimonial(id: number, updates: Partial<Testimonial>): Promise<void>;
   deleteTestimonial(id: number): Promise<void>;
 }
 
@@ -75,16 +76,16 @@ export class PostgresStorage implements IStorage {
     await db.update(users).set(updates).where(eq(users.id, id));
   }
 
-  async approveUser(userId: number, approvedById: number): Promise<void> {
+  async approveUser(userId: number, approvedById?: number): Promise<void> {
     await db.update(users).set({ 
-      isApproved: true, 
+      approved: true, 
       approvedBy: approvedById, 
       approvedAt: new Date() 
     }).where(eq(users.id, userId));
   }
 
   async getPendingUsers(): Promise<User[]> {
-    return await db.select().from(users).where(eq(users.isApproved, false)).orderBy(users.createdAt);
+    return await db.select().from(users).where(eq(users.approved, false)).orderBy(users.createdAt);
   }
 
   async getAllUsers(): Promise<User[]> {
@@ -205,6 +206,10 @@ export class PostgresStorage implements IStorage {
 
   async unpublishTestimonial(id: number): Promise<void> {
     await db.update(testimonials).set({ approved: false }).where(eq(testimonials.id, id));
+  }
+
+  async updateTestimonial(id: number, updates: Partial<Testimonial>): Promise<void> {
+    await db.update(testimonials).set(updates).where(eq(testimonials.id, id));
   }
 
   async deleteTestimonial(id: number): Promise<void> {
