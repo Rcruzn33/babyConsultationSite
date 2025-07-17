@@ -198,7 +198,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/consultations", async (req, res) => {
     try {
       const validatedData = insertConsultationSchema.parse(req.body);
-      const consultation = await storage.createConsultation(validatedData);
+      
+      // Map frontend field names to database column names for compatibility
+      const consultationData = {
+        ...validatedData,
+        name: validatedData.parentName, // Map parentName to name for DB compatibility
+      };
+      
+      const consultation = await storage.createConsultation(consultationData);
       res.json({ success: true, consultation });
     } catch (error: any) {
       if (error.name === 'ZodError') {

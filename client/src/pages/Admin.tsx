@@ -450,7 +450,7 @@ export default function Admin() {
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant={contact.responded ? "default" : "secondary"}>
+                          <Badge variant={contact.responded ? "default" : "destructive"} className={contact.responded ? "" : "bg-red-500 text-white"}>
                             {contact.responded ? "Responded" : "New"}
                           </Badge>
                           <Button

@@ -320,8 +320,8 @@ app.post('/api/consultations', async (req, res) => {
   try {
     const { parentName, email, phone, childAge, sleepChallenges, consultationType, preferredDate } = req.body;
     const result = await pool.query(
-      'INSERT INTO consultations (parent_name, email, phone, child_age, sleep_challenges, consultation_type, preferred_date, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW()) RETURNING *',
-      [parentName, email, phone, childAge, sleepChallenges, consultationType, preferredDate, 'pending']
+      'INSERT INTO consultations (name, parent_name, email, phone, child_age, sleep_challenges, consultation_type, preferred_date, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW()) RETURNING *',
+      [parentName, parentName, email, phone, childAge, sleepChallenges, consultationType, preferredDate, 'pending']
     );
     res.json(result.rows[0]);
   } catch (error) {
