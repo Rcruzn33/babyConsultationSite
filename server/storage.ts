@@ -183,7 +183,9 @@ export class PostgresStorage implements IStorage {
   }
 
   async updateBlogPost(id: number, updates: Partial<InsertBlogPost>): Promise<void> {
-    await db.update(blogPosts).set({ ...updates, updatedAt: new Date() }).where(eq(blogPosts.id, id));
+    // Remove updatedAt from the update to avoid toISOString error
+    const { updatedAt, ...safeUpdates } = updates;
+    await db.update(blogPosts).set(safeUpdates).where(eq(blogPosts.id, id));
   }
 
   // Testimonial methods
@@ -201,7 +203,11 @@ export class PostgresStorage implements IStorage {
   }
 
   async approveTestimonial(id: number): Promise<void> {
-    await db.update(testimonials).set({ approved: true }).where(eq(testimonials.id, id));
+    // Toggle approval status instead of just setting to true
+    const current = await db.select().from(testimonials).where(eq(testimonials.id, id)).limit(1);
+    if (current[0]) {
+      await db.update(testimonials).set({ approved: !current[0].approved }).where(eq(testimonials.id, id));
+    }
   }
 
   async unpublishTestimonial(id: number): Promise<void> {
