@@ -452,17 +452,17 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="contacts" className="space-y-6">
-          <TabsList className={`grid w-full ${getGridCols()}`}>
-            <TabsTrigger value="contacts">📧 Contacts ({contacts.length})</TabsTrigger>
-            <TabsTrigger value="consultations">📅 Consultations ({consultations.length})</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5 h-auto">
+            <TabsTrigger value="contacts" className="text-sm">📧 Contacts ({contacts.length})</TabsTrigger>
+            <TabsTrigger value="consultations" className="text-sm">📅 Consultations ({consultations.length})</TabsTrigger>
             {currentUser?.canManageBlog && (
-              <TabsTrigger value="blog">📝 Blog Posts ({blogPosts.length})</TabsTrigger>
+              <TabsTrigger value="blog" className="text-sm">📝 Blog Posts ({blogPosts.length})</TabsTrigger>
             )}
             {currentUser?.canManageTestimonials && (
-              <TabsTrigger value="testimonials">⭐ Testimonials ({testimonials.filter(t => !t.approved).length} pending)</TabsTrigger>
+              <TabsTrigger value="testimonials" className="text-sm">⭐ Testimonials ({testimonials.filter(t => !t.approved).length} pending)</TabsTrigger>
             )}
             {currentUser?.canManageUsers && (
-              <TabsTrigger value="users">👤 Users ({users.length})</TabsTrigger>
+              <TabsTrigger value="users" className="text-sm">👤 Users ({users.length})</TabsTrigger>
             )}
           </TabsList>
 
