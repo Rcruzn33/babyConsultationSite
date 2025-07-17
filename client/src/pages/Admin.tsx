@@ -673,12 +673,37 @@ export default function Admin() {
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="imageUrl" className="text-sm font-medium text-gray-700">Image URL</Label>
-                            <Input
-                              id="imageUrl"
-                              value={formData.imageUrl}
-                              onChange={(e) => handleFormChange('imageUrl', e.target.value)}
-                              placeholder="https://example.com/image.jpg"
-                              className="mt-1 bg-white border-gray-300 text-gray-900"
+                            <div className="flex gap-2">
+                              <Input
+                                id="imageUrl"
+                                value={formData.imageUrl}
+                                onChange={(e) => handleFormChange('imageUrl', e.target.value)}
+                                placeholder="https://example.com/image.jpg"
+                                className="mt-1 bg-white border-gray-300 text-gray-900 flex-1"
+                              />
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="mt-1"
+                                onClick={() => document.getElementById('blog-image-upload')?.click()}
+                              >
+                                Upload Image
+                              </Button>
+                            </div>
+                            <input
+                              id="blog-image-upload"
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  // In a real app, you'd upload the file to a server
+                                  // For now, we'll just show the filename
+                                  handleFormChange('imageUrl', `uploaded-${file.name}`);
+                                }
+                              }}
                             />
                           </div>
                           <div className="flex items-center space-x-2 mt-6">
@@ -821,12 +846,35 @@ export default function Admin() {
                           </div>
                           <div>
                             <Label htmlFor="photoUrl" className="text-sm font-medium text-gray-700">Photo URL (optional)</Label>
-                            <Input
-                              id="photoUrl"
-                              value={testimonialForm.photoUrl}
-                              onChange={(e) => setTestimonialForm(prev => ({ ...prev, photoUrl: e.target.value }))}
-                              placeholder="https://example.com/photo.jpg"
-                              className="mt-1 bg-white border-gray-300 text-gray-900"
+                            <div className="flex gap-2">
+                              <Input
+                                id="photoUrl"
+                                value={testimonialForm.photoUrl}
+                                onChange={(e) => setTestimonialForm(prev => ({ ...prev, photoUrl: e.target.value }))}
+                                placeholder="https://example.com/photo.jpg"
+                                className="mt-1 bg-white border-gray-300 text-gray-900 flex-1"
+                              />
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="mt-1"
+                                onClick={() => document.getElementById('testimonial-image-upload')?.click()}
+                              >
+                                Upload Photo
+                              </Button>
+                            </div>
+                            <input
+                              id="testimonial-image-upload"
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  setTestimonialForm(prev => ({ ...prev, photoUrl: `uploaded-${file.name}` }));
+                                }
+                              }}
                             />
                           </div>
                         </div>
@@ -895,7 +943,7 @@ export default function Admin() {
             </Card>
           </TabsContent>
 
-          {currentUser?.can_manage_users && (
+          {currentUser?.canManageUsers && (
             <TabsContent value="users" className="space-y-4">
               <Card>
               <CardHeader>
