@@ -21,6 +21,7 @@ export default function Admin() {
   const [showCreateBlog, setShowCreateBlog] = useState(false);
   const [showCreateTestimonial, setShowCreateTestimonial] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
+
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -615,17 +616,16 @@ export default function Admin() {
             </Card>
           </TabsContent>
 
-
           {currentUser?.canManageBlog && (
             <TabsContent value="blog" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <CardTitle>Blog Posts</CardTitle>
-                    <CardDescription>Manage your blog content</CardDescription>
-                  </div>
-                  <Dialog open={showCreateBlog} onOpenChange={setShowCreateBlog}>
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Blog Posts</CardTitle>
+                      <CardDescription>Manage your blog content</CardDescription>
+                    </div>
+                    <Dialog open={showCreateBlog} onOpenChange={setShowCreateBlog}>
                     <DialogTrigger asChild>
                       <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2">
                         + Create Post
@@ -741,8 +741,8 @@ export default function Admin() {
                       </div>
                     </DialogContent>
                   </Dialog>
-                </div>
-              </CardHeader>
+                  </div>
+                </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {blogPosts.map((post) => (
