@@ -124,24 +124,7 @@ export default function Admin() {
     }
   };
 
-  const updateConsultationStatus = async (id: number, status: string) => {
-    try {
-      const response = await fetch(`/api/consultations/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-        credentials: 'include'
-      });
-      if (response.ok) {
-        toast({ title: "Consultation status updated" });
-        loadData();
-      } else {
-        toast({ title: "Failed to update consultation", variant: "destructive" });
-      }
-    } catch (error) {
-      toast({ title: "Error updating consultation", variant: "destructive" });
-    }
-  };
+
 
   const handleFormChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -314,6 +297,96 @@ export default function Admin() {
     }
   };
 
+  const deleteContact = async (contactId: number) => {
+    try {
+      const response = await fetch(`/api/contacts/${contactId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: "Contact deleted successfully" });
+        loadData();
+      } else {
+        toast({ title: "Failed to delete contact", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error deleting contact", variant: "destructive" });
+    }
+  };
+
+  const updateContactStatus = async (contactId: number, responded: boolean) => {
+    try {
+      const response = await fetch(`/api/contacts/${contactId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ responded }),
+      });
+      if (response.ok) {
+        toast({ title: `Contact marked as ${responded ? 'read' : 'unread'}` });
+        loadData();
+      } else {
+        toast({ title: "Failed to update contact status", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error updating contact status", variant: "destructive" });
+    }
+  };
+
+  const createEmailReply = (contact: any) => {
+    const subject = `Re: ${contact.subject}`;
+    const body = `Hi ${contact.name},\n\nThank you for reaching out! I received your message:\n\n"${contact.message}"\n\nI'll get back to you soon with more information.\n\nBest regards,\nBaby Sleep Whisperer`;
+    window.open(`mailto:${contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+  };
+
+  const updateConsultationStatus = async (consultationId: number, status: string) => {
+    try {
+      const response = await fetch(`/api/consultations/${consultationId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ status }),
+      });
+      if (response.ok) {
+        toast({ title: `Consultation status updated to ${status}` });
+        loadData();
+      } else {
+        toast({ title: "Failed to update consultation status", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error updating consultation status", variant: "destructive" });
+    }
+  };
+
+
+
+  const deleteConsultation = async (consultationId: number) => {
+    try {
+      const response = await fetch(`/api/consultations/${consultationId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        toast({ title: "Consultation deleted successfully" });
+        loadData();
+      } else {
+        toast({ title: "Failed to delete consultation", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Error deleting consultation", variant: "destructive" });
+    }
+  };
+
+  const createConsultationEmailReply = (consultation: any) => {
+    const subject = `Re: ${consultation.consultationType} Consultation Request`;
+    const body = `Hi ${consultation.parentName},\n\nThank you for your consultation request! I received your information:\n\nChild's Age: ${consultation.childAge}\nSleep Challenges: ${consultation.sleepChallenges}\nConsultation Type: ${consultation.consultationType}\n\nI'll contact you within 24 hours to schedule our call.\n\nBest regards,\nBaby Sleep Whisperer`;
+    window.open(`mailto:${consultation.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+  };
+
   const logout = async () => {
     try {
       await fetch("/api/auth/logout", { 
@@ -372,12 +445,45 @@ export default function Admin() {
                         <div>
                           <h3 className="font-semibold">{contact.name}</h3>
                           <p className="text-sm text-gray-600">{contact.email}</p>
+                          {contact.phone && (
+                            <p className="text-sm text-gray-600">{contact.phone}</p>
+                          )}
                         </div>
-                        <Badge variant={contact.responded ? "default" : "secondary"}>
-                          {contact.responded ? "Responded" : "New"}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={contact.responded ? "default" : "secondary"}>
+                            {contact.responded ? "Responded" : "New"}
+                          </Badge>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => createEmailReply(contact)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            Reply via Email
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateContactStatus(contact.id, !contact.responded)}
+                          >
+                            Mark as {contact.responded ? "Unread" : "Read"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteContact(contact.id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </div>
-                      <p className="text-sm mb-2">{contact.message}</p>
+                      <div className="mb-2">
+                        <strong>Subject:</strong> {contact.subject}
+                      </div>
+                      <div className="mb-2">
+                        <strong>Message:</strong>
+                        <p className="mt-1 text-sm">{contact.message}</p>
+                      </div>
                       <div className="text-xs text-gray-500">
                         Submitted: {new Date(contact.createdAt).toLocaleString()}
                       </div>
@@ -406,38 +512,61 @@ export default function Admin() {
                           <h3 className="font-semibold">{consultation.parentName}</h3>
                           <p className="text-sm text-gray-600">{consultation.email}</p>
                           <p className="text-sm text-gray-600">Child: {consultation.childAge}</p>
-                          <p className="text-sm text-gray-600">Service: {consultation.serviceType}</p>
+                          <p className="text-sm text-gray-600">Service: {consultation.consultationType}</p>
                           {consultation.phone && (
                             <p className="text-sm text-gray-600">{consultation.phone}</p>
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge
-                            variant={
-                              consultation.status === "pending"
-                                ? "secondary"
-                                : consultation.status === "confirmed"
-                                ? "default"
-                                : "outline"
-                            }
-                          >
-                            {consultation.status}
-                          </Badge>
-                          <select
+                          <Select
                             value={consultation.status}
-                            onChange={(e) =>
-                              updateConsultationStatus(consultation.id, e.target.value)
-                            }
-                            className="text-sm border rounded px-2 py-1"
+                            onValueChange={(value) => updateConsultationStatus(consultation.id, value)}
                           >
-                            <option value="pending">Pending</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                          </select>
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="confirmed">Confirmed</SelectItem>
+                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="cancelled">Cancelled</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => createConsultationEmailReply(consultation)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            Reply via Email
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteConsultation(consultation.id)}
+                          >
+                            Delete
+                          </Button>
                         </div>
                       </div>
-                      <p className="text-sm mb-2">{consultation.message}</p>
+                      <div className="mb-2">
+                        <strong>Sleep Challenges:</strong>
+                        <p className="mt-1 text-sm">{consultation.sleepChallenges}</p>
+                      </div>
+                      <div className="mb-2">
+                        <strong>Consultation Type:</strong> {consultation.consultationType}
+                      </div>
+                      {consultation.preferredDate && (
+                        <div className="mb-2">
+                          <strong>Preferred Date:</strong> {new Date(consultation.preferredDate).toLocaleDateString()}
+                        </div>
+                      )}
+                      {consultation.notes && (
+                        <div className="mb-2">
+                          <strong>Notes:</strong>
+                          <p className="mt-1 text-sm">{consultation.notes}</p>
+                        </div>
+                      )}
                       <div className="text-xs text-gray-500">
                         Submitted: {new Date(consultation.createdAt).toLocaleString()}
                       </div>
@@ -450,6 +579,7 @@ export default function Admin() {
               </CardContent>
             </Card>
           </TabsContent>
+
 
           <TabsContent value="blog" className="space-y-4">
             <Card>

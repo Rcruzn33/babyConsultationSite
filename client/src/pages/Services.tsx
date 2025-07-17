@@ -79,16 +79,24 @@ export default function Services() {
     setIsSubmitting(true);
     
     try {
+      // Convert preferredDate to proper format if provided
+      const submitData = {
+        ...data,
+        preferredDate: data.preferredDate ? new Date(data.preferredDate).toISOString() : null
+      };
+
       const response = await fetch('/api/consultations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(submitData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to book consultation');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Consultation booking error:', errorData);
+        throw new Error(errorData.error || 'Failed to book consultation');
       }
 
       toast({
@@ -97,8 +105,10 @@ export default function Services() {
       });
       
       form.reset();
+      setSelectedService("");
       
     } catch (error) {
+      console.error('Booking error:', error);
       toast({
         title: "Booking failed",
         description: "Please try again or contact me directly.",

@@ -263,6 +263,115 @@ app.post('/api/testimonials', requireAuth, async (req, res) => {
   }
 });
 
+// Contact management API
+app.post('/api/contacts', async (req, res) => {
+  try {
+    const { name, email, phone, subject, message } = req.body;
+    const result = await pool.query(
+      'INSERT INTO contacts (name, email, phone, subject, message, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *',
+      [name, email, phone, subject, message]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Create contact error:', error);
+    res.status(500).json({ error: 'Failed to create contact' });
+  }
+});
+
+app.get('/api/contacts', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM contacts ORDER BY created_at DESC');
+    const contacts = result.rows.map(contact => ({
+      ...contact,
+      createdAt: contact.created_at
+    }));
+    res.json(contacts);
+  } catch (error) {
+    console.error('Get contacts error:', error);
+    res.status(500).json({ error: 'Failed to fetch contacts' });
+  }
+});
+
+app.patch('/api/contacts/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { responded } = req.body;
+    await pool.query('UPDATE contacts SET responded = $1 WHERE id = $2', [responded, id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Update contact error:', error);
+    res.status(500).json({ error: 'Failed to update contact' });
+  }
+});
+
+app.delete('/api/contacts/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM contacts WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete contact error:', error);
+    res.status(500).json({ error: 'Failed to delete contact' });
+  }
+});
+
+// Consultation management API
+app.post('/api/consultations', async (req, res) => {
+  try {
+    const { parentName, email, phone, childAge, sleepChallenges, consultationType, preferredDate } = req.body;
+    const result = await pool.query(
+      'INSERT INTO consultations (parent_name, email, phone, child_age, sleep_challenges, consultation_type, preferred_date, status, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW()) RETURNING *',
+      [parentName, email, phone, childAge, sleepChallenges, consultationType, preferredDate, 'pending']
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Create consultation error:', error);
+    res.status(500).json({ error: 'Failed to create consultation' });
+  }
+});
+
+app.get('/api/consultations', requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM consultations ORDER BY created_at DESC');
+    const consultations = result.rows.map(consultation => ({
+      ...consultation,
+      parentName: consultation.parent_name,
+      childAge: consultation.child_age,
+      sleepChallenges: consultation.sleep_challenges,
+      consultationType: consultation.consultation_type,
+      preferredDate: consultation.preferred_date,
+      createdAt: consultation.created_at
+    }));
+    res.json(consultations);
+  } catch (error) {
+    console.error('Get consultations error:', error);
+    res.status(500).json({ error: 'Failed to fetch consultations' });
+  }
+});
+
+app.patch('/api/consultations/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, notes } = req.body;
+    await pool.query('UPDATE consultations SET status = $1, notes = $2 WHERE id = $3', [status, notes, id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Update consultation error:', error);
+    res.status(500).json({ error: 'Failed to update consultation' });
+  }
+});
+
+app.delete('/api/consultations/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM consultations WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete consultation error:', error);
+    res.status(500).json({ error: 'Failed to delete consultation' });
+  }
+});
+
 // Get users for admin dashboard
 app.get('/api/admin/users', requireAuth, async (req, res) => {
   try {

@@ -247,18 +247,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Delete consultation (admin only)
-  app.delete("/api/consultations/:id", requireApprovedAdmin, async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      await storage.deleteConsultation(id);
-      res.json({ success: true });
-    } catch (error) {
-      console.error(`Delete consultation error: ${error}`);
-      res.status(500).json({ error: "Failed to delete consultation" });
-    }
-  });
-
   // Blog posts
   app.get("/api/blog", async (req, res) => {
     try {
