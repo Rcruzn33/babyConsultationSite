@@ -48,6 +48,7 @@ export default function Admin() {
       const response = await fetch("/api/auth/me", { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
+        console.log("Current user data:", data.user);
         setCurrentUser(data.user);
       }
     } catch (error) {
@@ -221,18 +222,10 @@ export default function Admin() {
 
   const toggleBlogPostPublished = async (id: number, published: boolean) => {
     try {
-      // Get the current blog post data first
-      const currentPost = blogPosts.find(post => post.id === id);
-      if (!currentPost) {
-        toast({ title: "Blog post not found", variant: "destructive" });
-        return;
-      }
-      
       const response = await fetch(`/api/blog/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          ...currentPost,
           published: !published 
         }),
         credentials: 'include'
@@ -273,7 +266,12 @@ export default function Admin() {
       });
       if (response.ok) {
         toast({ title: `Testimonial ${!approved ? 'approved' : 'unapproved'} successfully` });
-        loadData();
+        // Optimistically update local state to prevent double-click issues
+        setTestimonials(prev => prev.map(t => 
+          t.id === id ? { ...t, approved: !approved } : t
+        ));
+        // Still reload data to ensure consistency
+        setTimeout(() => loadData(), 100);
       } else {
         toast({ title: "Failed to update testimonial", variant: "destructive" });
       }
@@ -445,12 +443,12 @@ export default function Admin() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="contacts" className="space-y-6">
-          <TabsList className={`grid w-full ${currentUser?.can_manage_users ? 'grid-cols-5' : 'grid-cols-4'}`}>
+          <TabsList className={`grid w-full ${currentUser?.canManageUsers ? 'grid-cols-5' : 'grid-cols-4'}`}>
             <TabsTrigger value="contacts">📧 Contacts ({contacts.length})</TabsTrigger>
             <TabsTrigger value="consultations">📅 Consultations ({consultations.length})</TabsTrigger>
             <TabsTrigger value="blog">📝 Blog Posts ({blogPosts.length})</TabsTrigger>
             <TabsTrigger value="testimonials">⭐ Testimonials ({testimonials.filter(t => !t.approved).length} pending)</TabsTrigger>
-            {currentUser?.can_manage_users && (
+            {currentUser?.canManageUsers && (
               <TabsTrigger value="users">👤 Users ({users.length})</TabsTrigger>
             )}
           </TabsList>
